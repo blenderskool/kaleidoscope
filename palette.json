@@ -3688,5 +3688,221 @@
     "color5": {
       "hex": "#BBCDE5"
     }
+  },
+  {
+    "palette_id": "Palette 206",
+    "color1": {
+      "hex": "#468966"
+    },
+    "color2": {
+      "hex": "#FFF0A5"
+    },
+    "color3": {
+      "hex": "#FFB03B"
+    },
+    "color4": {
+      "hex": "#B64926"
+    },
+    "color5": {
+      "hex": "#8E2800"
+    }
+  },
+  {
+    "palette_id": "Palette 207",
+    "color1": {
+      "hex": "#EA6045"
+    },
+    "color2": {
+      "hex": "#F8CA4D"
+    },
+    "color3": {
+      "hex": "#F5E5C0"
+    },
+    "color4": {
+      "hex": "#3F5666"
+    },
+    "color5": {
+      "hex": "#2F3440"
+    }
+  },
+  {
+    "palette_id": "Palette 208",
+    "color1": {
+      "hex": "#289976"
+    },
+    "color2": {
+      "hex": "#67CC8E"
+    },
+    "color3": {
+      "hex": "#B1FF91"
+    },
+    "color4": {
+      "hex": "#FFE877"
+    },
+    "color5": {
+      "hex": "#FF5600"
+    }
+  },
+  {
+    "palette_id": "Palette 209",
+    "color1": {
+      "hex": "#E0FFB3"
+    },
+    "color2": {
+      "hex": "#61C791"
+    },
+    "color3": {
+      "hex": "#31797D"
+    },
+    "color4": {
+      "hex": "#2A2F36"
+    },
+    "color5": {
+      "hex": "#F23C55"
+    }
+  },
+  {
+    "palette_id": "Palette 210",
+    "color1": {
+      "hex": "#3CBAC8"
+    },
+    "color2": {
+      "hex": "#93EDD4"
+    },
+    "color3": {
+      "hex": "#F3F5C4"
+    },
+    "color4": {
+      "hex": "#F9CB8F"
+    },
+    "color5": {
+      "hex": "#F19181"
+    }
+  },
+  {
+    "palette_id": "Palette 211",
+    "color1": {
+      "hex": "#006D8D"
+    },
+    "color2": {
+      "hex": "#008A6E"
+    },
+    "color3": {
+      "hex": "#549E39"
+    },
+    "color4": {
+      "hex": "#8AB833"
+    },
+    "color5": {
+      "hex": "#C0CF3A"
+    }
+  },
+  {
+    "palette_id": "Palette 212",
+    "color1": {
+      "hex": "#73603D"
+    },
+    "color2": {
+      "hex": "#BF8A49"
+    },
+    "color3": {
+      "hex": "#F2CA80"
+    },
+    "color4": {
+      "hex": "#F2CA80"
+    },
+    "color5": {
+      "hex": "#0D0D0D"
+    }
+  },
+  {
+    "palette_id": "Palette 213",
+    "color1": {
+      "hex": "#002E40"
+    },
+    "color2": {
+      "hex": "#2A5769"
+    },
+    "color3": {
+      "hex": "#FFFFFF"
+    },
+    "color4": {
+      "hex": "#FABD4A"
+    },
+    "color5": {
+      "hex": "#FA9600"
+    }
+  },
+  {
+    "palette_id": "Palette 214",
+    "color1": {
+      "hex": "#2F400D"
+    },
+    "color2": {
+      "hex": "#8CBF26"
+    },
+    "color3": {
+      "hex": "#A8CA65"
+    },
+    "color4": {
+      "hex": "#E8E5B0"
+    },
+    "color5": {
+      "hex": "#419184"
+    }
+  },
+  {
+    "palette_id": "Palette 215",
+    "color1": {
+      "hex": "#002F36"
+    },
+    "color2": {
+      "hex": "#142426"
+    },
+    "color3": {
+      "hex": "#D1B748"
+    },
+    "color4": {
+      "hex": "#EDDB43"
+    },
+    "color5": {
+      "hex": "#FFFD84"
+    }
+  },
+  {
+    "palette_id": "Palette 216",
+    "color1": {
+      "hex": "#3DA8A4"
+    },
+    "color2": {
+      "hex": "#7ACCBE"
+    },
+    "color3": {
+      "hex": "#FFFFF7"
+    },
+    "color4": {
+      "hex": "#FF99A1"
+    },
+    "color5": {
+      "hex": "#FF5879"
+    }
+  },
+  {
+    "palette_id": "Palette 217",
+    "color1": {
+      "hex": "#849696"
+    },
+    "color2": {
+      "hex": "#FEFFFB"
+    },
+    "color3": {
+      "hex": "#232D33"
+    },
+    "color4": {
+      "hex": "#17384C"
+    },
+    "color5": {
+      "hex": "#FF972C"
+    }
   }
 ]

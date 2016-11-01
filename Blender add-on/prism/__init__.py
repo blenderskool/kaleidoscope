@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "Prism",
+    "name": "Prism - A small package of nodes for Cycles Materials",
     "author": "Akash Hamirwasia",
     "version": (1, 0),
     "blender": (2, 75, 0),

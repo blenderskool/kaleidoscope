@@ -104,7 +104,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items =(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
-    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Vibrant Colors for the Palette'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random', 'Use any Rule or color Effect')), update=set_type, default="0")
+    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Vibrant Colors for the Palette'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule')), update=set_type, default="0")
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
     use_global = bpy.props.BoolProperty(name="Use Global Controls", description="Use Global Settings to control the overall Color of the Palette", default=False)
@@ -245,6 +245,12 @@ def SpectrumPaletteUI(context, layout):
                 col_box.label("in a click. It is helpful when")
                 col_box.label("you need want to find the best")
                 col_box.label("palette of a base color.")
+            elif prism_spectrum_props.custom_gen_type == "5":
+                col_box.label("If you are really angry, and")
+                col_box.label("want to try any color for your")
+                col_box.label("scene, then use this option.")
+                col_box.label("This option 'Randomly' generates")
+                col_box.label("the colors for the palette.")
                 if prism_spectrum_props.use_internet_libs == True:
                     col_box.label()
         if prism_spectrum_props.use_internet_libs == True:
@@ -692,8 +698,6 @@ def Spectrum_Engine(caller, context):
         elif prism_spectrum_props.custom_gen_type == "4" or prism_spectrum_props.random_custom_int == 3:
             global palette
             #Online
-            c = Color()
-            #bpy.context.scene.display_settings.display_device = 'None'
             if prism_spectrum_props.new_file != 0:
                 palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/prism/master/palette.json").read(), 'UTF-8')
                 prism_spectrum_props.new_file = 0
@@ -709,6 +713,17 @@ def Spectrum_Engine(caller, context):
             for i in range(1, 6):
                 exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
             prism_spectrum_props.use_internet_libs = True
+        elif prism_spectrum_props.custom_gen_type == "5" or prism_spectrum_props.random_custom_int == 4:
+            if prism_spectrum_props.use_custom == True:
+                exec("prism_spectrum_props.color"+str(index[0])+" = prism_spectrum_props.hue[0], prism_spectrum_props.hue[1], prism_spectrum_props.hue[2], 1.0")
+            else:
+                exec("prism_spectrum_props.color"+str(index[0])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("prism_spectrum_props.color"+str(index[1])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("prism_spectrum_props.color"+str(index[2])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("prism_spectrum_props.color"+str(index[3])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("prism_spectrum_props.color"+str(index[4])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            prism_spectrum_props.use_internet_libs = False
+
 
 class PaletteGenerate(bpy.types.Operator):
     """Generate a new Color Palette"""
@@ -717,7 +732,6 @@ class PaletteGenerate(bpy.types.Operator):
 
     def execute(self, context):
         prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-        bpy.context.scene.display_settings.display_device = 'sRGB'
         if prism_spectrum_props.custom_gen_type != "3":
             Spectrum_Engine(self, context)
         else:
@@ -726,7 +740,7 @@ class PaletteGenerate(bpy.types.Operator):
                 prism_spectrum_props.random_int = 4
             else:
                 prism_spectrum_props.random_int = random.randint(0, 4)
-            prism_spectrum_props.random_custom_int = random.randint(0, 3)
+            prism_spectrum_props.random_custom_int = random.randint(0, 4)
             Spectrum_Engine(self, context)
 
         #Palette History 1

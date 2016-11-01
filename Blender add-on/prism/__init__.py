@@ -4,7 +4,7 @@ bl_info = {
     "version": (1, 0),
     "blender": (2, 75, 0),
     "location": "Cycles > NodeEditor > MaterialView > Add Node Menu",
-    "description": "A Complete Toolkit of Nodes to Make your materials even more colorful and accurate",
+    "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",
     "warning": "",
     "wiki_url": "http://www.blenderskool.cf",
     "tracker_url": "",

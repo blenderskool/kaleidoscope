@@ -1,3 +1,4 @@
+# Intensity Node
 import bpy
 import os
 from bpy.types import NodeTree, Node, NodeSocket
@@ -186,7 +187,7 @@ def IntensityUI(self, context, layout, current_node):
                 colb.label("So, the IOR value defines")
                 colb.label("that how much slower a light")
                 colb.label("ray would travel in a medium")
-                colb.label("compared to that is vacuum.")
+                colb.label("compared to that in vacuum.")
                 colb.label("This value is important and")
                 colb.label("it controls the refractions")
                 colb.label("caused by the light ray.")
@@ -207,7 +208,7 @@ def IntensityUI(self, context, layout, current_node):
                 colb.label("more.")
                 colb.label()
 
-            colb.prop(prism_intensity_props, "prism_intensity_info", text="Close", icon='INFO', toggle=True)
+            colb.prop(prism_intensity_props, "prism_intensity_info", text="Close Help", icon='INFO', toggle=True)
         col.label()
         row = col.row(align=True)
         split1 = row.split(percentage=0.05)

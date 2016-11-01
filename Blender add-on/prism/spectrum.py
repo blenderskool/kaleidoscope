@@ -1,4 +1,4 @@
-# Spectrum Palette
+# Spectrum Palette Node
 import bpy
 import json, os
 import urllib.request
@@ -11,7 +11,7 @@ import random, struct
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
-#online_check = True
+online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
 
@@ -218,9 +218,9 @@ def SpectrumPaletteUI(context, layout):
             col_box.label()
             if prism_spectrum_props.custom_gen_type == "0":
                 col_box.label("Vibrant scheme uses two")
-                col_box.label("similar color shades and")
-                col_box.label("others are shades of black and")
-                col_box.label("white")
+                col_box.label("visually appealing color shades")
+                col_box.label("and others are shades of black")
+                col_box.label("and white")
             elif prism_spectrum_props.custom_gen_type == "1":
                 col_box.label("Gradient scheme is similar")
                 col_box.label("to Monochromatic scheme, and")
@@ -283,6 +283,9 @@ def SpectrumPaletteUI(context, layout):
     row2.scale_y = 1.2
     row2.operator(PaletteGenerate.bl_idname, text="Refresh Palette", icon="COLOR")
     col3 = layout.column(align=True)
+    if online_check == False:
+        col3.label("There was some problem,", icon='WARNING')
+        col3.label("try again")
     if prism_spectrum_props.use_global == False:
         col3.prop(prism_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
     else:
@@ -697,18 +700,23 @@ def Spectrum_Engine(caller, context):
             prism_spectrum_props.use_internet_libs = False
         elif prism_spectrum_props.custom_gen_type == "4" or prism_spectrum_props.random_custom_int == 3:
             global palette
+            global online_check
             #Online
-            if prism_spectrum_props.new_file != 0:
-                palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/prism/master/palette.json").read(), 'UTF-8')
-                prism_spectrum_props.new_file = 0
-                palette = json.loads(palette_file)
-            index = random.randint(0, len(palette)-1)
-            for i in range(0, 20):
-                if prism_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
-                    index = random.randint(0, len(palette)-1)
-                else:
-                    break
-            prism_spectrum_props.online_palette_index = index
+            try:
+                if prism_spectrum_props.new_file != 0:
+                    palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/prism/master/palette.json").read(), 'UTF-8')
+                    prism_spectrum_props.new_file = 0
+                    palette = json.loads(palette_file)
+                index = random.randint(0, len(palette)-1)
+                for i in range(0, 20):
+                    if prism_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
+                        index = random.randint(0, len(palette)-1)
+                    else:
+                        break
+                prism_spectrum_props.online_palette_index = index
+                online_check = True
+            except:
+                online_check = False
 
             for i in range(1, 6):
                 exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")

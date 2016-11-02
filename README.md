@@ -11,7 +11,7 @@ And this small package of nodes is designed to improve and fix all that. I do un
 While there are only 2 Nodes in the Prism add-on, both are extremely powerful, and can be customized to give results based on your liking. The Nodes that come with the add-on are:
 
 #Spectrum:
-Spectrum is a Node which allows you to generate visually appealing color schemes and palettes. It comes with the Spectrum Engine, which is designed to generate infinte color shades and palettes. But to make it even more powerful, it comes with Color rules such as Monochromatics, Analagous, Triadic, and even more. So you can select the type of Color Rule you are looking for, and let Spectrum generate the Color palette based on that rule.<br>
+Spectrum is a Node which allows you to generate visually appealing color schemes and palettes. It comes with the Spectrum Engine, which is designed to generate infinite color shades and palettes. But to make it even more powerful, it comes with Color rules such as Monochromatic, Analogous, Triadic, and even more. So you can select the type of Color Rule you are looking for, and let Spectrum generate the Color palette based on that rule.<br>
 It also comes with Global Color Controls, to manipulate the Hue, Saturation and Value of the Palette. Since the Spectrum Node is global in a Blender scene. You can generate a new palette, and see the live changes directly. No need to update any link or material.
 
 I have also created an online library of popular palettes. These can be easily used within the Spectrum Node

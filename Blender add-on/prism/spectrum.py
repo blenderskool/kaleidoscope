@@ -11,6 +11,7 @@ import random, struct
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
+palette_export = {}
 online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
@@ -91,6 +92,31 @@ class SpectumProperties(bpy.types.PropertyGroup):
             exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
             exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
         return None
+    def get_saved_palettes(self, context):
+        saved_palettes_list = []
+        for sub in os.listdir(os.path.dirname(__file__)):
+            if os.path.isfile(os.path.join(os.path.dirname(__file__), str(sub))):
+                name = str(sub)
+                if name.endswith('.json'):
+                    name = name[:-5]
+                    name = name.title()
+                    name = name.replace('_', ' ')
+                    saved_palettes_list.append((name, name, ""))
+        return saved_palettes_list
+    def import_saved_palette(self, context):
+        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+        name = prism_spectrum_props.saved_palettes
+        name = name.lower()
+        name = name.replace(' ', '_')
+        name = name+".json"
+        path = os.path.join(os.path.dirname(__file__), name)
+        palette_file = open(path, 'r')
+        palette = json.load(palette_file)
+        for i in range(1, 6):
+            exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[prism_spectrum_props.saved_palettes]['color"+str(i)+"'])")
+        palette_file.close()
+        set_palettes_list(self, context)
+        return None
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
@@ -105,6 +131,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items =(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
     custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Vibrant Colors for the Palette'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule')), update=set_type, default="0")
+    saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
     use_global = bpy.props.BoolProperty(name="Use Global Controls", description="Use Global Settings to control the overall Color of the Palette", default=False)
@@ -119,7 +146,55 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     history_count = bpy.props.IntProperty(name="History Counter", description="Value to Count the Current History Value", default=0)
 
+    save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
+
 # Derived from the Node base type.
+
+class SavePalette(bpy.types.Operator):
+    bl_idname = "spectrum.save_palette"
+    bl_label = "Save Spectrum Palette"
+
+    def set_name(self, context):
+        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+        prism_spectrum_props.save_palette_name = self.name
+
+        name = self.name
+        name = name.lower()
+        self.name = name.replace(' ', '_')
+        return None
+
+    name = bpy.props.StringProperty(name="Palette Name",description="Enter the Name for the Palette", default="My Palette", update=set_name)
+
+    def execute(self, context):
+        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+        prism_spectrum_props.save_palette_name = self.name
+        global palette_export
+        name = prism_spectrum_props.save_palette_name
+        name = name.title()
+        name = name.replace('_', ' ')
+        prism_spectrum_props.save_palette_name = name
+        palette_export[prism_spectrum_props.save_palette_name] = {
+            "palette_name": prism_spectrum_props.save_palette_name,
+            "color1": rgb_to_hex(prism_spectrum_props.color1),
+            "color2": rgb_to_hex(prism_spectrum_props.color2),
+            "color3": rgb_to_hex(prism_spectrum_props.color3),
+            "color4": rgb_to_hex(prism_spectrum_props.color4),
+            "color5": rgb_to_hex(prism_spectrum_props.color5)
+        }
+        name = prism_spectrum_props.save_palette_name
+        name = name.lower()
+        prism_spectrum_props.save_palette_name = name.replace(' ', '_')
+        path = os.path.join(os.path.dirname(__file__), prism_spectrum_props.save_palette_name+".json")
+        s = json.dumps(palette_export)
+        with open(path, "w") as f:
+            f.write(s)
+        return{'FINISHED'}
+
+    def invoke(self, context, event):
+        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+        self.name = prism_spectrum_props.save_palette_name
+        return bpy.context.window_manager.invoke_props_dialog(self)
+
 class SpectrumNode(Node, SpectrumTreeNode):
     '''Spectrum node'''
     bl_idname = 'spectrum_palette.node'
@@ -285,7 +360,7 @@ def SpectrumPaletteUI(context, layout):
     row2.operator(PaletteGenerate.bl_idname, text="Refresh Palette", icon="COLOR")
     col3 = layout.column(align=True)
     if online_check == False:
-        col3.label("There was some problem,", icon='WARNING')
+        col3.label("There was some problem,", icon='ERROR')
         col3.label("try again")
     if prism_spectrum_props.use_global == False:
         col3.prop(prism_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
@@ -305,7 +380,14 @@ def SpectrumPaletteUI(context, layout):
     row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="ARROW_LEFTRIGHT")
     if prism_spectrum_props.history_count != 0:
         row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT")
-    col4.operator(SavePalette.bl_idname)
+    col4.label()
+    row5 = col4.row(align=True)
+    if len(prism_spectrum_props.saved_palettes) !=0:
+        row5.prop(prism_spectrum_props, "saved_palettes", text="")
+    else:
+        row5.label("No Saved Presets")
+    row5.operator(SavePalette.bl_idname, text="", icon='ZOOMIN')
+    row5.operator(DeletePalette.bl_idname, text="", icon='ZOOMOUT')
 
 def update_caller(caller, input_name):
     out = ""
@@ -335,6 +417,22 @@ def hex_to_rgb(value):
     fin.append(b)
     fin.append(1.0)
     return tuple(fin)
+
+def rgb_to_hex(rgb):
+    gamma = 1/2.2
+    fin = list(rgb)
+    r = fin[0]*255
+    g = fin[1]*255
+    b = fin[2]*255
+    r = int(255*pow(r / 255, gamma))
+    g = int(255*pow(g / 255, gamma))
+    b = int(255*pow(b / 255, gamma))
+    fin.clear()
+    fin.append(r)
+    fin.append(g)
+    fin.append(b)
+    fin = tuple(fin)
+    return '#%02x%02x%02x' % fin
 
 def Spectrum_Engine(caller, context):
     prism_spectrum_props = bpy.context.scene.prism_spectrum_props
@@ -716,13 +814,14 @@ def Spectrum_Engine(caller, context):
                         break
                 prism_spectrum_props.online_palette_index = index
                 online_check = True
+
+                for i in range(1, 6):
+                    exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
+                prism_spectrum_props.use_internet_libs = True
             except:
                 online_check = False
-
-            for i in range(1, 6):
-                exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
-            prism_spectrum_props.use_internet_libs = True
         elif prism_spectrum_props.custom_gen_type == "5" or prism_spectrum_props.random_custom_int == 4:
+            #Random
             if prism_spectrum_props.use_custom == True:
                 exec("prism_spectrum_props.color"+str(index[0])+" = prism_spectrum_props.hue[0], prism_spectrum_props.hue[1], prism_spectrum_props.hue[2], 1.0")
             else:
@@ -733,6 +832,75 @@ def Spectrum_Engine(caller, context):
             exec("prism_spectrum_props.color"+str(index[4])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
             prism_spectrum_props.use_internet_libs = False
 
+def set_palettes_list(caller, context):
+    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+    #Palette History 1
+    PaletteHistory[4].r = PaletteHistory[9].r
+    PaletteHistory[4].g = PaletteHistory[9].g
+    PaletteHistory[4].b = PaletteHistory[9].b
+
+    PaletteHistory[3].r = PaletteHistory[8].r
+    PaletteHistory[3].g = PaletteHistory[8].g
+    PaletteHistory[3].b = PaletteHistory[8].b
+
+    PaletteHistory[2].r = PaletteHistory[7].r
+    PaletteHistory[2].g = PaletteHistory[7].g
+    PaletteHistory[2].b = PaletteHistory[7].b
+
+    PaletteHistory[1].r = PaletteHistory[6].r
+    PaletteHistory[1].g = PaletteHistory[6].g
+    PaletteHistory[1].b = PaletteHistory[6].b
+
+    PaletteHistory[0].r = PaletteHistory[5].r
+    PaletteHistory[0].g = PaletteHistory[5].g
+    PaletteHistory[0].b = PaletteHistory[5].b
+    Palette_idHistory[0] = Palette_idHistory[1]
+
+    #Palette History 2
+    PaletteHistory[9].r = PaletteHistory[14].r
+    PaletteHistory[9].g = PaletteHistory[14].g
+    PaletteHistory[9].b = PaletteHistory[14].b
+
+    PaletteHistory[8].r = PaletteHistory[13].r
+    PaletteHistory[8].g = PaletteHistory[13].g
+    PaletteHistory[8].b = PaletteHistory[13].b
+
+    PaletteHistory[7].r = PaletteHistory[12].r
+    PaletteHistory[7].g = PaletteHistory[12].g
+    PaletteHistory[7].b = PaletteHistory[12].b
+
+    PaletteHistory[6].r = PaletteHistory[11].r
+    PaletteHistory[6].g = PaletteHistory[11].g
+    PaletteHistory[6].b = PaletteHistory[11].b
+
+    PaletteHistory[5].r = PaletteHistory[10].r
+    PaletteHistory[5].g = PaletteHistory[10].g
+    PaletteHistory[5].b = PaletteHistory[10].b
+    Palette_idHistory[1] = Palette_idHistory[2]
+
+    #Palette History 3
+    PaletteHistory[14].r = prism_spectrum_props.color5[0]
+    PaletteHistory[14].g = prism_spectrum_props.color5[1]
+    PaletteHistory[14].b = prism_spectrum_props.color5[2]
+
+    PaletteHistory[13].r = prism_spectrum_props.color4[0]
+    PaletteHistory[13].g = prism_spectrum_props.color4[1]
+    PaletteHistory[13].b = prism_spectrum_props.color4[2]
+
+    PaletteHistory[12].r = prism_spectrum_props.color3[0]
+    PaletteHistory[12].g = prism_spectrum_props.color3[1]
+    PaletteHistory[12].b = prism_spectrum_props.color3[2]
+
+    PaletteHistory[11].r = prism_spectrum_props.color2[0]
+    PaletteHistory[11].g = prism_spectrum_props.color2[1]
+    PaletteHistory[11].b = prism_spectrum_props.color2[2]
+
+    PaletteHistory[10].r = prism_spectrum_props.color1[0]
+    PaletteHistory[10].g = prism_spectrum_props.color1[1]
+    PaletteHistory[10].b = prism_spectrum_props.color1[2]
+    Palette_idHistory[2] = prism_spectrum_props.online_palette_index
+
+    prism_spectrum_props.history_count = 0
 
 class PaletteGenerate(bpy.types.Operator):
     """Generate a new Color Palette"""
@@ -751,74 +919,7 @@ class PaletteGenerate(bpy.types.Operator):
                 prism_spectrum_props.random_int = random.randint(0, 4)
             prism_spectrum_props.random_custom_int = random.randint(0, 4)
             Spectrum_Engine(self, context)
-
-        #Palette History 1
-        PaletteHistory[4].r = PaletteHistory[9].r
-        PaletteHistory[4].g = PaletteHistory[9].g
-        PaletteHistory[4].b = PaletteHistory[9].b
-
-        PaletteHistory[3].r = PaletteHistory[8].r
-        PaletteHistory[3].g = PaletteHistory[8].g
-        PaletteHistory[3].b = PaletteHistory[8].b
-
-        PaletteHistory[2].r = PaletteHistory[7].r
-        PaletteHistory[2].g = PaletteHistory[7].g
-        PaletteHistory[2].b = PaletteHistory[7].b
-
-        PaletteHistory[1].r = PaletteHistory[6].r
-        PaletteHistory[1].g = PaletteHistory[6].g
-        PaletteHistory[1].b = PaletteHistory[6].b
-
-        PaletteHistory[0].r = PaletteHistory[5].r
-        PaletteHistory[0].g = PaletteHistory[5].g
-        PaletteHistory[0].b = PaletteHistory[5].b
-        Palette_idHistory[0] = Palette_idHistory[1]
-
-        #Palette History 2
-        PaletteHistory[9].r = PaletteHistory[14].r
-        PaletteHistory[9].g = PaletteHistory[14].g
-        PaletteHistory[9].b = PaletteHistory[14].b
-
-        PaletteHistory[8].r = PaletteHistory[13].r
-        PaletteHistory[8].g = PaletteHistory[13].g
-        PaletteHistory[8].b = PaletteHistory[13].b
-
-        PaletteHistory[7].r = PaletteHistory[12].r
-        PaletteHistory[7].g = PaletteHistory[12].g
-        PaletteHistory[7].b = PaletteHistory[12].b
-
-        PaletteHistory[6].r = PaletteHistory[11].r
-        PaletteHistory[6].g = PaletteHistory[11].g
-        PaletteHistory[6].b = PaletteHistory[11].b
-
-        PaletteHistory[5].r = PaletteHistory[10].r
-        PaletteHistory[5].g = PaletteHistory[10].g
-        PaletteHistory[5].b = PaletteHistory[10].b
-        Palette_idHistory[1] = Palette_idHistory[2]
-
-        #Palette History 3
-        PaletteHistory[14].r = prism_spectrum_props.color5[0]
-        PaletteHistory[14].g = prism_spectrum_props.color5[1]
-        PaletteHistory[14].b = prism_spectrum_props.color5[2]
-
-        PaletteHistory[13].r = prism_spectrum_props.color4[0]
-        PaletteHistory[13].g = prism_spectrum_props.color4[1]
-        PaletteHistory[13].b = prism_spectrum_props.color4[2]
-
-        PaletteHistory[12].r = prism_spectrum_props.color3[0]
-        PaletteHistory[12].g = prism_spectrum_props.color3[1]
-        PaletteHistory[12].b = prism_spectrum_props.color3[2]
-
-        PaletteHistory[11].r = prism_spectrum_props.color2[0]
-        PaletteHistory[11].g = prism_spectrum_props.color2[1]
-        PaletteHistory[11].b = prism_spectrum_props.color2[2]
-
-        PaletteHistory[10].r = prism_spectrum_props.color1[0]
-        PaletteHistory[10].g = prism_spectrum_props.color1[1]
-        PaletteHistory[10].b = prism_spectrum_props.color1[2]
-        Palette_idHistory[2] = prism_spectrum_props.online_palette_index
-
-        prism_spectrum_props.history_count = 0
+        set_palettes_list(self, context)
         return{'FINISHED'}
 
 class PreviousPalette(bpy.types.Operator):
@@ -1032,17 +1133,18 @@ class PaletteShuffle(bpy.types.Operator):
         prism_spectrum_props.value_slider = 0.0
         return{'FINISHED'}
 
-class SavePalette(bpy.types.Operator):
-    """Save the Current Palette for Later use"""
-    bl_idname = "spectrum.save_palette"
-    bl_label = "Save"
+class DeletePalette(bpy.types.Operator):
+    """Delete the Current Selected Palette"""
+    bl_idname = "spectrum.save_palette_remove"
+    bl_label = "Delete"
 
     def execute(self, context):
         prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        path = os.path.join(os.path.dirname(__file__), "saves.json")
-        for i in range(1, 6):
-            with open(path, 'a') as outfile:
-                exec("json.dump(prism_spectrum_props.color"+str(i)+"[0], outfile)")
+        name = prism_spectrum_props.saved_palettes
+        name = name.lower()
+        name = name.replace(' ', '_')
+        path = os.path.join(os.path.dirname(__file__), name+".json")
+        os.remove(path)
         return{'FINISHED'}
 
 def register():

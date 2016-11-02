@@ -245,6 +245,7 @@ def SpectrumPaletteUI(context, layout):
                 col_box.label("in a click. It is helpful when")
                 col_box.label("you need want to find the best")
                 col_box.label("palette of a base color.")
+                col_box.label()
             elif prism_spectrum_props.custom_gen_type == "5":
                 col_box.label("If you are really angry, and")
                 col_box.label("want to try any color for your")
@@ -258,7 +259,7 @@ def SpectrumPaletteUI(context, layout):
             row = col_box.row(align=True)
             row.scale_y = 1.1
             row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://google.com"
-        if prism_spectrum_props.gen_type != '4' or prism_spectrum_props.custom_gen_type != '4':
+        if prism_spectrum_props.gen_type != '4' and prism_spectrum_props.custom_gen_type != '4':
             col_box.label()
         col_box.prop(prism_spectrum_props, "view_help", text="Close Help", icon='INFO')
     col = layout.column(align=True)

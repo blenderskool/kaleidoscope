@@ -4192,5 +4192,131 @@
     "color5": {
       "hex": "#352630"
     }
+  },
+  {
+    "palette_id": "Palette 234",
+    "color1": {
+      "hex": "#1F0A1D"
+    },
+    "color2": {
+      "hex": "#334F53"
+    },
+    "color3": {
+      "hex": "#45936C"
+    },
+    "color4": {
+      "hex": "#9ACC77"
+    },
+    "color5": {
+      "hex": "#E5EAD4"
+    }
+  },
+  {
+    "palette_id": "Palette 235",
+    "color1": {
+      "hex": "#43777A"
+    },
+    "color2": {
+      "hex": "#442432"
+    },
+    "color3": {
+      "hex": "#C02948"
+    },
+    "color4": {
+      "hex": "#D95B45"
+    },
+    "color5": {
+      "hex": "#ECD079"
+    }
+  },
+  {
+    "palette_id": "Palette 236",
+    "color1": {
+      "hex": "#FEE9A6"
+    },
+    "color2": {
+      "hex": "#FEC0AB"
+    },
+    "color3": {
+      "hex": "#FA5894"
+    },
+    "color4": {
+      "hex": "#660860"
+    },
+    "color5": {
+      "hex": "#9380B7"
+    }
+  },
+  {
+    "palette_id": "Palette 237",
+    "color1": {
+      "hex": "#444444"
+    },
+    "color2": {
+      "hex": "#FCF7D1"
+    },
+    "color3": {
+      "hex": "#A9A17A"
+    },
+    "color4": {
+      "hex": "#B52C00"
+    },
+    "color5": {
+      "hex": "#8C0005"
+    }
+  },
+  {
+    "palette_id": "Palette 238",
+    "color1": {
+      "hex": "#20663F"
+    },
+    "color2": {
+      "hex": "#259959"
+    },
+    "color3": {
+      "hex": "#ABD406"
+    },
+    "color4": {
+      "hex": "#FFD412"
+    },
+    "color5": {
+      "hex": "#FF821C"
+    }
+  },
+  {
+    "palette_id": "Palette 239",
+    "color1": {
+      "hex": "#DBDA97"
+    },
+    "color2": {
+      "hex": "#EFAE54"
+    },
+    "color3": {
+      "hex": "#EF6771"
+    },
+    "color4": {
+      "hex": "#4B1D37"
+    },
+    "color5": {
+      "hex": "#977E77"
+    }
+  },
+  {
+    "palette_id": "Palette 240",
+    "color1": {
+      "hex": "#260729"
+    },
+    "color2": {
+      "hex": "#2A2344"
+    },
+    "color3": {
+      "hex": "#495168"
+    },
+    "color4": {
+      "hex": "#CCBD9E"
+    },
+    "color5": {
+      "hex": "#D8CCB2"
+    }
   }
 ]

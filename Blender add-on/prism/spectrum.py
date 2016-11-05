@@ -117,6 +117,9 @@ class SpectumProperties(bpy.types.PropertyGroup):
         palette_file.close()
         set_palettes_list(self, context)
         return None
+    def set_ramp(self, context):
+        set_color_ramp(self)
+        return None
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
@@ -138,6 +141,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
     use_internet_libs = bpy.props.BoolProperty(name="Interent Library Checker", description="Checks if the palette generated is from internet library", default=False)
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
+    assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp", default=False, update=set_ramp)
 
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
     random_custom_int = bpy.props.IntProperty(name="Random Custom Integer", description="Used to use Random color rules and effects", default=0)
@@ -147,6 +151,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
     history_count = bpy.props.IntProperty(name="History Counter", description="Value to Count the Current History Value", default=0)
 
     save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
+    colorramp_name = bpy.props.StringProperty(name="ColorRamp name", description="Select the ColorRamp to assign the Colors", default="")
 
 # Derived from the Node base type.
 
@@ -195,6 +200,21 @@ class SavePalette(bpy.types.Operator):
         self.name = prism_spectrum_props.save_palette_name
         return bpy.context.window_manager.invoke_props_dialog(self)
 
+def set_color_ramp(self):
+    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+    try:
+        try:
+            ramp = bpy.context.object.active_material.node_tree.nodes[prism_spectrum_props.colorramp_name].color_ramp
+        except:
+            self.report({'WARNING'}, "Not a Valid ColorRamp Node")
+        for i in range(0, 5):
+            exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
+            exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
+            exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+            ramp.elements[0].color[3] = 1.0
+    except:
+        pass
+
 class SpectrumNode(Node, SpectrumTreeNode):
     '''Spectrum node'''
     bl_idname = 'spectrum_palette.node'
@@ -231,13 +251,13 @@ class SpectrumNode(Node, SpectrumTreeNode):
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
-        SpectrumPaletteUI(context, layout)
+        SpectrumPaletteUI(self, context, layout)
 
     #Node Label
     def draw_label(self):
         return "Spectrum Palette"
 
-def SpectrumPaletteUI(context, layout):
+def SpectrumPaletteUI(self, context, layout):
     prism_spectrum_props = bpy.context.scene.prism_spectrum_props
     col = layout.column(align=True)
     row = col.row(align=True)
@@ -338,7 +358,7 @@ def SpectrumPaletteUI(context, layout):
             col_box.label()
         col_box.prop(prism_spectrum_props, "view_help", text="Close Help", icon='INFO')
     col = layout.column(align=True)
-    if prism_spectrum_props.gen_type != '4' or prism_spectrum_props.custom_gen_type != '4':
+    if prism_spectrum_props.use_internet_libs != True:
         if prism_spectrum_props.use_custom == False:
             col.prop(prism_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
         if prism_spectrum_props.use_custom == True:
@@ -388,10 +408,15 @@ def SpectrumPaletteUI(context, layout):
         row5.label("No Saved Presets")
     row5.operator(SavePalette.bl_idname, text="", icon='ZOOMIN')
     row5.operator(DeletePalette.bl_idname, text="", icon='ZOOMOUT')
+    col4.label()
+    row6 = col4.row(align=True)
+    row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes" ,text="Ramp", icon='NODETREE')
+    row6.prop(prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
 
 def update_caller(caller, input_name):
     out = ""
     can_continue = False
+    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
     try:
         for mat in bpy.data.materials:
             for node in mat.node_tree.nodes:
@@ -400,6 +425,9 @@ def update_caller(caller, input_name):
                         for o in node.outputs[input_name].links:
                             if o.is_valid:
                                 o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
+
+        if prism_spectrum_props.assign_colorramp == True:
+            set_color_ramp(caller)
     except:
         pass
 
@@ -920,6 +948,8 @@ class PaletteGenerate(bpy.types.Operator):
             prism_spectrum_props.random_custom_int = random.randint(0, 4)
             Spectrum_Engine(self, context)
         set_palettes_list(self, context)
+        if prism_spectrum_props.assign_colorramp == True:
+            set_color_ramp(self)
         return{'FINISHED'}
 
 class PreviousPalette(bpy.types.Operator):

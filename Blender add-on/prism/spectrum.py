@@ -968,25 +968,10 @@ class PreviousPalette(bpy.types.Operator):
         prism_spectrum_props = bpy.context.scene.prism_spectrum_props
         prism_spectrum_props.history_count = prism_spectrum_props.history_count+1
         if prism_spectrum_props.history_count == 2:
-            prism_spectrum_props.color1[0] = PaletteHistory[0].r
-            prism_spectrum_props.color1[1] = PaletteHistory[0].g
-            prism_spectrum_props.color1[2] = PaletteHistory[0].b
-
-            prism_spectrum_props.color2[0] = PaletteHistory[1].r
-            prism_spectrum_props.color2[1] = PaletteHistory[1].g
-            prism_spectrum_props.color2[2] = PaletteHistory[1].b
-
-            prism_spectrum_props.color3[0] = PaletteHistory[2].r
-            prism_spectrum_props.color3[1] = PaletteHistory[2].g
-            prism_spectrum_props.color3[2] = PaletteHistory[2].b
-
-            prism_spectrum_props.color4[0] = PaletteHistory[3].r
-            prism_spectrum_props.color4[1] = PaletteHistory[3].g
-            prism_spectrum_props.color4[2] = PaletteHistory[3].b
-
-            prism_spectrum_props.color5[0] = PaletteHistory[4].r
-            prism_spectrum_props.color5[1] = PaletteHistory[4].g
-            prism_spectrum_props.color5[2] = PaletteHistory[4].b
+            for i in range(0, 5):
+                exec("prism_spectrum_props.color"+str(i+1)+"[0] = PaletteHistory["+str(i)+"].r")
+                exec("prism_spectrum_props.color"+str(i+1)+"[1] = PaletteHistory["+str(i)+"].g")
+                exec("prism_spectrum_props.color"+str(i+1)+"[2] = PaletteHistory["+str(i)+"].b")
 
             prism_spectrum_props.online_palette_index = Palette_idHistory[0]
 

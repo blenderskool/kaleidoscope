@@ -7,7 +7,7 @@ bl_info = {
     "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",
     "warning": "",
     "wiki_url": "http://www.blenderskool.cf",
-    "tracker_url": "",
+    "tracker_url": "http://bit.ly/prismbugbs",
     "category": "Node"}
 
 import bpy

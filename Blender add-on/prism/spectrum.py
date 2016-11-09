@@ -359,7 +359,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("Palette ID: "+str(prism_spectrum_props.online_palette_index+1))
             row = col_box.row(align=True)
             row.scale_y = 1.1
-            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://google.com"
+            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://bit.ly/prismbugbs"
         if prism_spectrum_props.gen_type != '4' and prism_spectrum_props.custom_gen_type != '4':
             col_box.label()
         col_box.prop(prism_spectrum_props, "view_help", text="Close Help", icon='INFO')

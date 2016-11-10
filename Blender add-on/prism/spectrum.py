@@ -138,7 +138,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items =(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
-    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Vibrant Colors for the Palette'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule')), update=set_type, default="0")
+    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule!')), update=set_type, default="0")
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
@@ -274,7 +274,7 @@ def SpectrumPaletteUI(self, context, layout):
         col1.prop(prism_spectrum_props, "custom_gen_type", "Type")
     col2 = split.column()
     row2 = col2.row(align=True)
-    if prism_spectrum_props.gen_type != '4' or prism_spectrum_props.custom_gen_type == '3':
+    if prism_spectrum_props.gen_type != '4' or prism_spectrum_props.custom_gen_type == '3' or prism_spectrum_props.custom_gen_type == '0' or prism_spectrum_props.custom_gen_type == '2':
         if prism_spectrum_props.use_organize == False:
             row2.prop(prism_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_OFF', emboss=False)
         else:
@@ -777,19 +777,34 @@ def Spectrum_Engine(caller, context):
 
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
-            exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.5)
-            exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
-            exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue, Saturation, Value1
-            exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue1, Saturation, Value
-            exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
             prism_spectrum_props.use_internet_libs = False
         elif prism_spectrum_props.custom_gen_type=="1" or prism_spectrum_props.random_custom_int == 1:
             #Gradient
@@ -822,15 +837,35 @@ def Spectrum_Engine(caller, context):
             Value = c.v
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
-            exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+
             c2.hsv = Hue, Saturation, Value
-            exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.2)
-            exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
-            c2.hsv = Hue, Saturation-0.05, Value
-            exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+
+            c2.hsv = Hue, Saturation-0.1, Value
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
-            exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            if prism_spectrum_props.use_organize == False:
+                exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            else:
+                prism_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+
             prism_spectrum_props.use_internet_libs = False
         elif prism_spectrum_props.custom_gen_type == "4" or prism_spectrum_props.random_custom_int == 3:
             global palette

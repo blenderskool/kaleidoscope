@@ -89,10 +89,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
                 exec("c.b = PaletteHistory["+str(i)+"].b")
             c.v = c.v+prism_spectrum_props.value_slider
             c.s = c.s+prism_spectrum_props.saturation_slider
-            if c.h+prism_spectrum_props.hue_slider > 1:
-                c.h = c.h-prism_spectrum_props.hue_slider
-            else:
-                c.h = c.h+prism_spectrum_props.hue_slider
+            c.h = c.h+prism_spectrum_props.hue_slider
             exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
             exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
             exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
@@ -128,7 +125,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
-    hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=0, max=1.0, default=0.0, update=set_global_settings)
+    hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=-0.5, max=0.5, default=0, update=set_global_settings)
 
     color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_1)
     color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_2)
@@ -161,6 +158,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
 # Derived from the Node base type.
 
 class SavePalette(bpy.types.Operator):
+    """Save the current Palette for future use"""
     bl_idname = "spectrum.save_palette"
     bl_label = "Save Spectrum Palette"
 

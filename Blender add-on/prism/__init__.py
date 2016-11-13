@@ -125,7 +125,6 @@ class PrismImport(bpy.types.Operator, ImportHelper): #Importing Presets
             default="*.zip",
             options={'HIDDEN'},
             )
-
     def execute(self, context):
         try:
             zipref = zipfile.ZipFile(self.filepath, 'r')
@@ -133,6 +132,7 @@ class PrismImport(bpy.types.Operator, ImportHelper): #Importing Presets
             if (path != ""):
                 zipref.extractall(path) #Extract to the Enrich add-on Folder
                 zipref.close()
+                bpy.conte
             bpy.context.scene.prism_props_import_files = False
         except:
             bpy.context.scene.prism_props_import_files = True

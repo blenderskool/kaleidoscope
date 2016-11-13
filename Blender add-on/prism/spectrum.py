@@ -94,6 +94,32 @@ class SpectumProperties(bpy.types.PropertyGroup):
         return None
     def get_saved_palettes(self, context):
         saved_palettes_list = []
+        global_palette = []
+        local_palette = []
+        synced_palette = []
+
+        check = False
+        val = None
+        try:
+            f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
+            line = f.readlines()
+            val = line[0]
+            f.close()
+            check = True
+        except:
+            check = False
+
+        #if check == True:
+        for sub in os.listdir(val):
+            if os.path.isfile(os.path.join(val, str(sub))):
+                name = str(sub)
+                if name.endswith('.json'):                        
+                    name = name[:-5]
+                    name = name.title()
+                    name = name.replace('_', ' ')
+                    global_palette.append(name)
+
+        i=0
         for sub in os.listdir(os.path.dirname(__file__)):
             if os.path.isfile(os.path.join(os.path.dirname(__file__), str(sub))):
                 name = str(sub)
@@ -101,7 +127,27 @@ class SpectumProperties(bpy.types.PropertyGroup):
                     name = name[:-5]
                     name = name.title()
                     name = name.replace('_', ' ')
-                    saved_palettes_list.append((name, name, ""))
+                    if name in global_palette:
+                        saved_palettes_list.append((name, name, "", "URL", i))
+                        synced_palette.append(name)
+                    else:
+                        saved_palettes_list.append((name, name, "", "FILE", i))
+                        local_palette.append(name)
+            i=i+1
+
+        if check == True:
+            i=0
+            for sub in os.listdir(val):
+                if os.path.isfile(os.path.join(val, str(sub))):
+                    name = str(sub)
+                    if name.endswith('.json'):
+                        name = name[:-5]
+                        name = name.title()
+                        name = name.replace('_', ' ')
+                        if name not in synced_palette and name not in local_palette:
+                            saved_palettes_list.append((name, name, "", "WORLD", i))
+                i=i+1
+
         return saved_palettes_list
     def import_saved_palette(self, context):
         prism_spectrum_props=bpy.context.scene.prism_spectrum_props
@@ -109,11 +155,17 @@ class SpectumProperties(bpy.types.PropertyGroup):
         name = name.lower()
         name = name.replace(' ', '_')
         name = name+".json"
-        path = os.path.join(os.path.dirname(__file__), name)
-        palette_file = open(path, 'r')
-        palette = json.load(palette_file)
+        try:
+            path = os.path.join(os.path.dirname(__file__), name)
+            palette_file = open(path, 'r')
+            self.palette = json.load(palette_file)
+        except:
+            if prism_spectrum_props.sync_path is not None:
+                path = os.path.join(prism_spectrum_props.sync_path, name)
+                palette_file = open(path, 'r')
+                self.palette = json.load(palette_file)
         for i in range(1, 6):
-            exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[prism_spectrum_props.saved_palettes]['color"+str(i)+"'])")
+            exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(self.palette[prism_spectrum_props.saved_palettes]['color"+str(i)+"'])")
         palette_file.close()
         set_palettes_list(self, context)
         return None
@@ -142,6 +194,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
     assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp", default=False, update=set_ramp)
+    sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
 
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
     random_custom_int = bpy.props.IntProperty(name="Random Custom Integer", description="Used to use Random color rules and effects", default=0)
@@ -152,6 +205,22 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
     colorramp_name = bpy.props.StringProperty(name="ColorRamp name", description="Select the ColorRamp to assign the Colors", default="")
+
+    check = False
+    val = None
+    try:
+        f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
+        line = f.readlines()
+        val = line[0]
+        f.close()
+        check = True
+    except:
+        check = False
+    if check == True:
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default=val)
+    else:
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default="")
+
 
 # Derived from the Node base type.
 
@@ -194,6 +263,12 @@ class SavePalette(bpy.types.Operator):
         s = json.dumps(palette_export)
         with open(path, "w") as f:
             f.write(s)
+
+        if prism_spectrum_props.sync_path is not None:
+            path = os.path.join(prism_spectrum_props.sync_path, prism_spectrum_props.save_palette_name+".json")
+            s = json.dumps(palette_export)
+            with open(path, 'w') as f:
+                f.write(s)
         return{'FINISHED'}
 
     def invoke(self, context, event):
@@ -1197,7 +1272,17 @@ class DeletePalette(bpy.types.Operator):
         name = name.lower()
         name = name.replace(' ', '_')
         path = os.path.join(os.path.dirname(__file__), name+".json")
-        os.remove(path)
+        try:
+            os.remove(path)
+        except:
+            pass
+
+        if prism_spectrum_props.sync_path is not None:
+            try:
+                path = os.path.join(prism_spectrum_props.sync_path, name+".json")
+                os.remove(path)
+            except:
+                pass
         return{'FINISHED'}
 
 def register():

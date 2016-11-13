@@ -12,9 +12,7 @@ bl_info = {
 
 import bpy
 from . import spectrum, intensity
-import nodeitems_utils, zipfile, os, datetime
-import urllib
-import urllib.request
+import nodeitems_utils, zipfile, os
 from nodeitems_utils import NodeCategory, NodeItem
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 

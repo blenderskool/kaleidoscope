@@ -1,7 +1,6 @@
 # Intensity Node
 import bpy
-import os
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import Node
 
 glass_ior = [1,
             1.000293,

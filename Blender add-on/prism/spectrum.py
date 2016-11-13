@@ -2,11 +2,9 @@
 import bpy
 import json, os
 import urllib.request
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import Node
 from mathutils import Color
-import nodeitems_utils
-from nodeitems_utils import NodeCategory, NodeItem
-import random, struct
+import random
 
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]

@@ -25,6 +25,12 @@ class SpectrumTreeNode:
 
 class SpectrumProperties(bpy.types.PropertyGroup):
     def update_color_1(self, context):
+        for world in bpy.data.worlds:
+            if world.node_tree is not None:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        node.outputs["Color 1"].default_value = bpy.context.scene.prism_spectrum_props.color1
+                        update_caller(self, input_name="Color 1")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
@@ -32,7 +38,14 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         node.outputs["Color 1"].default_value = bpy.context.scene.prism_spectrum_props.color1
                         update_caller(self, input_name="Color 1")
         return None
+
     def update_color_2(self, context):
+        for world in bpy.data.worlds:
+            if world.node_tree is not None:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        node.outputs["Color 2"].default_value = bpy.context.scene.prism_spectrum_props.color2
+                        update_caller(self, input_name="Color 2")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
@@ -40,7 +53,14 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         node.outputs["Color 2"].default_value = bpy.context.scene.prism_spectrum_props.color2
                         update_caller(self, input_name="Color 2")
         return None
+
     def update_color_3(self, context):
+        for world in bpy.data.worlds:
+            if world.node_tree is not None:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        node.outputs["Color 3"].default_value = bpy.context.scene.prism_spectrum_props.color3
+                        update_caller(self, input_name="Color 3")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
@@ -49,6 +69,12 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         update_caller(self, input_name="Color 3")
         return None
     def update_color_4(self, context):
+        for world in bpy.data.worlds:
+            if world.node_tree is not None:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        node.outputs["Color 4"].default_value = bpy.context.scene.prism_spectrum_props.color4
+                        update_caller(self, input_name="Color 4")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
@@ -56,7 +82,14 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         node.outputs["Color 4"].default_value = bpy.context.scene.prism_spectrum_props.color4
                         update_caller(self, input_name="Color 4")
         return None
+
     def update_color_5(self, context):
+        for world in bpy.data.worlds:
+            if world.node_tree is not None:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        node.outputs["Color 5"].default_value = bpy.context.scene.prism_spectrum_props.color5
+                        update_caller(self, input_name="Color 5")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
@@ -169,6 +202,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         palette_file.close()
         set_palettes_list(self, context)
         return None
+
     def set_ramp(self, context):
         set_color_ramp(self)
         return None
@@ -192,7 +226,8 @@ class SpectrumProperties(bpy.types.PropertyGroup):
     use_internet_libs = bpy.props.BoolProperty(name="Internet Library Checker", description="Checks if the palette generated is from Internet library", default=False)
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
-    assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp", default=False, update=set_ramp)
+    assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp in the Object Material", default=False, update=set_ramp)
+    assign_colorramp_world = bpy.props.BoolProperty(name="Assign ColorRamp World", description="Assign the Colors from Spectrum to ColorRamp in the World Material", default=False, update=set_ramp)
     sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
 
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
@@ -204,6 +239,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
     colorramp_name = bpy.props.StringProperty(name="ColorRamp name", description="Select the ColorRamp to assign the Colors", default="")
+    colorramp_world_name = bpy.props.StringProperty(name="ColorRamp name World", description="Select the ColorRamp in the World Material to assign the Colors", default="")
 
     check = False
     val = None
@@ -277,17 +313,37 @@ class SavePalette(bpy.types.Operator):
 
 def set_color_ramp(self):
     prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-    if prism_spectrum_props.assign_colorramp == True:
+    ramp = None
+    ramp_world = None
+    if prism_spectrum_props.assign_colorramp == True or prism_spectrum_props.assign_colorramp_world == True:
         try:
             try:
-                ramp = bpy.context.object.active_material.node_tree.nodes[prism_spectrum_props.colorramp_name].color_ramp
+                try:
+                    ramp_world = bpy.context.scene.world.node_tree.nodes[prism_spectrum_props.colorramp_world_name].color_ramp
+                except:
+                    if prism_spectrum_props.assign_colorramp_world == True:
+                        self.report({'WARNING'}, "There is not Not a Valid ColorRamp Node in the World Material")
+                try:
+                    ramp = bpy.context.object.active_material.node_tree.nodes[prism_spectrum_props.colorramp_name].color_ramp
+                except:
+                    if prism_spectrum_props.assign_colorramp == True:
+                        self.report({'WARNING'}, "There is not Not a Valid ColorRamp Node in the Object Material")
+                if prism_spectrum_props.assign_colorramp == True and prism_spectrum_props.assign_colorramp_world == True and prism_spectrum_props.colorramp_world_name == "" and prism_spectrum_props.colorramp_name == "":
+                    self.report({'WARNING'}, "There is not Not a Valid ColorRamp Node in the Object and World Material")
             except:
-                self.report({'WARNING'}, "Not a Valid ColorRamp Node")
+                self.report({'WARNING'}, "There was some problem, please try again")
             for i in range(0, 5):
-                exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
-                exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
-                exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
-                ramp.elements[0].color[3] = 1.0
+                if prism_spectrum_props.assign_colorramp == True:
+                    exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
+                    exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
+                    exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                    ramp.elements[0].color[3] = 1.0
+
+                if prism_spectrum_props.assign_colorramp_world == True:
+                    exec("ramp_world.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
+                    exec("ramp_world.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
+                    exec("ramp_world.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                    ramp_world.elements[0].color[3] = 1.0
         except:
             pass
 
@@ -312,6 +368,18 @@ class SpectrumNode(Node, SpectrumTreeNode):
 
     def update(self):
         out = ""
+        try:
+            for world in bpy.data.worlds:
+                for node in world.node_tree.nodes:
+                    if node.name.startswith("Spectrum Palette"):
+                        for out in node.outputs:
+                            if out.is_linked:
+                                for o in out.links:
+                                    if o.is_valid:
+                                        o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+        except:
+            pass
+
         try:
             for mat in bpy.data.materials:
                 for node in mat.node_tree.nodes:
@@ -486,8 +554,12 @@ def SpectrumPaletteUI(self, context, layout):
     row5.operator(DeletePalette.bl_idname, text="", icon='ZOOMOUT')
     col4.label()
     row6 = col4.row(align=True)
-    row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
-    row6.prop(prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
+    if bpy.context.space_data.shader_type == 'WORLD': 
+        row6.prop_search(prism_spectrum_props,"colorramp_world_name", bpy.context.scene.world.node_tree, "nodes",text="Ramp", icon='NODETREE')
+        row6.prop(prism_spectrum_props, "assign_colorramp_world", text="", icon='RESTRICT_COLOR_ON', toggle=True)
+    elif bpy.context.space_data.shader_type == 'OBJECT':
+        row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
+        row6.prop(prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
     col4.label()
     row7 = col4.row(align=True)
     row7.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
@@ -498,20 +570,26 @@ def SpectrumPaletteUI(self, context, layout):
 
 def update_caller(caller, input_name):
     prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-    try:
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.name.startswith("Spectrum Palette"):
-                        if node.outputs[input_name].is_linked:
-                            for o in node.outputs[input_name].links:
-                                if o.is_valid:
-                                    o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
+    for world in bpy.data.worlds:
+        if world.node_tree is not None:
+            for node in world.node_tree.nodes:
+                if node.name.startswith("Spectrum Palette"):
+                    if node.outputs[input_name].is_linked:
+                        for o in node.outputs[input_name].links:
+                            if o.is_valid:
+                                o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
 
-        if prism_spectrum_props.assign_colorramp == True:
-            set_color_ramp(caller)
-    except:
-        pass
+    for mat in bpy.data.materials:
+        if mat.node_tree is not None:
+            for node in mat.node_tree.nodes:
+                if node.name.startswith("Spectrum Palette"):
+                    if node.outputs[input_name].is_linked:
+                        for o in node.outputs[input_name].links:
+                            if o.is_valid:
+                                o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
+
+    if prism_spectrum_props.assign_colorramp == True or prism_spectrum_props.assign_colorramp_world == True:
+        set_color_ramp(caller)
 
 def hex_to_rgb(value):
     gamma = 2.2
@@ -1065,7 +1143,7 @@ class PaletteGenerate(bpy.types.Operator):
             prism_spectrum_props.random_custom_int = random.randint(0, 4)
             Spectrum_Engine(self, context)
         set_palettes_list(self, context)
-        if prism_spectrum_props.assign_colorramp == True:
+        if prism_spectrum_props.assign_colorramp == True or prism_spectrum_props.assign_colorramp_world == True:
             set_color_ramp(self)
         return{'FINISHED'}
 

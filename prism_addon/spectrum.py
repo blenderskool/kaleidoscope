@@ -1,5 +1,6 @@
 # Spectrum Palette Node
 import bpy
+import bpy.utils.previews
 import json, os
 import urllib.request
 from bpy.types import Node
@@ -22,8 +23,7 @@ class SpectrumTreeNode:
             b = True
         return b
 
-class SpectumProperties(bpy.types.PropertyGroup):
-
+class SpectrumProperties(bpy.types.PropertyGroup):
     def update_color_1(self, context):
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
@@ -176,7 +176,6 @@ class SpectumProperties(bpy.types.PropertyGroup):
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=-0.5, max=0.5, default=0, update=set_global_settings)
-
     color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_1)
     color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_2)
     color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_3)
@@ -185,12 +184,12 @@ class SpectumProperties(bpy.types.PropertyGroup):
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
-    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule!')), update=set_type, default="0")
+    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from Internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not following any rule!')), update=set_type, default="0")
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
     use_global = bpy.props.BoolProperty(name="Use Global Controls", description="Use Global Settings to control the overall Color of the Palette", default=False)
-    use_internet_libs = bpy.props.BoolProperty(name="Interent Library Checker", description="Checks if the palette generated is from Internet library", default=False)
+    use_internet_libs = bpy.props.BoolProperty(name="Internet Library Checker", description="Checks if the palette generated is from Internet library", default=False)
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
     assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp", default=False, update=set_ramp)
@@ -238,7 +237,7 @@ class SavePalette(bpy.types.Operator):
         self.name = name.replace(' ', '_')
         return None
 
-    name = bpy.props.StringProperty(name="Palette Name",description="Enter the Name for the Palette", default="My Palette", update=set_name)
+    name = bpy.props.StringProperty(name="Palette Name", description="Enter the Name for the Palette", default="My Palette", update=set_name)
 
     def execute(self, context):
         prism_spectrum_props=bpy.context.scene.prism_spectrum_props
@@ -335,6 +334,7 @@ class SpectrumNode(Node, SpectrumTreeNode):
 
 def SpectrumPaletteUI(self, context, layout):
     prism_spectrum_props = bpy.context.scene.prism_spectrum_props
+    global icons_dict
     col = layout.column(align=True)
     row = col.row(align=True)
     split = row.split(percentage=0.8)
@@ -383,7 +383,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("such that all three form an")
             col_box.label("equilateral triangle.")
         elif prism_spectrum_props.gen_type == "4":
-            col_box.label("Custom scehemes are some")
+            col_box.label("Custom schemes are some")
             col_box.label("simple rules exclusive to")
             col_box.label("this add-on")
             col_box.label()
@@ -400,7 +400,7 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("from left to form gradient of")
                 col_box.label("colors.")
             elif prism_spectrum_props.custom_gen_type == "2":
-                col_box.label("Pop Out scheme is simlar to")
+                col_box.label("Pop Out scheme is similar to")
                 col_box.label("Vibrant scheme, but this uses")
                 col_box.label("two same colors and other three")
                 col_box.label("are shades of black and white.")
@@ -408,7 +408,7 @@ def SpectrumPaletteUI(self, context, layout):
             elif prism_spectrum_props.custom_gen_type == "4":
                 col_box.label("Online mode provides you with")
                 col_box.label("some amazing color palettes")
-                col_box.label("from the internet.")
+                col_box.label("from the Internet.")
                 col_box.label()
             elif prism_spectrum_props.custom_gen_type == "3":
                 col_box.label("Random option allows you to")
@@ -488,6 +488,13 @@ def SpectrumPaletteUI(self, context, layout):
     row6 = col4.row(align=True)
     row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
     row6.prop(prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
+    col4.label()
+    row7 = col4.row(align=True)
+    row7.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
+    row7_1 = row7.row(align=True)
+    row7_1.alignment = 'CENTER'
+    row7_1.label("Akash Hamirwasia")
+    row7.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
 
 def update_caller(caller, input_name):
     prism_spectrum_props=bpy.context.scene.prism_spectrum_props
@@ -1191,7 +1198,7 @@ class NextPalette(bpy.types.Operator):
 class PaletteShuffle(bpy.types.Operator):
     """Shuffle the Order of colors in the Palette"""
     bl_idname="spectrum_palette.palette_shuffle"
-    bl_label="Shuffle Palette"
+    bl_label="Shufle Palette"
 
     def execute(self, context):
         prism_spectrum_props = bpy.context.scene.prism_spectrum_props
@@ -1287,10 +1294,17 @@ def register():
         bpy.utils.register_module(__name__)
     except:
         pass
-    bpy.types.Scene.prism_spectrum_props = bpy.props.PointerProperty(type=SpectumProperties)
+    global icons_dict
+    icons_dict = bpy.utils.previews.new()
+    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+    icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
+    icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
+    bpy.types.Scene.prism_spectrum_props = bpy.props.PointerProperty(type=SpectrumProperties)
     bpy.app.handlers.frame_change_pre.append(pre_frame_change)
 
 def unregister():
+    global icons_dict
+    bpy.utils.previews.remove(icons_dict)
     bpy.context.scene.prism_spectrum_props.new_file = 1
     del bpy.types.Scene.prism_spectrum_props
     palette.clear()

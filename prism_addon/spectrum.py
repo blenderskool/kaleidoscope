@@ -14,7 +14,7 @@ online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
 
-class SpectrumTreeNode :
+class SpectrumTreeNode:
     @classmethod
     def poll(cls, ntree):
         b = False
@@ -113,7 +113,7 @@ class SpectumProperties(bpy.types.PropertyGroup):
         for sub in os.listdir(val):
             if os.path.isfile(os.path.join(val, str(sub))):
                 name = str(sub)
-                if name.endswith('.json'):                        
+                if name.endswith('.json'):
                     name = name[:-5]
                     name = name.title()
                     name = name.replace('_', ' ')
@@ -184,13 +184,13 @@ class SpectumProperties(bpy.types.PropertyGroup):
     color5 = bpy.props.FloatVectorProperty(name="Color5", description="Set Color 5 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_5)
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
-    gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items =(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
+    gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
     custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not follwing any rule!')), update=set_type, default="0")
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
     use_global = bpy.props.BoolProperty(name="Use Global Controls", description="Use Global Settings to control the overall Color of the Palette", default=False)
-    use_internet_libs = bpy.props.BoolProperty(name="Interent Library Checker", description="Checks if the palette generated is from internet library", default=False)
+    use_internet_libs = bpy.props.BoolProperty(name="Interent Library Checker", description="Checks if the palette generated is from Internet library", default=False)
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
     assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp", default=False, update=set_ramp)
@@ -313,7 +313,6 @@ class SpectrumNode(Node, SpectrumTreeNode):
 
     def update(self):
         out = ""
-        can_continue = False
         try:
             for mat in bpy.data.materials:
                 for node in mat.node_tree.nodes:
@@ -487,12 +486,10 @@ def SpectrumPaletteUI(self, context, layout):
     row5.operator(DeletePalette.bl_idname, text="", icon='ZOOMOUT')
     col4.label()
     row6 = col4.row(align=True)
-    row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes" ,text="Ramp", icon='NODETREE')
+    row6.prop_search(prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
     row6.prop(prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
 
 def update_caller(caller, input_name):
-    out = ""
-    can_continue = False
     prism_spectrum_props=bpy.context.scene.prism_spectrum_props
     try:
         for mat in bpy.data.materials:

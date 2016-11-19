@@ -37,7 +37,7 @@ blackbody = [1700,
             27000]
 
 node_name = ""
-class IntensityTreeNode :
+class IntensityTreeNode:
     @classmethod
     def poll(cls, ntree):
         b = False
@@ -136,7 +136,6 @@ class IntensityNode(Node, IntensityTreeNode):
 
     def update(self):
         out = ""
-        can_continue = False
         #try:
         for mat in bpy.data.materials:
             try:

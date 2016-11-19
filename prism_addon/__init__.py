@@ -169,7 +169,7 @@ class PrismExport(bpy.types.Operator, ExportHelper):
             zf.close()
             self.report({'INFO'}, "Palettes Exported Successfully to "+self.filepath)
         except:
-            self.report({'ERROR'}, "There was an error, please check the filepath!")
+            self.report({'ERROR'}, "There was an error, please check the File Path!")
         return{'FINISHED'}
 
 def register():

@@ -119,14 +119,13 @@ class Prism(bpy.types.AddonPreferences):
         col4_1s = split.column(align=True)
         row4 = col4_1s.row()
         row4.separator()
-        row4.separator()
         row4.operator('wm.url_open', text="", icon_value=icons_dict["twitter"].icon_id, emboss=False).url="http://www.twitter.com/blenderskool"
+        row4.operator('wm.url_open', text="", icon_value=icons_dict["googleplus"].icon_id, emboss=False).url="https://plus.google.com/+AkashHamirwasia1"
+        row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
         row4.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
         row4_1 = row4.row(align=True)
         row4_1.alignment = 'CENTER'
         row4_1.label("Created by Akash Hamirwasia")
-        row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
-        row4.separator()
         col4_2s = split.column(align=True)
         row4_2 = col4_2s.row()
         row4_2.scale_y = 1.2
@@ -203,6 +202,7 @@ def register():
     icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
     icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
     icons_dict.load("twitter", os.path.join(icons_dir, "twitter_icon.png"), 'IMAGE')
+    icons_dict.load("googleplus", os.path.join(icons_dir, "googleplus_icon.png"), 'IMAGE')
     bpy.types.Scene.prism_props_import_files = bpy.props.BoolProperty(name="Prism Import", description="Checks if the zip file is properly imported", default=False)
     nodeitems_utils.register_node_categories("PRISM_NODES", node_categories)
 

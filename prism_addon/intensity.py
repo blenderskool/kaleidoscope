@@ -1,5 +1,7 @@
 # Intensity Node
 import bpy
+import bpy.utils.previews
+import os
 from bpy.types import Node
 
 glass_ior = [1,
@@ -105,7 +107,7 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                 ('7', 'Olive Oil', ''),
                                                                                                                                                 ('8', 'Ice', ''),
                                                                                                                                                 ('9', 'Soda-lime Glass', ''),
-                                                                                                                                                ('10', 'Plexiglass', ''),
+                                                                                                                                                ('10', 'Plexiglas', ''),
                                                                                                                                                 ('11', 'Crown glass', ''),
                                                                                                                                                 ('12', 'Flint glass', ''),
                                                                                                                                                 ('13', 'Cubic zirconia', ''),
@@ -225,6 +227,13 @@ def IntensityUI(self, context, layout, current_node):
         col4.prop(prism_intensity_props, 'prism_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
         col.label()
         col.prop(prism_intensity_props, 'prism_intensity_out_value')
+        col.label()
+        row2 = col.row(align=True)
+        row2.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
+        row2_1 = row2.row()
+        row2_1.alignment = 'CENTER'
+        row2_1.label("Akash Hamirwasia")
+        row2.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
 
 
 def register():
@@ -232,9 +241,16 @@ def register():
         bpy.utils.register_module(__name__)
     except:
         pass
+    global icons_dict
+    icons_dict = bpy.utils.previews.new()
+    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+    icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
+    icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
     bpy.app.handlers.frame_change_pre.append(pre_frame_change)
 
 def unregister():
+    global icons_dict
+    bpy.utils.previews.remove(icons_dict)
     bpy.utils.unregister_module(__name__)
 
 def pre_frame_change(scene):

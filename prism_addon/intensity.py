@@ -55,11 +55,18 @@ class IntensityNode(Node, IntensityTreeNode):
     bl_icon = 'INFO'
 
     def update_value(self, context):
-        for node in bpy.context.object.active_material.node_tree.nodes:
-            if node.name.startswith("Intensity"):
-                node.outputs["Value"].default_value = self.prism_intensity_out_value
-                #update_caller(self, input_name="Value")
-                self.update()
+        if bpy.context.space_data.shader_type == 'WORLD':
+            for node in bpy.context.scene.world.node_tree.nodes:
+                if node.name.startswith("Intensity"):
+                    node.outputs["Value"].default_value = self.prism_intensity_out_value
+                    #update_caller(self, input_name="Value")
+                    self.update()
+        elif bpy.context.space_data.shader_type == 'OBJECT':
+            for node in bpy.context.object.active_material.node_tree.nodes:
+                if node.name.startswith("Intensity"):
+                    node.outputs["Value"].default_value = self.prism_intensity_out_value
+                    #update_caller(self, input_name="Value")
+                    self.update()
         return None
 
     def set_value(self, context):
@@ -139,17 +146,30 @@ class IntensityNode(Node, IntensityTreeNode):
     def update(self):
         out = ""
         #try:
-        for mat in bpy.data.materials:
-            try:
-                for node in mat.node_tree.nodes:
-                    if node.name.startswith("Intensity"):
-                        for out in node.outputs:
-                            if out.is_linked:
-                                for o in out.links:
-                                    if o.is_valid:
-                                        o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-            except:
-                continue
+        if bpy.context.space_data.shader_type == 'WORLD':
+            for world in bpy.data.worlds:
+                try:
+                    for node in world.node_tree.nodes:
+                        if node.name.startswith("Intensity"):
+                            for out in node.outputs:
+                                if out.is_linked:
+                                    for o in out.links:
+                                        if o.is_valid:
+                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+                except:
+                    continue
+        elif bpy.context.space_data.shader_type == 'OBJECT':
+            for mat in bpy.data.materials:
+                try:
+                    for node in mat.node_tree.nodes:
+                        if node.name.startswith("Intensity"):
+                            for out in node.outputs:
+                                if out.is_linked:
+                                    for o in out.links:
+                                        if o.is_valid:
+                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+                except:
+                    continue
         #except:
             #pass
 

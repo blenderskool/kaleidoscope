@@ -10,8 +10,16 @@ bl_info = {
     "tracker_url": "http://bit.ly/prismbugbs",
     "category": "Node"}
 
+
+if "bpy" in locals():
+    import importlib
+    importlib.reload(spectrum)
+    importlib.reload(intensity)
+else:
+    from . import spectrum, intensity
+
 import bpy
-from . import spectrum, intensity
+import bpy.utils.previews
 import nodeitems_utils, zipfile, os
 from nodeitems_utils import NodeCategory, NodeItem
 from bpy_extras.io_utils import ImportHelper, ExportHelper
@@ -79,10 +87,10 @@ class Prism(bpy.types.AddonPreferences):
             col3.label()
             col3.label("Instructions to setup Syncing of Palettes:")
             col3.label("   1) Start by signing up with a Cloud Storage Service (Eg. Dropbox, Google Drive, etc.)")
-            col3.label("   2) Then install the Desktop Application (NOTE: Only Popular Cloud Servies Provide this)")
+            col3.label("   2) Then install the Desktop Application (NOTE: Only Popular Cloud Services Provide this)")
             col3.label("   3) Select the Sync folder that was created by Desktop Application, in the sync path above")
             col3.label()
-            col3.label("It's done. Whatever is saved in that folder, would autmatically transfer to the Cloud which can be used later on.")
+            col3.label("It's done. Whatever is saved in that folder, would automatically transfer to the Cloud which can be used later on.")
             col3.label()
             row3 = col3.row(align=True)
             row3.alignment='CENTER'
@@ -106,13 +114,23 @@ class Prism(bpy.types.AddonPreferences):
             col3.separator
         col4 = box.column(align=True)
         col4.separator()
-        row4 = col4.row(align=True)
-        row4.alignment = 'CENTER'
-        row4.template_node_socket(color=(0.104, 0.421, 0.554, 1.0))
-        row4.template_node_socket(color=(0.267, 0.639, 0.344, 1.0))
-        row4.template_node_socket(color=(0.619, 0.812, 0.194, 1.0))
-        row4.template_node_socket(color=(0.974, 0.476, 0.082, 1.0))
-        row4.template_node_socket(color=(1.0, 0.08, 0.087, 1.0))
+        row4 = col4.row()
+        split = row4.split(percentage=0.8)
+        col4_1s = split.column(align=True)
+        row4 = col4_1s.row()
+        row4.separator()
+        row4.separator()
+        row4.operator('wm.url_open', text="", icon_value=icons_dict["twitter"].icon_id, emboss=False).url="http://www.twitter.com/blenderskool"
+        row4.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
+        row4_1 = row4.row(align=True)
+        row4_1.alignment = 'CENTER'
+        row4_1.label("Created by Akash Hamirwasia")
+        row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
+        row4.separator()
+        col4_2s = split.column(align=True)
+        row4_2 = col4_2s.row()
+        row4_2.scale_y = 1.2
+        row4_2.operator('wm.url_open', text="Donate", icon='SOLO_ON').url="http://bit.ly/donatetobs"
 
 class PrismImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""
@@ -169,7 +187,7 @@ class PrismExport(bpy.types.Operator, ExportHelper):
             zf.close()
             self.report({'INFO'}, "Palettes Exported Successfully to "+self.filepath)
         except:
-            self.report({'ERROR'}, "There was an error, please check the File Path!")
+            self.report({'ERROR'}, "There was an error, please check the file path!")
         return{'FINISHED'}
 
 def register():
@@ -177,13 +195,21 @@ def register():
         bpy.utils.register_module(__name__)
     except:
         pass
+    global icons_dict
     spectrum.register()
     intensity.register()
+    icons_dict = bpy.utils.previews.new()
+    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+    icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
+    icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
+    icons_dict.load("twitter", os.path.join(icons_dir, "twitter_icon.png"), 'IMAGE')
     bpy.types.Scene.prism_props_import_files = bpy.props.BoolProperty(name="Prism Import", description="Checks if the zip file is properly imported", default=False)
-    nodeitems_utils.register_node_categories("CUSTOM_NODES", node_categories)
+    nodeitems_utils.register_node_categories("PRISM_NODES", node_categories)
 
 def unregister():
-    nodeitems_utils.unregister_node_categories("CUSTOM_NODES")
+    global icons_dict
+    bpy.utils.previews.remove(icons_dict)
+    nodeitems_utils.unregister_node_categories("PRISM_NODES")
     spectrum.unregister()
     intensity.unregister()
     del bpy.types.Scene.prism_props_import_files

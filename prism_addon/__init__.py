@@ -118,7 +118,7 @@ class Prism(bpy.types.AddonPreferences):
         split = row4.split(percentage=0.8)
         col4_1s = split.column(align=True)
         row4 = col4_1s.row()
-        row4.separator()
+        row4.separator() # For some spacing
         row4.operator('wm.url_open', text="", icon_value=icons_dict["twitter"].icon_id, emboss=False).url="http://www.twitter.com/blenderskool"
         row4.operator('wm.url_open', text="", icon_value=icons_dict["googleplus"].icon_id, emboss=False).url="https://plus.google.com/+AkashHamirwasia1"
         row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"

@@ -98,10 +98,10 @@ class PrismCategory(NodeCategory):
 
 # all categories in a list
 node_categories = [
-    PrismCategory("PRISMNODES", "Prism", items=[
+    PrismCategory("PRISMNODES", "Prism", items=[        
+        NodeItem("prism_hybrid.node"),
         NodeItem("spectrum_palette.node"),
-        NodeItem("intensity.node"),
-        NodeItem("prism_hybrid.node")
+        NodeItem("intensity.node")
         ]),
     ]
 

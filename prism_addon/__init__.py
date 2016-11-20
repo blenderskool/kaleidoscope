@@ -22,7 +22,71 @@ import bpy
 import bpy.utils.previews
 import nodeitems_utils, zipfile, os
 from nodeitems_utils import NodeCategory, NodeItem
+from bpy.types import Node
 from bpy_extras.io_utils import ImportHelper, ExportHelper
+
+class PrismHybridTreeNode:
+    @classmethod
+    def poll(cls, ntree):
+        b = False
+        if ntree.bl_idname == 'ShaderNodeTree':
+            b = True
+        return b
+
+# Derived from the Node base type.
+class PrismHybridNode(Node, PrismHybridTreeNode):
+    """Prism Hybrid node"""
+    bl_idname = 'prism_hybrid.node'
+    bl_label = 'Prism Hybrid'
+    bl_icon = 'INFO'
+
+    def set_prism_node(self, context):
+        node_type = self.node_type
+        loc = self.location
+        if node_type == '1':
+            if bpy.context.space_data.shader_type == 'WORLD':
+                spectrum_node = bpy.context.scene.world.node_tree.nodes.new(type='spectrum_palette.node')
+                spectrum_node.location = loc
+                bpy.context.scene.world.node_tree.nodes.remove(self)
+            elif bpy.context.space_data.shader_type == 'OBJECT':
+                spectrum_node = bpy.context.object.active_material.node_tree.nodes.new(type='spectrum_palette.node')
+                spectrum_node.location = loc
+                bpy.context.object.active_material.node_tree.nodes.remove(self)
+        elif node_type == '2':
+            if bpy.context.space_data.shader_type == 'WORLD':
+                intensity_node = bpy.context.scene.world.node_tree.nodes.new(type='intensity.node')
+                intensity_node.location = loc
+                bpy.context.scene.world.node_tree.nodes.remove(self)
+            elif bpy.context.space_data.shader_type == 'OBJECT':
+                intensity_node = bpy.context.object.active_material.node_tree.nodes.new(type='intensity.node')
+                intensity_node.location = loc
+                bpy.context.object.active_material.node_tree.nodes.remove(self)
+        return None
+
+    node_type = bpy.props.EnumProperty(name="Prism Node Type", description="Choose the type of Node which you want to use", items=(('0', '', '', 'NODETREE', 0), ('1', 'Spectrum', 'Use the Spectrum Palette Node'), ('2', 'Intensity', 'Use the Intensity Node')), default=None, update=set_prism_node)
+
+    def init(self, context):
+        self.width = 200
+        pass
+
+    # Additional buttons displayed on the node.
+    def draw_buttons(self, context, layout):
+        col = layout.column(align=True)
+        col.label()
+        col.label("Prism Hybrid is just a quick node")
+        col.label("to choose the nodes that come")
+        col.label("with Prism.")
+        col.label()
+        col.label("Select any one of the option to")
+        col.label("to use the node that comes with")
+        col.label("Prism")
+        col.label()
+        row = col.row(align=True)
+        row.prop(self, 'node_type', expand = True)
+
+    #Node Label
+    def draw_label(self):
+        return "Prism Hybrid"
 
 class PrismCategory(NodeCategory):
     @classmethod
@@ -36,7 +100,8 @@ class PrismCategory(NodeCategory):
 node_categories = [
     PrismCategory("PRISMNODES", "Prism", items=[
         NodeItem("spectrum_palette.node"),
-        NodeItem("intensity.node")
+        NodeItem("intensity.node"),
+        NodeItem("prism_hybrid.node")
         ]),
     ]
 
@@ -118,7 +183,7 @@ class Prism(bpy.types.AddonPreferences):
         split = row4.split(percentage=0.8)
         col4_1s = split.column(align=True)
         row4 = col4_1s.row()
-        row4.separator() # For some spacing
+        row4.separator()
         row4.operator('wm.url_open', text="", icon_value=icons_dict["twitter"].icon_id, emboss=False).url="http://www.twitter.com/blenderskool"
         row4.operator('wm.url_open', text="", icon_value=icons_dict["googleplus"].icon_id, emboss=False).url="https://plus.google.com/+AkashHamirwasia1"
         row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"

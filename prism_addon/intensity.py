@@ -79,9 +79,13 @@ class IntensityNode(Node, IntensityTreeNode):
         if self.prism_intensity_main_category == '0':
             if int(self.prism_intensity_glass_category) > 0:
                 self.prism_intensity_glass_category = str(int(self.prism_intensity_glass_category)-1)
+            else:
+                self.prism_intensity_glass_category = str(len(glass_ior)-1)
         elif self.prism_intensity_main_category == '1':
             if int(self.prism_intensity_black_body_category) > 0:
                 self.prism_intensity_black_body_category = str(int(self.prism_intensity_black_body_category)-1)
+            else:
+                self.prism_intensity_black_body_category = str(len(blackbody)-1)
         return None
     def set_next(self, context):
         if self.prism_intensity_main_category == '0':
@@ -96,8 +100,8 @@ class IntensityNode(Node, IntensityTreeNode):
                 self.prism_intensity_black_body_category = '0'
         return None
 
-    prism_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Updated Next Value", default=False, update=set_next)
-    prism_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Updated Previous Value", default=False, update=set_previous)
+    prism_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
+    prism_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
     prism_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
 
     prism_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)

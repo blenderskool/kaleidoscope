@@ -330,15 +330,15 @@ def set_color_ramp(self):
                 if prism_spectrum_props.assign_colorramp_world == True:
                     self.report({'WARNING'}, "There is Not a Valid ColorRamp Node in the World Material")
             if prism_spectrum_props.colorramp_world_name != "" and prism_spectrum_props.assign_colorramp_world == True:
-                for i in range(0, len(ramp_world.elements)):
-                    try:
-                        if prism_spectrum_props.assign_colorramp_world == True:
-                            exec("ramp_world.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
-                            exec("ramp_world.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
-                            exec("ramp_world.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
-                            ramp_world.elements[0].color[3] = 1.0
-                    except:
-                        pass
+                try:
+                    for i in range(0, len(ramp_world.elements)):
+                            if prism_spectrum_props.assign_colorramp_world == True:
+                                exec("ramp_world.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
+                                exec("ramp_world.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
+                                exec("ramp_world.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                                ramp_world.elements[0].color[3] = 1.0
+                except:
+                    pass
         except:
             pass
 
@@ -348,17 +348,18 @@ def set_color_ramp(self):
             try:
                 ramp = mat.node_tree.nodes[spectrum_active.colorramp_name].color_ramp
             except:
-                pass
+                if spectrum_active.assign_colorramp == True:
+                    self.report({'WARNING'}, "There is Not a Valid ColorRamp Node in '"+mat.name+"'")
             if spectrum_active.colorramp_name != "" and spectrum_active.assign_colorramp == True:
-                for i in range(0, len(ramp.elements)):
-                    try:
-                        if spectrum_active.assign_colorramp == True:
-                            exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
-                            exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
-                            exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
-                            ramp.elements[0].color[3] = 1.0
-                    except:
-                        pass
+                try:
+                    for i in range(0, len(ramp.elements)):
+                            if spectrum_active.assign_colorramp == True:
+                                exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
+                                exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
+                                exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                                ramp.elements[0].color[3] = 1.0
+                except:
+                    pass
 
 class SpectrumNode(Node, SpectrumTreeNode):
     '''Spectrum node'''
@@ -567,7 +568,7 @@ def SpectrumPaletteUI(self, context, layout):
     row5.operator(DeletePalette.bl_idname, text="", icon='ZOOMOUT')
     col4.label()
     row6 = col4.row(align=True)
-    if bpy.context.space_data.shader_type == 'WORLD': 
+    if bpy.context.space_data.shader_type == 'WORLD':
         row6.prop_search(prism_spectrum_props,"colorramp_world_name", bpy.context.scene.world.node_tree, "nodes",text="Ramp", icon='NODETREE')
         row6.prop(prism_spectrum_props, "assign_colorramp_world", text="", icon='RESTRICT_COLOR_ON', toggle=True)
     elif bpy.context.space_data.shader_type == 'OBJECT':

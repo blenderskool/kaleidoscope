@@ -555,9 +555,15 @@ def SpectrumPaletteUI(self, context, layout):
     row4 = col4.row(align=True)
     if prism_spectrum_props.history_count != 2:
         row4.operator(PreviousPalette.bl_idname, text="", icon="TRIA_LEFT")
+    else:
+        row4.separator()
+        row4.separator()
     row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="ARROW_LEFTRIGHT")
     if prism_spectrum_props.history_count != 0:
         row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT")
+    else:
+        row4.separator()
+        row4.separator()
     col4.label()
     row5 = col4.row(align=True)
     if len(prism_spectrum_props.saved_palettes) !=0:

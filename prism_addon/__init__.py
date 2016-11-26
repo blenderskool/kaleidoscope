@@ -33,7 +33,7 @@ class PrismHybridTreeNode:
             b = True
         return b
 
-# Derived from the Node base type.
+# Derived from the Node base type
 class PrismHybridNode(Node, PrismHybridTreeNode):
     """Prism Hybrid node"""
     bl_idname = 'prism_hybrid.node'
@@ -98,7 +98,7 @@ class PrismCategory(NodeCategory):
 
 # all categories in a list
 node_categories = [
-    PrismCategory("PRISMNODES", "Prism", items=[        
+    PrismCategory("PRISMNODES", "Prism", items=[
         NodeItem("prism_hybrid.node"),
         NodeItem("spectrum_palette.node"),
         NodeItem("intensity.node")
@@ -178,6 +178,7 @@ class Prism(bpy.types.AddonPreferences):
             row.label()
             col3.separator
         col4 = box.column(align=True)
+        col4.separator()
         col4.separator()
         row4 = col4.row()
         split = row4.split(percentage=0.8)

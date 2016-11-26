@@ -474,6 +474,7 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("visually appealing color shades")
                 col_box.label("and others are shades of black")
                 col_box.label("and white")
+                col_box.label()
             elif prism_spectrum_props.custom_gen_type == "1":
                 col_box.label("Gradient scheme is similar")
                 col_box.label("to Monochromatic scheme, and")
@@ -481,12 +482,14 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("change and goes light to dark")
                 col_box.label("from left to form gradient of")
                 col_box.label("colors.")
+                col_box.label()
             elif prism_spectrum_props.custom_gen_type == "2":
                 col_box.label("Pop Out scheme is similar to")
                 col_box.label("Vibrant scheme, but this uses")
                 col_box.label("two same colors and other three")
                 col_box.label("are shades of black and white.")
                 col_box.label("Really Minimal Color Scheme.")
+                col_box.label()
             elif prism_spectrum_props.custom_gen_type == "4":
                 col_box.label("Online mode provides you with")
                 col_box.label("some amazing color palettes")
@@ -505,6 +508,7 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("scene, then use this option.")
                 col_box.label("This option 'Randomly' generates")
                 col_box.label("the colors for the palette.")
+                col_box.label()
                 if prism_spectrum_props.use_internet_libs == True:
                     col_box.label()
         if prism_spectrum_props.use_internet_libs == True:

@@ -29,13 +29,13 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if world.node_tree is not None:
                 for node in world.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 1"].default_value = bpy.context.scene.prism_spectrum_props.color1
+                        node.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
                         update_caller(self, input_name="Color 1")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 1"].default_value = bpy.context.scene.prism_spectrum_props.color1
+                        node.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
                         update_caller(self, input_name="Color 1")
         return None
 
@@ -44,13 +44,13 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if world.node_tree is not None:
                 for node in world.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 2"].default_value = bpy.context.scene.prism_spectrum_props.color2
+                        node.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
                         update_caller(self, input_name="Color 2")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 2"].default_value = bpy.context.scene.prism_spectrum_props.color2
+                        node.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
                         update_caller(self, input_name="Color 2")
         return None
 
@@ -59,13 +59,13 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if world.node_tree is not None:
                 for node in world.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 3"].default_value = bpy.context.scene.prism_spectrum_props.color3
+                        node.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
                         update_caller(self, input_name="Color 3")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 3"].default_value = bpy.context.scene.prism_spectrum_props.color3
+                        node.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
                         update_caller(self, input_name="Color 3")
         return None
     def update_color_4(self, context):
@@ -73,13 +73,13 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if world.node_tree is not None:
                 for node in world.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 4"].default_value = bpy.context.scene.prism_spectrum_props.color4
+                        node.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
                         update_caller(self, input_name="Color 4")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 4"].default_value = bpy.context.scene.prism_spectrum_props.color4
+                        node.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
                         update_caller(self, input_name="Color 4")
         return None
 
@@ -88,42 +88,42 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if world.node_tree is not None:
                 for node in world.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 5"].default_value = bpy.context.scene.prism_spectrum_props.color5
+                        node.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
                         update_caller(self, input_name="Color 5")
         for mat in bpy.data.materials:
             if mat.node_tree is not None:
                 for node in mat.node_tree.nodes:
                     if node.name.startswith("Spectrum Palette"):
-                        node.outputs["Color 5"].default_value = bpy.context.scene.prism_spectrum_props.color5
+                        node.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
                         update_caller(self, input_name="Color 5")
         return None
     def set_type(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-        prism_spectrum_props.random_int = int(prism_spectrum_props.gen_type)
-        prism_spectrum_props.random_custom_int = int(prism_spectrum_props.custom_gen_type)
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props.random_int = int(kaleidoscope_spectrum_props.gen_type)
+        kaleidoscope_spectrum_props.random_custom_int = int(kaleidoscope_spectrum_props.custom_gen_type)
         return None
     def set_global_settings(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         c = Color()
         for i in range(0,5):
-            if prism_spectrum_props.history_count == 0:
+            if kaleidoscope_spectrum_props.history_count == 0:
                 exec("c.r = PaletteHistory[1"+str(i)+"].r")
                 exec("c.g = PaletteHistory[1"+str(i)+"].g")
                 exec("c.b = PaletteHistory[1"+str(i)+"].b")
-            elif prism_spectrum_props.history_count == 1:
+            elif kaleidoscope_spectrum_props.history_count == 1:
                 exec("c.r = PaletteHistory["+str(i+5)+"].r")
                 exec("c.g = PaletteHistory["+str(i+5)+"].g")
                 exec("c.b = PaletteHistory["+str(i+5)+"].b")
-            elif prism_spectrum_props.history_count == 2:
+            elif kaleidoscope_spectrum_props.history_count == 2:
                 exec("c.r = PaletteHistory["+str(i)+"].r")
                 exec("c.g = PaletteHistory["+str(i)+"].g")
                 exec("c.b = PaletteHistory["+str(i)+"].b")
-            c.v = c.v+prism_spectrum_props.value_slider
-            c.s = c.s+prism_spectrum_props.saturation_slider
-            c.h = c.h+prism_spectrum_props.hue_slider
-            exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
-            exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
-            exec("prism_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+            c.v = c.v+kaleidoscope_spectrum_props.value_slider
+            c.s = c.s+kaleidoscope_spectrum_props.saturation_slider
+            c.h = c.h+kaleidoscope_spectrum_props.hue_slider
+            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
         return None
     def get_saved_palettes(self, context):
         saved_palettes_list = []
@@ -183,8 +183,8 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
         return saved_palettes_list
     def import_saved_palette(self, context):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        name = prism_spectrum_props.saved_palettes
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        name = kaleidoscope_spectrum_props.saved_palettes
         name = name.lower()
         name = name.replace(' ', '_')
         name = name+".json"
@@ -193,12 +193,12 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             palette_file = open(path, 'r')
             self.palette = json.load(palette_file)
         except:
-            if prism_spectrum_props.sync_path is not None:
-                path = os.path.join(prism_spectrum_props.sync_path, name)
+            if kaleidoscope_spectrum_props.sync_path is not None:
+                path = os.path.join(kaleidoscope_spectrum_props.sync_path, name)
                 palette_file = open(path, 'r')
                 self.palette = json.load(palette_file)
         for i in range(1, 6):
-            exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(self.palette[prism_spectrum_props.saved_palettes]['color"+str(i)+"'])")
+            exec("kaleidoscope_spectrum_props.color"+str(i)+" = hex_to_rgb(self.palette[kaleidoscope_spectrum_props.saved_palettes]['color"+str(i)+"'])")
         palette_file.close()
         set_palettes_list(self, context)
         return None
@@ -271,8 +271,8 @@ class SavePalette(bpy.types.Operator):
     bl_label = "Save Spectrum Palette"
 
     def set_name(self, context):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        prism_spectrum_props.save_palette_name = self.name
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props.save_palette_name = self.name
 
         name = self.name
         name = name.lower()
@@ -282,60 +282,60 @@ class SavePalette(bpy.types.Operator):
     name = bpy.props.StringProperty(name="Palette Name", description="Enter the Name for the Palette", default="My Palette", update=set_name)
 
     def execute(self, context):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        prism_spectrum_props.save_palette_name = self.name
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props.save_palette_name = self.name
         global palette_export
-        name = prism_spectrum_props.save_palette_name
+        name = kaleidoscope_spectrum_props.save_palette_name
         name = name.title()
         name = name.replace('_', ' ')
-        prism_spectrum_props.save_palette_name = name
-        palette_export[prism_spectrum_props.save_palette_name] = {
-            "palette_name": prism_spectrum_props.save_palette_name,
-            "color1": rgb_to_hex(prism_spectrum_props.color1),
-            "color2": rgb_to_hex(prism_spectrum_props.color2),
-            "color3": rgb_to_hex(prism_spectrum_props.color3),
-            "color4": rgb_to_hex(prism_spectrum_props.color4),
-            "color5": rgb_to_hex(prism_spectrum_props.color5)
+        kaleidoscope_spectrum_props.save_palette_name = name
+        palette_export[kaleidoscope_spectrum_props.save_palette_name] = {
+            "palette_name": kaleidoscope_spectrum_props.save_palette_name,
+            "color1": rgb_to_hex(kaleidoscope_spectrum_props.color1),
+            "color2": rgb_to_hex(kaleidoscope_spectrum_props.color2),
+            "color3": rgb_to_hex(kaleidoscope_spectrum_props.color3),
+            "color4": rgb_to_hex(kaleidoscope_spectrum_props.color4),
+            "color5": rgb_to_hex(kaleidoscope_spectrum_props.color5)
         }
-        name = prism_spectrum_props.save_palette_name
+        name = kaleidoscope_spectrum_props.save_palette_name
         name = name.lower()
-        prism_spectrum_props.save_palette_name = name.replace(' ', '_')
-        path = os.path.join(os.path.dirname(__file__), prism_spectrum_props.save_palette_name+".json")
+        kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
+        path = os.path.join(os.path.dirname(__file__), kaleidoscope_spectrum_props.save_palette_name+".json")
         s = json.dumps(palette_export)
         with open(path, "w") as f:
             f.write(s)
 
-        if prism_spectrum_props.sync_path is not None:
-            path = os.path.join(prism_spectrum_props.sync_path, prism_spectrum_props.save_palette_name+".json")
+        if kaleidoscope_spectrum_props.sync_path is not None:
+            path = os.path.join(kaleidoscope_spectrum_props.sync_path, kaleidoscope_spectrum_props.save_palette_name+".json")
             s = json.dumps(palette_export)
             with open(path, 'w') as f:
                 f.write(s)
         return{'FINISHED'}
 
     def invoke(self, context, event):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        self.name = prism_spectrum_props.save_palette_name
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        self.name = kaleidoscope_spectrum_props.save_palette_name
         return bpy.context.window_manager.invoke_props_dialog(self)
 
 def set_color_ramp(self):
-    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+    kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     ramp = None
     ramp_world = None
-    spectrum_active = bpy.context.object.active_material.prism_spectrum_props
-    if prism_spectrum_props.assign_colorramp_world == True:
+    spectrum_active = bpy.context.object.active_material.kaleidoscope_spectrum_props
+    if kaleidoscope_spectrum_props.assign_colorramp_world == True:
         try:
             try:
-                ramp_world = bpy.context.scene.world.node_tree.nodes[prism_spectrum_props.colorramp_world_name].color_ramp
+                ramp_world = bpy.context.scene.world.node_tree.nodes[kaleidoscope_spectrum_props.colorramp_world_name].color_ramp
             except:
-                if prism_spectrum_props.assign_colorramp_world == True:
+                if kaleidoscope_spectrum_props.assign_colorramp_world == True:
                     self.report({'WARNING'}, "There is Not a Valid ColorRamp Node in the World Material")
-            if prism_spectrum_props.colorramp_world_name != "" and prism_spectrum_props.assign_colorramp_world == True:
+            if kaleidoscope_spectrum_props.colorramp_world_name != "" and kaleidoscope_spectrum_props.assign_colorramp_world == True:
                 try:
                     for i in range(0, len(ramp_world.elements)):
-                            if prism_spectrum_props.assign_colorramp_world == True:
-                                exec("ramp_world.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
-                                exec("ramp_world.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
-                                exec("ramp_world.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                            if kaleidoscope_spectrum_props.assign_colorramp_world == True:
+                                exec("ramp_world.elements["+str(i)+"].color[0] = kaleidoscope_spectrum_props.color"+str(i+1)+"[0]")
+                                exec("ramp_world.elements["+str(i)+"].color[1] = kaleidoscope_spectrum_props.color"+str(i+1)+"[1]")
+                                exec("ramp_world.elements["+str(i)+"].color[2] = kaleidoscope_spectrum_props.color"+str(i+1)+"[2]")
                                 ramp_world.elements[0].color[3] = 1.0
                 except:
                     pass
@@ -343,7 +343,7 @@ def set_color_ramp(self):
             pass
 
     for mat in bpy.data.materials:
-        spectrum_active = mat.prism_spectrum_props
+        spectrum_active = mat.kaleidoscope_spectrum_props
         if spectrum_active.assign_colorramp == True and spectrum_active.colorramp_name != "":
             try:
                 ramp = mat.node_tree.nodes[spectrum_active.colorramp_name].color_ramp
@@ -354,9 +354,9 @@ def set_color_ramp(self):
                 try:
                     for i in range(0, len(ramp.elements)):
                             if spectrum_active.assign_colorramp == True:
-                                exec("ramp.elements["+str(i)+"].color[0] = prism_spectrum_props.color"+str(i+1)+"[0]")
-                                exec("ramp.elements["+str(i)+"].color[1] = prism_spectrum_props.color"+str(i+1)+"[1]")
-                                exec("ramp.elements["+str(i)+"].color[2] = prism_spectrum_props.color"+str(i+1)+"[2]")
+                                exec("ramp.elements["+str(i)+"].color[0] = kaleidoscope_spectrum_props.color"+str(i+1)+"[0]")
+                                exec("ramp.elements["+str(i)+"].color[1] = kaleidoscope_spectrum_props.color"+str(i+1)+"[1]")
+                                exec("ramp.elements["+str(i)+"].color[2] = kaleidoscope_spectrum_props.color"+str(i+1)+"[2]")
                                 ramp.elements[0].color[3] = 1.0
                 except:
                     pass
@@ -373,11 +373,11 @@ class SpectrumNode(Node, SpectrumTreeNode):
         self.outputs.new('NodeSocketColor', "Color 3")
         self.outputs.new('NodeSocketColor', "Color 4")
         self.outputs.new('NodeSocketColor', "Color 5")
-        self.outputs["Color 1"].default_value = bpy.context.scene.prism_spectrum_props.color1
-        self.outputs["Color 2"].default_value = bpy.context.scene.prism_spectrum_props.color2
-        self.outputs["Color 3"].default_value = bpy.context.scene.prism_spectrum_props.color3
-        self.outputs["Color 4"].default_value = bpy.context.scene.prism_spectrum_props.color4
-        self.outputs["Color 5"].default_value = bpy.context.scene.prism_spectrum_props.color5
+        self.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
+        self.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
+        self.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
+        self.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
+        self.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
         self.width = 226
 
     def update(self):
@@ -415,41 +415,41 @@ class SpectrumNode(Node, SpectrumTreeNode):
         return "Spectrum Palette"
 
 def SpectrumPaletteUI(self, context, layout):
-    prism_spectrum_props = bpy.context.scene.prism_spectrum_props
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
     global icons_dict
     col = layout.column(align=True)
     row = col.row(align=True)
     split = row.split(percentage=0.8)
     col1 = split.column(align=True)
-    col1.prop(prism_spectrum_props, "gen_type", text="Rule")
-    if prism_spectrum_props.gen_type == "4":
-        col1.prop(prism_spectrum_props, "custom_gen_type", "Type")
+    col1.prop(kaleidoscope_spectrum_props, "gen_type", text="Rule")
+    if kaleidoscope_spectrum_props.gen_type == "4":
+        col1.prop(kaleidoscope_spectrum_props, "custom_gen_type", "Type")
     col2 = split.column()
     row2 = col2.row(align=True)
-    if prism_spectrum_props.gen_type != '4' or prism_spectrum_props.custom_gen_type == '3' or prism_spectrum_props.custom_gen_type == '0' or prism_spectrum_props.custom_gen_type == '2':
-        if prism_spectrum_props.use_organize == False:
-            row2.prop(prism_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_OFF', emboss=False)
+    if kaleidoscope_spectrum_props.gen_type != '4' or kaleidoscope_spectrum_props.custom_gen_type == '3' or kaleidoscope_spectrum_props.custom_gen_type == '0' or kaleidoscope_spectrum_props.custom_gen_type == '2':
+        if kaleidoscope_spectrum_props.use_organize == False:
+            row2.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_OFF', emboss=False)
         else:
-            row2.prop(prism_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_ON', emboss=False)
-    row2.prop(prism_spectrum_props, "view_help", toggle=True, text="", icon='INFO', emboss=False)
-    if prism_spectrum_props.view_help == True:
+            row2.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_ON', emboss=False)
+    row2.prop(kaleidoscope_spectrum_props, "view_help", toggle=True, text="", icon='INFO', emboss=False)
+    if kaleidoscope_spectrum_props.view_help == True:
         box = layout.box()
         col_box = box.column(align=True)
-        if prism_spectrum_props.gen_type == "0":
+        if kaleidoscope_spectrum_props.gen_type == "0":
             col_box.label("Monochromatic Scheme is the")
             col_box.label("most basic color rule. It has")
             col_box.label("colors of same hue, but with")
             col_box.label("varying saturation and")
             col_box.label("brightness. It is useful when")
             col_box.label("used in a proper way.")
-        elif prism_spectrum_props.gen_type == "1":
+        elif kaleidoscope_spectrum_props.gen_type == "1":
             col_box.label("Analogous Scheme uses")
             col_box.label("colors of different hues. It")
             col_box.label("uses one color as base color")
             col_box.label("and uses colors near it in the")
             col_box.label("color wheel, with varying")
             col_box.label("saturation and brightness.")
-        elif prism_spectrum_props.gen_type == "2":
+        elif kaleidoscope_spectrum_props.gen_type == "2":
             col_box.label("Complementary Scheme is")
             col_box.label("interesting rule where colors")
             col_box.label("opposite to each other in the")
@@ -457,25 +457,25 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("scheme should be used")
             col_box.label("carefully because of contrasting")
             col_box.label("shades.")
-        elif prism_spectrum_props.gen_type == "3":
+        elif kaleidoscope_spectrum_props.gen_type == "3":
             col_box.label("Triadic Scheme uses")
             col_box.label("one color as base color")
             col_box.label("and other two colors are")
             col_box.label("chosen from the color wheel")
             col_box.label("such that all three form an")
             col_box.label("equilateral triangle.")
-        elif prism_spectrum_props.gen_type == "4":
+        elif kaleidoscope_spectrum_props.gen_type == "4":
             col_box.label("Custom schemes are some")
             col_box.label("simple rules exclusive to")
             col_box.label("this add-on")
             col_box.label()
-            if prism_spectrum_props.custom_gen_type == "0":
+            if kaleidoscope_spectrum_props.custom_gen_type == "0":
                 col_box.label("Vibrant scheme uses two")
                 col_box.label("visually appealing color shades")
                 col_box.label("and others are shades of black")
                 col_box.label("and white")
                 col_box.label()
-            elif prism_spectrum_props.custom_gen_type == "1":
+            elif kaleidoscope_spectrum_props.custom_gen_type == "1":
                 col_box.label("Gradient scheme is similar")
                 col_box.label("to Monochromatic scheme, and")
                 col_box.label("it uses fixed hue with fixed")
@@ -483,60 +483,60 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("from left to form gradient of")
                 col_box.label("colors.")
                 col_box.label()
-            elif prism_spectrum_props.custom_gen_type == "2":
+            elif kaleidoscope_spectrum_props.custom_gen_type == "2":
                 col_box.label("Pop Out scheme is similar to")
                 col_box.label("Vibrant scheme, but this uses")
                 col_box.label("two same colors and other three")
                 col_box.label("are shades of black and white.")
                 col_box.label("Really Minimal Color Scheme.")
                 col_box.label()
-            elif prism_spectrum_props.custom_gen_type == "4":
+            elif kaleidoscope_spectrum_props.custom_gen_type == "4":
                 col_box.label("Online mode provides you with")
                 col_box.label("some amazing color palettes")
                 col_box.label("from the Internet.")
                 col_box.label()
-            elif prism_spectrum_props.custom_gen_type == "3":
+            elif kaleidoscope_spectrum_props.custom_gen_type == "3":
                 col_box.label("Random option allows you to")
                 col_box.label("generate a palette from any rule")
                 col_box.label("in a click. It is helpful when")
                 col_box.label("you need want to find the best")
                 col_box.label("palette of a base color.")
                 col_box.label()
-            elif prism_spectrum_props.custom_gen_type == "5":
+            elif kaleidoscope_spectrum_props.custom_gen_type == "5":
                 col_box.label("If you are really angry, and")
                 col_box.label("want to try any color for your")
                 col_box.label("scene, then use this option.")
                 col_box.label("This option 'Randomly' generates")
                 col_box.label("the colors for the palette.")
                 col_box.label()
-                if prism_spectrum_props.use_internet_libs == True:
+                if kaleidoscope_spectrum_props.use_internet_libs == True:
                     col_box.label()
-        if prism_spectrum_props.use_internet_libs == True:
-            col_box.label("Palette ID: "+str(prism_spectrum_props.online_palette_index+1))
+        if kaleidoscope_spectrum_props.use_internet_libs == True:
+            col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
             row = col_box.row(align=True)
             row.scale_y = 1.1
-            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://bit.ly/prismbugbs"
-        if prism_spectrum_props.gen_type != '4' and prism_spectrum_props.custom_gen_type != '4':
+            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://bit.ly/kaleidoscopebugbs"
+        if kaleidoscope_spectrum_props.gen_type != '4' and kaleidoscope_spectrum_props.custom_gen_type != '4':
             col_box.label()
-        col_box.prop(prism_spectrum_props, "view_help", text="Close Help", icon='INFO')
+        col_box.prop(kaleidoscope_spectrum_props, "view_help", text="Close Help", icon='INFO')
     col = layout.column(align=True)
-    if prism_spectrum_props.use_internet_libs != True:
-        if prism_spectrum_props.use_custom == False:
-            col.prop(prism_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
-        if prism_spectrum_props.use_custom == True:
-            col.prop(prism_spectrum_props, "use_custom", text="Hide Custom Base Color", toggle=True, icon="LAYER_ACTIVE")
+    if kaleidoscope_spectrum_props.use_internet_libs != True:
+        if kaleidoscope_spectrum_props.use_custom == False:
+            col.prop(kaleidoscope_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
+        if kaleidoscope_spectrum_props.use_custom == True:
+            col.prop(kaleidoscope_spectrum_props, "use_custom", text="Hide Custom Base Color", toggle=True, icon="LAYER_ACTIVE")
             col1 = layout.column()
             row = col1.row(align=True)
             row.label("Base Color:")
-            row.prop(prism_spectrum_props, "hue", text="")
+            row.prop(kaleidoscope_spectrum_props, "hue", text="")
 
     col2 = layout.column(align=True)
     row = col2.row(align=True)
-    row.prop(prism_spectrum_props, "color1", text="")
-    row.prop(prism_spectrum_props, "color2", text="")
-    row.prop(prism_spectrum_props, "color3", text="")
-    row.prop(prism_spectrum_props, "color4", text="")
-    row.prop(prism_spectrum_props, "color5", text="")
+    row.prop(kaleidoscope_spectrum_props, "color1", text="")
+    row.prop(kaleidoscope_spectrum_props, "color2", text="")
+    row.prop(kaleidoscope_spectrum_props, "color3", text="")
+    row.prop(kaleidoscope_spectrum_props, "color4", text="")
+    row.prop(kaleidoscope_spectrum_props, "color5", text="")
     row2 = col2.row(align=True)
     row2.scale_y = 1.2
     row2.operator(PaletteGenerate.bl_idname, text="Refresh Palette", icon="COLOR")
@@ -544,34 +544,34 @@ def SpectrumPaletteUI(self, context, layout):
     if online_check == False:
         col3.label("There was some problem,", icon='ERROR')
         col3.label("try again")
-    if prism_spectrum_props.use_global == False:
-        col3.prop(prism_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
+    if kaleidoscope_spectrum_props.use_global == False:
+        col3.prop(kaleidoscope_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
     else:
-        col3.prop(prism_spectrum_props, "use_global", text="Hide Global Controls", icon='LAYER_ACTIVE', toggle=True)
+        col3.prop(kaleidoscope_spectrum_props, "use_global", text="Hide Global Controls", icon='LAYER_ACTIVE', toggle=True)
         col4 = layout.column(align=True)
         row4 = col4.row(align=True)
-        col4.prop(prism_spectrum_props, "hue_slider", text="Hue", slider=True)
-        col4.prop(prism_spectrum_props, "saturation_slider", text="Saturation", slider=True)
-        col4.prop(prism_spectrum_props, "value_slider", text="Value", slider=True)
+        col4.prop(kaleidoscope_spectrum_props, "hue_slider", text="Hue", slider=True)
+        col4.prop(kaleidoscope_spectrum_props, "saturation_slider", text="Saturation", slider=True)
+        col4.prop(kaleidoscope_spectrum_props, "value_slider", text="Value", slider=True)
 
     col4 = layout.column(align=True)
     col4.label()
     row4 = col4.row(align=True)
-    if prism_spectrum_props.history_count != 2:
+    if kaleidoscope_spectrum_props.history_count != 2:
         row4.operator(PreviousPalette.bl_idname, text="", icon="TRIA_LEFT")
     else:
         row4.separator()
         row4.separator()
     row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="ARROW_LEFTRIGHT")
-    if prism_spectrum_props.history_count != 0:
+    if kaleidoscope_spectrum_props.history_count != 0:
         row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT")
     else:
         row4.separator()
         row4.separator()
     col4.label()
     row5 = col4.row(align=True)
-    if len(prism_spectrum_props.saved_palettes) !=0:
-        row5.prop(prism_spectrum_props, "saved_palettes", text="")
+    if len(kaleidoscope_spectrum_props.saved_palettes) !=0:
+        row5.prop(kaleidoscope_spectrum_props, "saved_palettes", text="")
     else:
         row5.label("No Saved Presets")
     row5.operator(SavePalette.bl_idname, text="", icon='ZOOMIN')
@@ -579,11 +579,11 @@ def SpectrumPaletteUI(self, context, layout):
     col4.label()
     row6 = col4.row(align=True)
     if bpy.context.space_data.shader_type == 'WORLD':
-        row6.prop_search(prism_spectrum_props,"colorramp_world_name", bpy.context.scene.world.node_tree, "nodes",text="Ramp", icon='NODETREE')
-        row6.prop(prism_spectrum_props, "assign_colorramp_world", text="", icon='RESTRICT_COLOR_ON', toggle=True)
+        row6.prop_search(kaleidoscope_spectrum_props,"colorramp_world_name", bpy.context.scene.world.node_tree, "nodes",text="Ramp", icon='NODETREE')
+        row6.prop(kaleidoscope_spectrum_props, "assign_colorramp_world", text="", icon='RESTRICT_COLOR_ON', toggle=True)
     elif bpy.context.space_data.shader_type == 'OBJECT':
-        row6.prop_search(bpy.context.object.active_material.prism_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
-        row6.prop(bpy.context.object.active_material.prism_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
+        row6.prop_search(bpy.context.object.active_material.kaleidoscope_spectrum_props,"colorramp_name", bpy.context.object.active_material.node_tree, "nodes",text="Ramp", icon='NODETREE')
+        row6.prop(bpy.context.object.active_material.kaleidoscope_spectrum_props, "assign_colorramp", text="", icon='RESTRICT_COLOR_ON', toggle=True)
     col4.label()
     row7 = col4.row(align=True)
     row7.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
@@ -593,7 +593,7 @@ def SpectrumPaletteUI(self, context, layout):
     row7.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
 
 def update_caller(caller, input_name):
-    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+    kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     for world in bpy.data.worlds:
         if world.node_tree is not None:
             for node in world.node_tree.nodes:
@@ -613,7 +613,7 @@ def update_caller(caller, input_name):
                                 o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
 
     for mat in bpy.data.materials:
-        if mat.prism_spectrum_props.assign_colorramp == True or prism_spectrum_props.assign_colorramp_world == True:
+        if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
             set_color_ramp(caller)
             break
 
@@ -649,10 +649,10 @@ def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % fin
 
 def Spectrum_Engine(caller, context):
-    prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-    prism_spectrum_props.hue_slider = 0.0
-    prism_spectrum_props.saturation_slider = 0.0
-    prism_spectrum_props.value_slider = 0.0
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+    kaleidoscope_spectrum_props.hue_slider = 0.0
+    kaleidoscope_spectrum_props.saturation_slider = 0.0
+    kaleidoscope_spectrum_props.value_slider = 0.0
 
     c = Color()
     c.hsv = 1.0, 0.0, 1.0
@@ -666,14 +666,14 @@ def Spectrum_Engine(caller, context):
     elif c.v <= 0.4:
         c.v = c.v+0.2
 
-    if prism_spectrum_props.use_custom == True:
-        if prism_spectrum_props.hue != (0.0, 0.0, 0.0, 1.0):
-            c.r = random.uniform(prism_spectrum_props.hue[0]-0.1, prism_spectrum_props.hue[0]+0.05)
-            c.g = random.uniform(prism_spectrum_props.hue[1]-0.1, prism_spectrum_props.hue[1]+0.05)
-            c.b = random.uniform(prism_spectrum_props.hue[2]-0.1, prism_spectrum_props.hue[2]+0.05)
+    if kaleidoscope_spectrum_props.use_custom == True:
+        if kaleidoscope_spectrum_props.hue != (0.0, 0.0, 0.0, 1.0):
+            c.r = random.uniform(kaleidoscope_spectrum_props.hue[0]-0.1, kaleidoscope_spectrum_props.hue[0]+0.05)
+            c.g = random.uniform(kaleidoscope_spectrum_props.hue[1]-0.1, kaleidoscope_spectrum_props.hue[1]+0.05)
+            c.b = random.uniform(kaleidoscope_spectrum_props.hue[2]-0.1, kaleidoscope_spectrum_props.hue[2]+0.05)
 
     #Monochromatic
-    if prism_spectrum_props.gen_type == "0" or prism_spectrum_props.random_int == 0:
+    if kaleidoscope_spectrum_props.gen_type == "0" or kaleidoscope_spectrum_props.random_int == 0:
         Hue = c.h
         Saturation_less= 0.0
         if c.s <=0.1:
@@ -700,37 +700,37 @@ def Spectrum_Engine(caller, context):
         c1 = Color()
         c1.hsv = Hue, Saturation_more, Value_more
 
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[0])+" = c1.r, c1.g, c1.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c1.r, c1.g, c1.b, 1.0")
         else:
-            prism_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
 
         c1.hsv = Hue, Saturation_more+0.1, Value_more
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[1])+" = c1.r, c1.g, c1.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c1.r, c1.g, c1.b, 1.0")
         else:
-            prism_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
 
         c1.hsv = Hue, c.s, c.v
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[2])+" = c1.r, c1.g, c1.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c1.r, c1.g, c1.b, 1.0")
         else:
-            prism_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
 
         c1.hsv = Hue, Saturation_more+0.1, Value_less-0.1
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[3])+" = c1.r, c1.g, c1.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c1.r, c1.g, c1.b, 1.0")
         else:
-            prism_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
 
         c1.hsv = Hue, Saturation_less, Value_less-0.1
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[4])+" = c1.r, c1.g, c1.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c1.r, c1.g, c1.b, 1.0")
         else:
-            prism_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
-        prism_spectrum_props.use_internet_libs == False
+            kaleidoscope_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
+        kaleidoscope_spectrum_props.use_internet_libs == False
 
-    elif prism_spectrum_props.gen_type == "1" or prism_spectrum_props.random_int == 1:
+    elif kaleidoscope_spectrum_props.gen_type == "1" or kaleidoscope_spectrum_props.random_int == 1:
         #Analogous
         Saturation = random.uniform(c.s, 1)
         if Saturation <= 0.4:
@@ -753,21 +753,21 @@ def Spectrum_Engine(caller, context):
             Hue1 = 0.1
         c2 = Color()
         c2.hsv = Hue1, Saturation-0.2, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
 
         Hue1_2 = random.uniform(c.h-0.07, c.h-0.2)
         if Hue1_2 == Hue1:
             Hue1_2 = Hue1_2-0.1
         c2.hsv = Hue, Saturation+0.2, Value1
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
-            exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
-            prism_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
 
         Hue_1 = random.uniform(c.h, c.h-0.3)
         if Hue_1==0:
@@ -778,19 +778,19 @@ def Spectrum_Engine(caller, context):
             Hue_1 = 1-abs(Hue_1)
             Hue1_2 = 1-abs(Hue1_2)
         c2.hsv = Hue1_2, Saturation, Value1
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue_1, Saturation, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color5 = c2.r, c2.g, c2.b, 1.0
-        prism_spectrum_props.use_internet_libs = False
+            kaleidoscope_spectrum_props.color5 = c2.r, c2.g, c2.b, 1.0
+        kaleidoscope_spectrum_props.use_internet_libs = False
 
-    elif prism_spectrum_props.gen_type == "2" or prism_spectrum_props.random_int == 2:
+    elif kaleidoscope_spectrum_props.gen_type == "2" or kaleidoscope_spectrum_props.random_int == 2:
         #Complementary
         Hue = c.h
         Hue1 = 0.0
@@ -823,37 +823,37 @@ def Spectrum_Engine(caller, context):
 
         c2 = Color()
         c2.hsv = Hue, Saturation_more, Value_less
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue, Saturation_less, Value_more
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue, Saturation, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue1, Saturation_more, Value_less
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue1, Saturation, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
-        prism_spectrum_props.use_internet_libs = False
+            kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+        kaleidoscope_spectrum_props.use_internet_libs = False
 
-    elif prism_spectrum_props.gen_type == "3" or prism_spectrum_props.random_int == 3:
+    elif kaleidoscope_spectrum_props.gen_type == "3" or kaleidoscope_spectrum_props.random_int == 3:
         #Triad
         Hue = c.h
         Hue2 = Hue+0.34
@@ -894,49 +894,49 @@ def Spectrum_Engine(caller, context):
 
         c2 = Color()
         c2.hsv = Hue, Saturation_more, Value_less
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue, Saturation, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue3, Saturation_lesser, Value
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue2, Saturation_less-0.07, Value_less+0.1
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
 
         c2.hsv = Hue2, Saturation_less+0.07, Value_less-0.2
-        if prism_spectrum_props.use_organize == False:
-            exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+        if kaleidoscope_spectrum_props.use_organize == False:
+            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
         else:
-            prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
-        prism_spectrum_props.use_internet_libs = False
+            kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+        kaleidoscope_spectrum_props.use_internet_libs = False
 
-    elif prism_spectrum_props.gen_type == "4" or prism_spectrum_props.random_int == 4:
-        if prism_spectrum_props.custom_gen_type == "0" or prism_spectrum_props.random_custom_int == 0:
+    elif kaleidoscope_spectrum_props.gen_type == "4" or kaleidoscope_spectrum_props.random_int == 4:
+        if kaleidoscope_spectrum_props.custom_gen_type == "0" or kaleidoscope_spectrum_props.random_custom_int == 0:
             #Vibrant
             Hue = c.h
             while True:
                 if Hue <=0.1 and Hue>=0.0:
                     Hue = random.random()
-                    if prism_spectrum_props.use_custom == True:
-                        if prism_spectrum_props.hue != (0.0, 0.0, 0.0, 1.0):
+                    if kaleidoscope_spectrum_props.use_custom == True:
+                        if kaleidoscope_spectrum_props.hue != (0.0, 0.0, 0.0, 1.0):
                             c_rgb = Color()
-                            c_rgb.r = prism_spectrum_props.hue[0]
-                            c_rgb.g = prism_spectrum_props.hue[1]
-                            c_rgb.b = prism_spectrum_props.hue[2]
+                            c_rgb.r = kaleidoscope_spectrum_props.hue[0]
+                            c_rgb.g = kaleidoscope_spectrum_props.hue[1]
+                            c_rgb.b = kaleidoscope_spectrum_props.hue[2]
                             Hue = random.uniform(c_rgb.h-0.1, c_rgb.h+0.1)
                 else:
                     break
@@ -956,36 +956,36 @@ def Spectrum_Engine(caller, context):
 
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.5)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue, Saturation, Value1
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue1, Saturation, Value
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
-            prism_spectrum_props.use_internet_libs = False
-        elif prism_spectrum_props.custom_gen_type=="1" or prism_spectrum_props.random_custom_int == 1:
+                kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+            kaleidoscope_spectrum_props.use_internet_libs = False
+        elif kaleidoscope_spectrum_props.custom_gen_type=="1" or kaleidoscope_spectrum_props.random_custom_int == 1:
             #Gradient
             Hue = c.h
             Value = c.v
@@ -993,21 +993,21 @@ def Spectrum_Engine(caller, context):
 
             c1 = Color()
             c1.hsv = Hue, 0.2, 0.9
-            prism_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
 
             c1.hsv = Hue, 0.3, 0.9-0.1
-            prism_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
 
             c1.hsv = Hue, Saturation, Value
-            prism_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
 
             c1.hsv = Hue, 0.9-0.1, 0.1+0.1
-            prism_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
 
             c1.hsv = Hue, 0.9, 0.1
-            prism_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
-            prism_spectrum_props.use_internet_libs = False
-        elif prism_spectrum_props.custom_gen_type == "2" or prism_spectrum_props.random_custom_int == 2:
+            kaleidoscope_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
+            kaleidoscope_spectrum_props.use_internet_libs = False
+        elif kaleidoscope_spectrum_props.custom_gen_type == "2" or kaleidoscope_spectrum_props.random_custom_int == 2:
             #Popout
             Hue = c.h
             Saturation = c.s
@@ -1016,73 +1016,73 @@ def Spectrum_Engine(caller, context):
             Value = c.v
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue, Saturation, Value
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.2)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = Hue, Saturation-0.1, Value
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
 
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
-            if prism_spectrum_props.use_organize == False:
-                exec("prism_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            if kaleidoscope_spectrum_props.use_organize == False:
+                exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
             else:
-                prism_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+                kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
 
-            prism_spectrum_props.use_internet_libs = False
-        elif prism_spectrum_props.custom_gen_type == "4" or prism_spectrum_props.random_custom_int == 3:
+            kaleidoscope_spectrum_props.use_internet_libs = False
+        elif kaleidoscope_spectrum_props.custom_gen_type == "4" or kaleidoscope_spectrum_props.random_custom_int == 3:
             global palette
             global online_check
             #Online
             try:
-                if prism_spectrum_props.new_file != 0:
-                    palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/prism/master/palette.json").read(), 'UTF-8')
-                    prism_spectrum_props.new_file = 0
+                if kaleidoscope_spectrum_props.new_file != 0:
+                    palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/kaleidoscope/master/palette.json").read(), 'UTF-8')
+                    kaleidoscope_spectrum_props.new_file = 0
                     palette = json.loads(palette_file)
                 index = random.randint(0, len(palette)-1)
                 for i in range(0, 20):
-                    if prism_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
+                    if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
                         index = random.randint(0, len(palette)-1)
                     else:
                         break
-                prism_spectrum_props.online_palette_index = index
+                kaleidoscope_spectrum_props.online_palette_index = index
                 online_check = True
 
                 for i in range(1, 6):
-                    exec("prism_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
-                prism_spectrum_props.use_internet_libs = True
+                    exec("kaleidoscope_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
+                kaleidoscope_spectrum_props.use_internet_libs = True
             except:
                 online_check = False
-        elif prism_spectrum_props.custom_gen_type == "5" or prism_spectrum_props.random_custom_int == 4:
+        elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
-            if prism_spectrum_props.use_custom == True:
-                exec("prism_spectrum_props.color"+str(index[0])+" = prism_spectrum_props.hue[0], prism_spectrum_props.hue[1], prism_spectrum_props.hue[2], 1.0")
+            if kaleidoscope_spectrum_props.use_custom == True:
+                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = kaleidoscope_spectrum_props.hue[0], kaleidoscope_spectrum_props.hue[1], kaleidoscope_spectrum_props.hue[2], 1.0")
             else:
-                exec("prism_spectrum_props.color"+str(index[0])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("prism_spectrum_props.color"+str(index[1])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("prism_spectrum_props.color"+str(index[2])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("prism_spectrum_props.color"+str(index[3])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("prism_spectrum_props.color"+str(index[4])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            prism_spectrum_props.use_internet_libs = False
+                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+            kaleidoscope_spectrum_props.use_internet_libs = False
 
 def set_palettes_list(caller, context):
-    prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+    kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     #Palette History 1
     PaletteHistory[4].r = PaletteHistory[9].r
     PaletteHistory[4].g = PaletteHistory[9].g
@@ -1128,28 +1128,28 @@ def set_palettes_list(caller, context):
     Palette_idHistory[1] = Palette_idHistory[2]
 
     #Palette History 3
-    PaletteHistory[14].r = prism_spectrum_props.color5[0]
-    PaletteHistory[14].g = prism_spectrum_props.color5[1]
-    PaletteHistory[14].b = prism_spectrum_props.color5[2]
+    PaletteHistory[14].r = kaleidoscope_spectrum_props.color5[0]
+    PaletteHistory[14].g = kaleidoscope_spectrum_props.color5[1]
+    PaletteHistory[14].b = kaleidoscope_spectrum_props.color5[2]
 
-    PaletteHistory[13].r = prism_spectrum_props.color4[0]
-    PaletteHistory[13].g = prism_spectrum_props.color4[1]
-    PaletteHistory[13].b = prism_spectrum_props.color4[2]
+    PaletteHistory[13].r = kaleidoscope_spectrum_props.color4[0]
+    PaletteHistory[13].g = kaleidoscope_spectrum_props.color4[1]
+    PaletteHistory[13].b = kaleidoscope_spectrum_props.color4[2]
 
-    PaletteHistory[12].r = prism_spectrum_props.color3[0]
-    PaletteHistory[12].g = prism_spectrum_props.color3[1]
-    PaletteHistory[12].b = prism_spectrum_props.color3[2]
+    PaletteHistory[12].r = kaleidoscope_spectrum_props.color3[0]
+    PaletteHistory[12].g = kaleidoscope_spectrum_props.color3[1]
+    PaletteHistory[12].b = kaleidoscope_spectrum_props.color3[2]
 
-    PaletteHistory[11].r = prism_spectrum_props.color2[0]
-    PaletteHistory[11].g = prism_spectrum_props.color2[1]
-    PaletteHistory[11].b = prism_spectrum_props.color2[2]
+    PaletteHistory[11].r = kaleidoscope_spectrum_props.color2[0]
+    PaletteHistory[11].g = kaleidoscope_spectrum_props.color2[1]
+    PaletteHistory[11].b = kaleidoscope_spectrum_props.color2[2]
 
-    PaletteHistory[10].r = prism_spectrum_props.color1[0]
-    PaletteHistory[10].g = prism_spectrum_props.color1[1]
-    PaletteHistory[10].b = prism_spectrum_props.color1[2]
-    Palette_idHistory[2] = prism_spectrum_props.online_palette_index
+    PaletteHistory[10].r = kaleidoscope_spectrum_props.color1[0]
+    PaletteHistory[10].g = kaleidoscope_spectrum_props.color1[1]
+    PaletteHistory[10].b = kaleidoscope_spectrum_props.color1[2]
+    Palette_idHistory[2] = kaleidoscope_spectrum_props.online_palette_index
 
-    prism_spectrum_props.history_count = 0
+    kaleidoscope_spectrum_props.history_count = 0
 
 class PaletteGenerate(bpy.types.Operator):
     """Generate a new Color Palette"""
@@ -1157,20 +1157,20 @@ class PaletteGenerate(bpy.types.Operator):
     bl_label="Refresh Palette"
 
     def execute(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-        if prism_spectrum_props.custom_gen_type != "3":
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        if kaleidoscope_spectrum_props.custom_gen_type != "3":
             Spectrum_Engine(self, context)
         else:
             num = random.randint(0, 2)
             if num % 2 == 0:
-                prism_spectrum_props.random_int = 4
+                kaleidoscope_spectrum_props.random_int = 4
             else:
-                prism_spectrum_props.random_int = random.randint(0, 4)
-            prism_spectrum_props.random_custom_int = random.randint(0, 4)
+                kaleidoscope_spectrum_props.random_int = random.randint(0, 4)
+            kaleidoscope_spectrum_props.random_custom_int = random.randint(0, 4)
             Spectrum_Engine(self, context)
         set_palettes_list(self, context)
         for mat in bpy.data.materials:
-            if mat.prism_spectrum_props.assign_colorramp == True or prism_spectrum_props.assign_colorramp_world == True:
+            if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
                 set_color_ramp(self)
                 break
         return{'FINISHED'}
@@ -1181,65 +1181,65 @@ class PreviousPalette(bpy.types.Operator):
     bl_label="Previous Palette"
 
     def execute(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-        prism_spectrum_props.history_count = prism_spectrum_props.history_count+1
-        if prism_spectrum_props.history_count == 2:
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props.history_count = kaleidoscope_spectrum_props.history_count+1
+        if kaleidoscope_spectrum_props.history_count == 2:
             for i in range(0, 5):
-                exec("prism_spectrum_props.color"+str(i+1)+"[0] = PaletteHistory["+str(i)+"].r")
-                exec("prism_spectrum_props.color"+str(i+1)+"[1] = PaletteHistory["+str(i)+"].g")
-                exec("prism_spectrum_props.color"+str(i+1)+"[2] = PaletteHistory["+str(i)+"].b")
+                exec("kaleidoscope_spectrum_props.color"+str(i+1)+"[0] = PaletteHistory["+str(i)+"].r")
+                exec("kaleidoscope_spectrum_props.color"+str(i+1)+"[1] = PaletteHistory["+str(i)+"].g")
+                exec("kaleidoscope_spectrum_props.color"+str(i+1)+"[2] = PaletteHistory["+str(i)+"].b")
 
-            prism_spectrum_props.online_palette_index = Palette_idHistory[0]
+            kaleidoscope_spectrum_props.online_palette_index = Palette_idHistory[0]
 
-        elif prism_spectrum_props.history_count == 1:
-            prism_spectrum_props.color1[0] = PaletteHistory[5].r
-            prism_spectrum_props.color1[1] = PaletteHistory[5].g
-            prism_spectrum_props.color1[2] = PaletteHistory[5].b
+        elif kaleidoscope_spectrum_props.history_count == 1:
+            kaleidoscope_spectrum_props.color1[0] = PaletteHistory[5].r
+            kaleidoscope_spectrum_props.color1[1] = PaletteHistory[5].g
+            kaleidoscope_spectrum_props.color1[2] = PaletteHistory[5].b
 
-            prism_spectrum_props.color2[0] = PaletteHistory[6].r
-            prism_spectrum_props.color2[1] = PaletteHistory[6].g
-            prism_spectrum_props.color2[2] = PaletteHistory[6].b
+            kaleidoscope_spectrum_props.color2[0] = PaletteHistory[6].r
+            kaleidoscope_spectrum_props.color2[1] = PaletteHistory[6].g
+            kaleidoscope_spectrum_props.color2[2] = PaletteHistory[6].b
 
-            prism_spectrum_props.color3[0] = PaletteHistory[7].r
-            prism_spectrum_props.color3[1] = PaletteHistory[7].g
-            prism_spectrum_props.color3[2] = PaletteHistory[7].b
+            kaleidoscope_spectrum_props.color3[0] = PaletteHistory[7].r
+            kaleidoscope_spectrum_props.color3[1] = PaletteHistory[7].g
+            kaleidoscope_spectrum_props.color3[2] = PaletteHistory[7].b
 
-            prism_spectrum_props.color4[0] = PaletteHistory[8].r
-            prism_spectrum_props.color4[1] = PaletteHistory[8].g
-            prism_spectrum_props.color4[2] = PaletteHistory[8].b
+            kaleidoscope_spectrum_props.color4[0] = PaletteHistory[8].r
+            kaleidoscope_spectrum_props.color4[1] = PaletteHistory[8].g
+            kaleidoscope_spectrum_props.color4[2] = PaletteHistory[8].b
 
-            prism_spectrum_props.color5[0] = PaletteHistory[9].r
-            prism_spectrum_props.color5[1] = PaletteHistory[9].g
-            prism_spectrum_props.color5[2] = PaletteHistory[9].b
+            kaleidoscope_spectrum_props.color5[0] = PaletteHistory[9].r
+            kaleidoscope_spectrum_props.color5[1] = PaletteHistory[9].g
+            kaleidoscope_spectrum_props.color5[2] = PaletteHistory[9].b
 
-            prism_spectrum_props.online_palette_index = Palette_idHistory[1]
+            kaleidoscope_spectrum_props.online_palette_index = Palette_idHistory[1]
 
-        elif prism_spectrum_props.history_count == 0:
-            prism_spectrum_props.color1[0] = PaletteHistory[10].r
-            prism_spectrum_props.color1[1] = PaletteHistory[10].g
-            prism_spectrum_props.color1[2] = PaletteHistory[10].b
+        elif kaleidoscope_spectrum_props.history_count == 0:
+            kaleidoscope_spectrum_props.color1[0] = PaletteHistory[10].r
+            kaleidoscope_spectrum_props.color1[1] = PaletteHistory[10].g
+            kaleidoscope_spectrum_props.color1[2] = PaletteHistory[10].b
 
-            prism_spectrum_props.color2[0] = PaletteHistory[11].r
-            prism_spectrum_props.color2[1] = PaletteHistory[11].g
-            prism_spectrum_props.color2[2] = PaletteHistory[11].b
+            kaleidoscope_spectrum_props.color2[0] = PaletteHistory[11].r
+            kaleidoscope_spectrum_props.color2[1] = PaletteHistory[11].g
+            kaleidoscope_spectrum_props.color2[2] = PaletteHistory[11].b
 
-            prism_spectrum_props.color3[0] = PaletteHistory[12].r
-            prism_spectrum_props.color3[1] = PaletteHistory[12].g
-            prism_spectrum_props.color3[2] = PaletteHistory[12].b
+            kaleidoscope_spectrum_props.color3[0] = PaletteHistory[12].r
+            kaleidoscope_spectrum_props.color3[1] = PaletteHistory[12].g
+            kaleidoscope_spectrum_props.color3[2] = PaletteHistory[12].b
 
-            prism_spectrum_props.color4[0] = PaletteHistory[13].r
-            prism_spectrum_props.color4[1] = PaletteHistory[13].g
-            prism_spectrum_props.color4[2] = PaletteHistory[13].b
+            kaleidoscope_spectrum_props.color4[0] = PaletteHistory[13].r
+            kaleidoscope_spectrum_props.color4[1] = PaletteHistory[13].g
+            kaleidoscope_spectrum_props.color4[2] = PaletteHistory[13].b
 
-            prism_spectrum_props.color5[0] = PaletteHistory[14].r
-            prism_spectrum_props.color5[1] = PaletteHistory[14].g
-            prism_spectrum_props.color5[2] = PaletteHistory[14].b
+            kaleidoscope_spectrum_props.color5[0] = PaletteHistory[14].r
+            kaleidoscope_spectrum_props.color5[1] = PaletteHistory[14].g
+            kaleidoscope_spectrum_props.color5[2] = PaletteHistory[14].b
 
-            prism_spectrum_props.online_palette_index[2] = Palette_idHistory[2]
+            kaleidoscope_spectrum_props.online_palette_index[2] = Palette_idHistory[2]
 
-        prism_spectrum_props.hue_slider = 0.0
-        prism_spectrum_props.saturation_slider = 0.0
-        prism_spectrum_props.value_slider = 0.0
+        kaleidoscope_spectrum_props.hue_slider = 0.0
+        kaleidoscope_spectrum_props.saturation_slider = 0.0
+        kaleidoscope_spectrum_props.value_slider = 0.0
         return{'FINISHED'}
 
 class NextPalette(bpy.types.Operator):
@@ -1248,57 +1248,57 @@ class NextPalette(bpy.types.Operator):
     bl_label="Next Palette"
 
     def execute(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
-        prism_spectrum_props.history_count = prism_spectrum_props.history_count-1
-        if prism_spectrum_props.history_count == 1:
-            prism_spectrum_props.color1[0] = PaletteHistory[5].r
-            prism_spectrum_props.color1[1] = PaletteHistory[5].g
-            prism_spectrum_props.color1[2] = PaletteHistory[5].b
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props.history_count = kaleidoscope_spectrum_props.history_count-1
+        if kaleidoscope_spectrum_props.history_count == 1:
+            kaleidoscope_spectrum_props.color1[0] = PaletteHistory[5].r
+            kaleidoscope_spectrum_props.color1[1] = PaletteHistory[5].g
+            kaleidoscope_spectrum_props.color1[2] = PaletteHistory[5].b
 
-            prism_spectrum_props.color2[0] = PaletteHistory[6].r
-            prism_spectrum_props.color2[1] = PaletteHistory[6].g
-            prism_spectrum_props.color2[2] = PaletteHistory[6].b
+            kaleidoscope_spectrum_props.color2[0] = PaletteHistory[6].r
+            kaleidoscope_spectrum_props.color2[1] = PaletteHistory[6].g
+            kaleidoscope_spectrum_props.color2[2] = PaletteHistory[6].b
 
-            prism_spectrum_props.color3[0] = PaletteHistory[7].r
-            prism_spectrum_props.color3[1] = PaletteHistory[7].g
-            prism_spectrum_props.color3[2] = PaletteHistory[7].b
+            kaleidoscope_spectrum_props.color3[0] = PaletteHistory[7].r
+            kaleidoscope_spectrum_props.color3[1] = PaletteHistory[7].g
+            kaleidoscope_spectrum_props.color3[2] = PaletteHistory[7].b
 
-            prism_spectrum_props.color4[0] = PaletteHistory[8].r
-            prism_spectrum_props.color4[1] = PaletteHistory[8].g
-            prism_spectrum_props.color4[2] = PaletteHistory[8].b
+            kaleidoscope_spectrum_props.color4[0] = PaletteHistory[8].r
+            kaleidoscope_spectrum_props.color4[1] = PaletteHistory[8].g
+            kaleidoscope_spectrum_props.color4[2] = PaletteHistory[8].b
 
-            prism_spectrum_props.color5[0] = PaletteHistory[9].r
-            prism_spectrum_props.color5[1] = PaletteHistory[9].g
-            prism_spectrum_props.color5[2] = PaletteHistory[9].b
+            kaleidoscope_spectrum_props.color5[0] = PaletteHistory[9].r
+            kaleidoscope_spectrum_props.color5[1] = PaletteHistory[9].g
+            kaleidoscope_spectrum_props.color5[2] = PaletteHistory[9].b
 
-            prism_spectrum_props.online_palette_index = Palette_idHistory[1]
+            kaleidoscope_spectrum_props.online_palette_index = Palette_idHistory[1]
 
-        elif prism_spectrum_props.history_count == 0:
-            prism_spectrum_props.color1[0] = PaletteHistory[10].r
-            prism_spectrum_props.color1[1] = PaletteHistory[10].g
-            prism_spectrum_props.color1[2] = PaletteHistory[10].b
+        elif kaleidoscope_spectrum_props.history_count == 0:
+            kaleidoscope_spectrum_props.color1[0] = PaletteHistory[10].r
+            kaleidoscope_spectrum_props.color1[1] = PaletteHistory[10].g
+            kaleidoscope_spectrum_props.color1[2] = PaletteHistory[10].b
 
-            prism_spectrum_props.color2[0] = PaletteHistory[11].r
-            prism_spectrum_props.color2[1] = PaletteHistory[11].g
-            prism_spectrum_props.color2[2] = PaletteHistory[11].b
+            kaleidoscope_spectrum_props.color2[0] = PaletteHistory[11].r
+            kaleidoscope_spectrum_props.color2[1] = PaletteHistory[11].g
+            kaleidoscope_spectrum_props.color2[2] = PaletteHistory[11].b
 
-            prism_spectrum_props.color3[0] = PaletteHistory[12].r
-            prism_spectrum_props.color3[1] = PaletteHistory[12].g
-            prism_spectrum_props.color3[2] = PaletteHistory[12].b
+            kaleidoscope_spectrum_props.color3[0] = PaletteHistory[12].r
+            kaleidoscope_spectrum_props.color3[1] = PaletteHistory[12].g
+            kaleidoscope_spectrum_props.color3[2] = PaletteHistory[12].b
 
-            prism_spectrum_props.color4[0] = PaletteHistory[13].r
-            prism_spectrum_props.color4[1] = PaletteHistory[13].g
-            prism_spectrum_props.color4[2] = PaletteHistory[13].b
+            kaleidoscope_spectrum_props.color4[0] = PaletteHistory[13].r
+            kaleidoscope_spectrum_props.color4[1] = PaletteHistory[13].g
+            kaleidoscope_spectrum_props.color4[2] = PaletteHistory[13].b
 
-            prism_spectrum_props.color5[0] = PaletteHistory[14].r
-            prism_spectrum_props.color5[1] = PaletteHistory[14].g
-            prism_spectrum_props.color5[2] = PaletteHistory[14].b
+            kaleidoscope_spectrum_props.color5[0] = PaletteHistory[14].r
+            kaleidoscope_spectrum_props.color5[1] = PaletteHistory[14].g
+            kaleidoscope_spectrum_props.color5[2] = PaletteHistory[14].b
 
-            prism_spectrum_props.online_palette_index = Palette_idHistory[2]
+            kaleidoscope_spectrum_props.online_palette_index = Palette_idHistory[2]
 
-        prism_spectrum_props.hue_slider = 0.0
-        prism_spectrum_props.saturation_slider = 0.0
-        prism_spectrum_props.value_slider = 0.0
+        kaleidoscope_spectrum_props.hue_slider = 0.0
+        kaleidoscope_spectrum_props.saturation_slider = 0.0
+        kaleidoscope_spectrum_props.value_slider = 0.0
         return{'FINISHED'}
 
 class PaletteShuffle(bpy.types.Operator):
@@ -1307,7 +1307,7 @@ class PaletteShuffle(bpy.types.Operator):
     bl_label="Shufle Palette"
 
     def execute(self, context):
-        prism_spectrum_props = bpy.context.scene.prism_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
 
         col1 = Color()
         col2 = Color()
@@ -1315,60 +1315,60 @@ class PaletteShuffle(bpy.types.Operator):
         col4 = Color()
         col5 = Color()
 
-        col1.r = prism_spectrum_props.color1[0]
-        col1.g = prism_spectrum_props.color1[1]
-        col1.b = prism_spectrum_props.color1[2]
+        col1.r = kaleidoscope_spectrum_props.color1[0]
+        col1.g = kaleidoscope_spectrum_props.color1[1]
+        col1.b = kaleidoscope_spectrum_props.color1[2]
 
-        col2.r = prism_spectrum_props.color2[0]
-        col2.g = prism_spectrum_props.color2[1]
-        col2.b = prism_spectrum_props.color2[2]
+        col2.r = kaleidoscope_spectrum_props.color2[0]
+        col2.g = kaleidoscope_spectrum_props.color2[1]
+        col2.b = kaleidoscope_spectrum_props.color2[2]
 
-        col3.r = prism_spectrum_props.color3[0]
-        col3.g = prism_spectrum_props.color3[1]
-        col3.b = prism_spectrum_props.color3[2]
+        col3.r = kaleidoscope_spectrum_props.color3[0]
+        col3.g = kaleidoscope_spectrum_props.color3[1]
+        col3.b = kaleidoscope_spectrum_props.color3[2]
 
-        col4.r = prism_spectrum_props.color4[0]
-        col4.g = prism_spectrum_props.color4[1]
-        col4.b = prism_spectrum_props.color4[2]
+        col4.r = kaleidoscope_spectrum_props.color4[0]
+        col4.g = kaleidoscope_spectrum_props.color4[1]
+        col4.b = kaleidoscope_spectrum_props.color4[2]
 
-        col5.r = prism_spectrum_props.color5[0]
-        col5.g = prism_spectrum_props.color5[1]
-        col5.b = prism_spectrum_props.color5[2]
+        col5.r = kaleidoscope_spectrum_props.color5[0]
+        col5.g = kaleidoscope_spectrum_props.color5[1]
+        col5.b = kaleidoscope_spectrum_props.color5[2]
 
         index = [1, 2, 3, 4, 5]
         random.shuffle(index)
 
-        exec("prism_spectrum_props.color"+str(index[0])+" = col1.r, col1.g, col1.b, 1.0")
-        exec("prism_spectrum_props.color"+str(index[1])+" = col2.r, col2.g, col2.b, 1.0")
-        exec("prism_spectrum_props.color"+str(index[2])+" = col3.r, col3.g, col3.b, 1.0")
-        exec("prism_spectrum_props.color"+str(index[3])+" = col4.r, col4.g, col4.b, 1.0")
-        exec("prism_spectrum_props.color"+str(index[4])+" = col5.r, col5.g, col5.b, 1.0")
+        exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = col1.r, col1.g, col1.b, 1.0")
+        exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = col2.r, col2.g, col2.b, 1.0")
+        exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = col3.r, col3.g, col3.b, 1.0")
+        exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = col4.r, col4.g, col4.b, 1.0")
+        exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = col5.r, col5.g, col5.b, 1.0")
 
-        prism_spectrum_props.history_count = 0.0
+        kaleidoscope_spectrum_props.history_count = 0.0
 
-        PaletteHistory[14].r = prism_spectrum_props.color5[0]
-        PaletteHistory[14].g = prism_spectrum_props.color5[1]
-        PaletteHistory[14].b = prism_spectrum_props.color5[2]
+        PaletteHistory[14].r = kaleidoscope_spectrum_props.color5[0]
+        PaletteHistory[14].g = kaleidoscope_spectrum_props.color5[1]
+        PaletteHistory[14].b = kaleidoscope_spectrum_props.color5[2]
 
-        PaletteHistory[13].r = prism_spectrum_props.color4[0]
-        PaletteHistory[13].g = prism_spectrum_props.color4[1]
-        PaletteHistory[13].b = prism_spectrum_props.color4[2]
+        PaletteHistory[13].r = kaleidoscope_spectrum_props.color4[0]
+        PaletteHistory[13].g = kaleidoscope_spectrum_props.color4[1]
+        PaletteHistory[13].b = kaleidoscope_spectrum_props.color4[2]
 
-        PaletteHistory[12].r = prism_spectrum_props.color3[0]
-        PaletteHistory[12].g = prism_spectrum_props.color3[1]
-        PaletteHistory[12].b = prism_spectrum_props.color3[2]
+        PaletteHistory[12].r = kaleidoscope_spectrum_props.color3[0]
+        PaletteHistory[12].g = kaleidoscope_spectrum_props.color3[1]
+        PaletteHistory[12].b = kaleidoscope_spectrum_props.color3[2]
 
-        PaletteHistory[11].r = prism_spectrum_props.color2[0]
-        PaletteHistory[11].g = prism_spectrum_props.color2[1]
-        PaletteHistory[11].b = prism_spectrum_props.color2[2]
+        PaletteHistory[11].r = kaleidoscope_spectrum_props.color2[0]
+        PaletteHistory[11].g = kaleidoscope_spectrum_props.color2[1]
+        PaletteHistory[11].b = kaleidoscope_spectrum_props.color2[2]
 
-        PaletteHistory[10].r = prism_spectrum_props.color1[0]
-        PaletteHistory[10].g = prism_spectrum_props.color1[1]
-        PaletteHistory[10].b = prism_spectrum_props.color1[2]
+        PaletteHistory[10].r = kaleidoscope_spectrum_props.color1[0]
+        PaletteHistory[10].g = kaleidoscope_spectrum_props.color1[1]
+        PaletteHistory[10].b = kaleidoscope_spectrum_props.color1[2]
 
-        prism_spectrum_props.hue_slider = 0.0
-        prism_spectrum_props.saturation_slider = 0.0
-        prism_spectrum_props.value_slider = 0.0
+        kaleidoscope_spectrum_props.hue_slider = 0.0
+        kaleidoscope_spectrum_props.saturation_slider = 0.0
+        kaleidoscope_spectrum_props.value_slider = 0.0
         return{'FINISHED'}
 
 class DeletePalette(bpy.types.Operator):
@@ -1377,8 +1377,8 @@ class DeletePalette(bpy.types.Operator):
     bl_label = "Delete"
 
     def execute(self, context):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
-        name = prism_spectrum_props.saved_palettes
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        name = kaleidoscope_spectrum_props.saved_palettes
         name = name.lower()
         name = name.replace(' ', '_')
         path = os.path.join(os.path.dirname(__file__), name+".json")
@@ -1387,9 +1387,9 @@ class DeletePalette(bpy.types.Operator):
         except:
             pass
 
-        if prism_spectrum_props.sync_path is not None:
+        if kaleidoscope_spectrum_props.sync_path is not None:
             try:
-                path = os.path.join(prism_spectrum_props.sync_path, name+".json")
+                path = os.path.join(kaleidoscope_spectrum_props.sync_path, name+".json")
                 os.remove(path)
             except:
                 pass
@@ -1405,16 +1405,16 @@ def register():
     icons_dir = os.path.join(os.path.dirname(__file__), "icons")
     icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
     icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
-    bpy.types.Scene.prism_spectrum_props = bpy.props.PointerProperty(type=SpectrumProperties)
-    bpy.types.Material.prism_spectrum_props = bpy.props.PointerProperty(type=SpectrumMaterialProps)
+    bpy.types.Scene.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumProperties)
+    bpy.types.Material.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumMaterialProps)
     bpy.app.handlers.frame_change_pre.append(pre_frame_change)
 
 def unregister():
     global icons_dict
     bpy.utils.previews.remove(icons_dict)
-    bpy.context.scene.prism_spectrum_props.new_file = 1
-    del bpy.types.Scene.prism_spectrum_props
-    del bpy.types.Material.prism_spectrum_props
+    bpy.context.scene.kaleidoscope_spectrum_props.new_file = 1
+    del bpy.types.Scene.kaleidoscope_spectrum_props
+    del bpy.types.Material.kaleidoscope_spectrum_props
     palette.clear()
     bpy.utils.unregister_module(__name__)
 

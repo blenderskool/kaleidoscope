@@ -1,13 +1,13 @@
 bl_info = {
-    "name": "Prism - A small package of nodes for Cycles Materials",
+    "name": "Kaleidoscope - A small package of nodes for Cycles Materials",
     "author": "Akash Hamirwasia",
     "version": (1, 0),
     "blender": (2, 75, 0),
-    "location": "Cycles > NodeEditor > MaterialView > Add Node Menu",
+    "location": "NodeEditor > MaterialView > Add Node Menu",
     "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",
     "warning": "",
     "wiki_url": "http://www.blenderskool.cf",
-    "tracker_url": "http://bit.ly/prismbugbs",
+    "tracker_url": "http://bit.ly/kaleidoscopebugbs",
     "category": "Node"}
 
 
@@ -25,7 +25,7 @@ from nodeitems_utils import NodeCategory, NodeItem
 from bpy.types import Node
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 
-class PrismHybridTreeNode:
+class KaleidoscopeHybridTreeNode:
     @classmethod
     def poll(cls, ntree):
         b = False
@@ -34,13 +34,13 @@ class PrismHybridTreeNode:
         return b
 
 # Derived from the Node base type
-class PrismHybridNode(Node, PrismHybridTreeNode):
-    """Prism Hybrid node"""
-    bl_idname = 'prism_hybrid.node'
-    bl_label = 'Prism Hybrid'
+class KaleidoscopeHybridNode(Node, KaleidoscopeHybridTreeNode):
+    """Kaleidoscope Hybrid node"""
+    bl_idname = 'kaleidoscope_hybrid.node'
+    bl_label = 'Kaleidoscope Hybrid'
     bl_icon = 'INFO'
 
-    def set_prism_node(self, context):
+    def set_kaleidoscope_node(self, context):
         node_type = self.node_type
         loc = self.location
         if node_type == '1':
@@ -63,7 +63,7 @@ class PrismHybridNode(Node, PrismHybridTreeNode):
                 bpy.context.object.active_material.node_tree.nodes.remove(self)
         return None
 
-    node_type = bpy.props.EnumProperty(name="Prism Node Type", description="Choose the type of Node which you want to use", items=(('0', '', '', 'NODETREE', 0), ('1', 'Spectrum', 'Use the Spectrum Palette Node'), ('2', 'Intensity', 'Use the Intensity Node')), default=None, update=set_prism_node)
+    node_type = bpy.props.EnumProperty(name="Kaleidoscope Node Type", description="Choose the type of Node which you want to use", items=(('0', '', '', 'NODETREE', 0), ('1', 'Spectrum', 'Use the Spectrum Palette Node'), ('2', 'Intensity', 'Use the Intensity Node')), default=None, update=set_kaleidoscope_node)
 
     def init(self, context):
         self.width = 200
@@ -73,22 +73,22 @@ class PrismHybridNode(Node, PrismHybridTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.label()
-        col.label("Prism Hybrid is just a quick node")
-        col.label("to choose the nodes that come")
-        col.label("with Prism.")
+        col.label("Kaleidoscope Hybrid is just a")
+        col.label("quick node to choose the nodes")
+        col.label("that come with Kaleidoscope.")
         col.label()
         col.label("Select any one of the option to")
         col.label("to use the node that comes with")
-        col.label("Prism")
+        col.label("Kaleidoscope")
         col.label()
         row = col.row(align=True)
         row.prop(self, 'node_type', expand = True)
 
     #Node Label
     def draw_label(self):
-        return "Prism Hybrid"
+        return "Kaleidoscope Hybrid"
 
-class PrismCategory(NodeCategory):
+class KaleidoscopeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
         b = False
@@ -98,18 +98,18 @@ class PrismCategory(NodeCategory):
 
 # all categories in a list
 node_categories = [
-    PrismCategory("PRISMNODES", "Prism", items=[
-        NodeItem("prism_hybrid.node"),
+    KaleidoscopeCategory("KALEIDOSCOPENODES", "Kaleidoscope", items=[
+        NodeItem("kaleidoscope_hybrid.node"),
         NodeItem("spectrum_palette.node"),
         NodeItem("intensity.node")
         ]),
     ]
 
-class Prism(bpy.types.AddonPreferences):
+class Kaleidoscope(bpy.types.AddonPreferences):
     bl_idname = __name__
 
     def draw(self, context):
-        prism_spectrum_props=bpy.context.scene.prism_spectrum_props
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
         layout = self.layout
         box = layout.box()
         col = box.column()
@@ -125,29 +125,29 @@ class Prism(bpy.types.AddonPreferences):
         row = col.row()
         row.scale_y = 1.2
         row.label("")
-        row.operator(PrismImport.bl_idname, text='Import Files', icon='PACKAGE') #Install Presets button
+        row.operator(KaleidoscopeImport.bl_idname, text='Import Files', icon='PACKAGE') #Install Presets button
         row.label("")
         col.separator()
         row = col.row()
         row.scale_y = 1.12
         row.label("")
-        row.operator(PrismExport.bl_idname, text='Export Files', icon='OOPS') #Install Presets button
+        row.operator(KaleidoscopeExport.bl_idname, text='Export Files', icon='OOPS') #Install Presets button
         row.label("")
-        if bpy.context.scene.prism_props_import_files == True:
+        if bpy.context.scene.kaleidoscope_props_import_files == True:
             col.label("There was a problem in importing the files.", icon='ERROR')
         col.label()
-        col.prop(prism_spectrum_props, "sync_path", text="Path to Sync Palettes")
+        col.prop(kaleidoscope_spectrum_props, "sync_path", text="Path to Sync Palettes")
         col.separator()
 
         box2 = box.box()
         col2 = box2.column(align=True)
-        if prism_spectrum_props.sync_help == False:
-            col2.prop(prism_spectrum_props, "sync_help", text="View Information for Syncing Palettes", toggle=True, icon='LAYER_USED')
+        if kaleidoscope_spectrum_props.sync_help == False:
+            col2.prop(kaleidoscope_spectrum_props, "sync_help", text="View Information for Syncing Palettes", toggle=True, icon='LAYER_USED')
         else:
-            col2.prop(prism_spectrum_props, "sync_help", text="Hide Information for Syncing Palettes", toggle=True, icon='LAYER_ACTIVE')
+            col2.prop(kaleidoscope_spectrum_props, "sync_help", text="Hide Information for Syncing Palettes", toggle=True, icon='LAYER_ACTIVE')
             col3 = box2.column(align=True)
             col3.separator()
-            col3.label("Prism add-on has the feature to sync the Saved Palettes of Spectrum Node in a cloud storage.")
+            col3.label("Kaleidoscope add-on has the feature to sync the Saved Palettes of Spectrum Node in a cloud storage.")
             col3.label("This allows you to Use Saved palettes on any system, anywhere.")
             col3.label()
             col3.label("Instructions to setup Syncing of Palettes:")
@@ -197,9 +197,9 @@ class Prism(bpy.types.AddonPreferences):
         row4_2.scale_y = 1.2
         row4_2.operator('wm.url_open', text="Donate", icon='SOLO_ON').url="http://bit.ly/donatetobs"
 
-class PrismImport(bpy.types.Operator, ImportHelper): #Importing Presets
+class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""
-    bl_idname = "prism.install_files"
+    bl_idname = "kaleidoscope.install_files"
     bl_label = "Install Files"
 
     filename_ext = ".zip"
@@ -216,14 +216,14 @@ class PrismImport(bpy.types.Operator, ImportHelper): #Importing Presets
                 zipref.extractall(path) #Extract to the Enrich add-on Folder
                 zipref.close()
                 bpy.conte
-            bpy.context.scene.prism_props_import_files = False
+            bpy.context.scene.kaleidoscope_props_import_files = False
         except:
-            bpy.context.scene.prism_props_import_files = True
+            bpy.context.scene.kaleidoscope_props_import_files = True
         return {'FINISHED'}
 
-class PrismExport(bpy.types.Operator, ExportHelper):
+class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
     """Export the Color Palettes in a .zip format"""
-    bl_idname = 'prism.export_files'
+    bl_idname = 'kaleidoscope.export_files'
     bl_label = 'Export Files'
 
     filename_ext = ".zip"
@@ -269,14 +269,14 @@ def register():
     icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
     icons_dict.load("twitter", os.path.join(icons_dir, "twitter_icon.png"), 'IMAGE')
     icons_dict.load("googleplus", os.path.join(icons_dir, "googleplus_icon.png"), 'IMAGE')
-    bpy.types.Scene.prism_props_import_files = bpy.props.BoolProperty(name="Prism Import", description="Checks if the zip file is properly imported", default=False)
-    nodeitems_utils.register_node_categories("PRISM_NODES", node_categories)
+    bpy.types.Scene.kaleidoscope_props_import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
+    nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
 
 def unregister():
     global icons_dict
     bpy.utils.previews.remove(icons_dict)
-    nodeitems_utils.unregister_node_categories("PRISM_NODES")
+    nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()
-    del bpy.types.Scene.prism_props_import_files
+    del bpy.types.Scene.kaleidoscope_props_import_files
     bpy.utils.unregister_module(__name__)

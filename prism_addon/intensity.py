@@ -58,57 +58,57 @@ class IntensityNode(Node, IntensityTreeNode):
         if bpy.context.space_data.shader_type == 'WORLD':
             for node in bpy.context.scene.world.node_tree.nodes:
                 if node.name.startswith("Intensity"):
-                    node.outputs["Value"].default_value = self.prism_intensity_out_value
+                    node.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
                     #update_caller(self, input_name="Value")
                     self.update()
         elif bpy.context.space_data.shader_type == 'OBJECT':
             for node in bpy.context.object.active_material.node_tree.nodes:
                 if node.name.startswith("Intensity"):
-                    node.outputs["Value"].default_value = self.prism_intensity_out_value
+                    node.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
                     #update_caller(self, input_name="Value")
                     self.update()
         return None
 
     def set_value(self, context):
-        if self.prism_intensity_main_category == '0':
-            self.prism_intensity_out_value = glass_ior[int(self.prism_intensity_glass_category)]
-        elif self.prism_intensity_main_category == '1':
-            self.prism_intensity_out_value = blackbody[int(self.prism_intensity_black_body_category)]
+        if self.kaleidoscope_intensity_main_category == '0':
+            self.kaleidoscope_intensity_out_value = glass_ior[int(self.kaleidoscope_intensity_glass_category)]
+        elif self.kaleidoscope_intensity_main_category == '1':
+            self.kaleidoscope_intensity_out_value = blackbody[int(self.kaleidoscope_intensity_black_body_category)]
         return None
     def set_previous(self, context):
-        if self.prism_intensity_main_category == '0':
-            if int(self.prism_intensity_glass_category) > 0:
-                self.prism_intensity_glass_category = str(int(self.prism_intensity_glass_category)-1)
+        if self.kaleidoscope_intensity_main_category == '0':
+            if int(self.kaleidoscope_intensity_glass_category) > 0:
+                self.kaleidoscope_intensity_glass_category = str(int(self.kaleidoscope_intensity_glass_category)-1)
             else:
-                self.prism_intensity_glass_category = str(len(glass_ior)-1)
-        elif self.prism_intensity_main_category == '1':
-            if int(self.prism_intensity_black_body_category) > 0:
-                self.prism_intensity_black_body_category = str(int(self.prism_intensity_black_body_category)-1)
+                self.kaleidoscope_intensity_glass_category = str(len(glass_ior)-1)
+        elif self.kaleidoscope_intensity_main_category == '1':
+            if int(self.kaleidoscope_intensity_black_body_category) > 0:
+                self.kaleidoscope_intensity_black_body_category = str(int(self.kaleidoscope_intensity_black_body_category)-1)
             else:
-                self.prism_intensity_black_body_category = str(len(blackbody)-1)
+                self.kaleidoscope_intensity_black_body_category = str(len(blackbody)-1)
         return None
     def set_next(self, context):
-        if self.prism_intensity_main_category == '0':
-            if int(self.prism_intensity_glass_category) < 16:
-                self.prism_intensity_glass_category = str(int(self.prism_intensity_glass_category)+1)
+        if self.kaleidoscope_intensity_main_category == '0':
+            if int(self.kaleidoscope_intensity_glass_category) < 16:
+                self.kaleidoscope_intensity_glass_category = str(int(self.kaleidoscope_intensity_glass_category)+1)
             else:
-                self.prism_intensity_glass_category = '0'
-        elif self.prism_intensity_main_category == '1':
-            if int(self.prism_intensity_black_body_category) < 15:
-                self.prism_intensity_black_body_category = str(int(self.prism_intensity_black_body_category)+1)
+                self.kaleidoscope_intensity_glass_category = '0'
+        elif self.kaleidoscope_intensity_main_category == '1':
+            if int(self.kaleidoscope_intensity_black_body_category) < 15:
+                self.kaleidoscope_intensity_black_body_category = str(int(self.kaleidoscope_intensity_black_body_category)+1)
             else:
-                self.prism_intensity_black_body_category = '0'
+                self.kaleidoscope_intensity_black_body_category = '0'
         return None
 
-    prism_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
-    prism_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
-    prism_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
+    kaleidoscope_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
+    kaleidoscope_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
+    kaleidoscope_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
 
-    prism_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
+    kaleidoscope_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
 
-    prism_intensity_main_category = bpy.props.EnumProperty(name="Main Category", description="Select the Type of Values to be used for the node", items=(('0', 'Glass IOR', 'Select the Glass IOR Predefined values'),
+    kaleidoscope_intensity_main_category = bpy.props.EnumProperty(name="Main Category", description="Select the Type of Values to be used for the node", items=(('0', 'Glass IOR', 'Select the Glass IOR Predefined values'),
                                                                                                                                          ('1', 'Blackbody', 'Select the Blackbody Predefined values')), default='0', update=set_value)
-    prism_intensity_glass_category = bpy.props.EnumProperty(name="Glass IOR", description="Select the Predefined Value for the Index of Refraction (IOR)", items=(('0', 'Vacuum', ''),
+    kaleidoscope_intensity_glass_category = bpy.props.EnumProperty(name="Glass IOR", description="Select the Predefined Value for the Index of Refraction (IOR)", items=(('0', 'Vacuum', ''),
                                                                                                                                                 ('1', 'Air', ''),
                                                                                                                                                 ('2', 'Helium', ''),
                                                                                                                                                 ('3', 'Hydrogen', ''),
@@ -125,7 +125,7 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                 ('14', 'Diamond', ''),
                                                                                                                                                 ('15', 'Moissanite', ''),
                                                                                                                                                 ('16', 'Zinc selenide', '')), default='0', update=set_value)
-    prism_intensity_black_body_category = bpy.props.EnumProperty(name="Blackbody", description="Select the Predefined Value for the Blackbody (Color Temperature)", items=(('0', 'Match Flame', ''),
+    kaleidoscope_intensity_black_body_category = bpy.props.EnumProperty(name="Blackbody", description="Select the Predefined Value for the Blackbody (Color Temperature)", items=(('0', 'Match Flame', ''),
                                                                                                                                                           ('1', 'Candle Flame', ''),
                                                                                                                                                           ('2', 'Standard incandescent lamps', ''),
                                                                                                                                                           ('3', 'Soft White incandescent lamps', ''),
@@ -144,7 +144,7 @@ class IntensityNode(Node, IntensityTreeNode):
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
-        self.outputs["Value"].default_value = self.prism_intensity_out_value
+        self.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
         self.width = 187
 
     def update(self):
@@ -189,18 +189,18 @@ class IntensityNode(Node, IntensityTreeNode):
 
 
 def IntensityUI(self, context, layout, current_node):
-        prism_intensity_props = self
+        kaleidoscope_intensity_props = self
         col = layout.column(align=False)
         row = col.row()
         split = row.split(percentage=0.9)
         col1 = split.column(align=True)
-        col1.prop(prism_intensity_props, "prism_intensity_main_category", text="")
+        col1.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_main_category", text="")
         col2 = split.column(align=True)
-        col2.prop(prism_intensity_props, "prism_intensity_info", text="", icon='INFO', toggle=True, emboss=False)
-        if prism_intensity_props.prism_intensity_info == True:
+        col2.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="", icon='INFO', toggle=True, emboss=False)
+        if kaleidoscope_intensity_props.kaleidoscope_intensity_info == True:
             box = col.box()
             colb = box.column(align=True)
-            if prism_intensity_props.prism_intensity_main_category == '0':
+            if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
                 colb.label("Glass IOR")
                 colb.label()
                 colb.label("The IOR (Index of Refraction)")
@@ -217,7 +217,7 @@ def IntensityUI(self, context, layout, current_node):
                 colb.label("caused by the light ray.")
                 colb.label()
 
-            elif prism_intensity_props.prism_intensity_main_category == '1':
+            elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '1':
                 colb.label("Blackbody")
                 colb.label()
                 colb.label("A Blackbody radiator radiates")
@@ -232,25 +232,25 @@ def IntensityUI(self, context, layout, current_node):
                 colb.label("more.")
                 colb.label()
 
-            colb.prop(prism_intensity_props, "prism_intensity_info", text="Close Help", icon='INFO', toggle=True)
+            colb.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="Close Help", icon='INFO', toggle=True)
         col.label()
         row = col.row(align=True)
         split1 = row.split(percentage=0.05)
         col1 = split1.column(align=True)
-        col1.prop(prism_intensity_props, 'prism_intensity_prev_button', text="", icon="TRIA_LEFT", emboss=False, toggle=True)
+        col1.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_prev_button', text="", icon="TRIA_LEFT", emboss=False, toggle=True)
 
         col2 = split1.column(align=True)
         row = col2.row(align=True)
         split2 = row.split(percentage=0.95)
         col3 = split2.column(align=True)
-        if prism_intensity_props.prism_intensity_main_category == '0':
-            col3.prop(prism_intensity_props, "prism_intensity_glass_category", text="")
-        elif prism_intensity_props.prism_intensity_main_category == '1':
-            col3.prop(prism_intensity_props, "prism_intensity_black_body_category", text="")
+        if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
+            col3.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_glass_category", text="")
+        elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '1':
+            col3.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_black_body_category", text="")
         col4 = split2.column(align=True)
-        col4.prop(prism_intensity_props, 'prism_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
+        col4.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
         col.label()
-        col.prop(prism_intensity_props, 'prism_intensity_out_value')
+        col.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_out_value')
         col.label()
         row2 = col.row(align=True)
         row2.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
@@ -284,7 +284,7 @@ def pre_frame_change(scene):
                 if m.node_tree is not None:
                     for n in m.node_tree.nodes:
                         if n.bl_idname == 'intensity.node':
-                            v = n.prism_intensity_out_value
-                            n.prism_intensity_out_value = v
+                            v = n.kaleidoscope_intensity_out_value
+                            n.kaleidoscope_intensity_out_value = v
             except:
                 continue

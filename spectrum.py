@@ -1052,7 +1052,7 @@ def Spectrum_Engine(caller, context):
             #Online
             try:
                 if kaleidoscope_spectrum_props.new_file != 0:
-                    palette_file = str(urllib.request.urlopen("https://raw.githubusercontent.com/blenderskool/kaleidoscope/master/palette.json").read(), 'UTF-8')
+                    palette_file = str(urllib.request.urlopen("https://gist.githubusercontent.com/blenderskool/609fa91ca7954efb913466a68b7e63a7/raw").read(), 'UTF-8')
                     kaleidoscope_spectrum_props.new_file = 0
                     palette = json.loads(palette_file)
                 index = random.randint(0, len(palette)-1)
@@ -1396,10 +1396,6 @@ class DeletePalette(bpy.types.Operator):
         return{'FINISHED'}
 
 def register():
-    try:
-        bpy.utils.register_module(__name__)
-    except:
-        pass
     global icons_dict
     icons_dict = bpy.utils.previews.new()
     icons_dir = os.path.join(os.path.dirname(__file__), "icons")
@@ -1416,7 +1412,6 @@ def unregister():
     del bpy.types.Scene.kaleidoscope_spectrum_props
     del bpy.types.Material.kaleidoscope_spectrum_props
     palette.clear()
-    bpy.utils.unregister_module(__name__)
 
 def pre_frame_change(scene):
     if scene.render.engine == 'CYCLES':

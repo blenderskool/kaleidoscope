@@ -261,10 +261,6 @@ def IntensityUI(self, context, layout, current_node):
 
 
 def register():
-    try:
-        bpy.utils.register_module(__name__)
-    except:
-        pass
     global icons_dict
     icons_dict = bpy.utils.previews.new()
     icons_dir = os.path.join(os.path.dirname(__file__), "icons")
@@ -275,7 +271,6 @@ def register():
 def unregister():
     global icons_dict
     bpy.utils.previews.remove(icons_dict)
-    bpy.utils.unregister_module(__name__)
 
 def pre_frame_change(scene):
     if scene.render.engine == 'CYCLES':

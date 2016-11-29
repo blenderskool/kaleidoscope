@@ -246,6 +246,8 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
             for dirname, subdirs, files in os.walk(path):
                 if '__pycache__' in subdirs:
                     subdirs.remove('__pycache__')
+                if 'kaleidoscope_updater' in subdirs:
+                    subdirs.remove('kaleidoscope_updater')
                 for filename in files: #Do not include the main code files
                     if filename.endswith(".json"):
                         absname = os.path.abspath(os.path.join(dirname, filename))

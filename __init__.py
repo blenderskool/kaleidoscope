@@ -15,8 +15,9 @@ if "bpy" in locals():
     import importlib
     importlib.reload(spectrum)
     importlib.reload(intensity)
+    importlib.reload(addon_updater_ops)
 else:
-    from . import spectrum, intensity
+    from . import spectrum, intensity, addon_updater_ops
 
 import bpy
 import bpy.utils.previews
@@ -196,6 +197,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         row4_2 = col4_2s.row()
         row4_2.scale_y = 1.2
         row4_2.operator('wm.url_open', text="Donate", icon='SOLO_ON').url="http://bit.ly/donatetobs"
+        addon_updater_ops.update_settings_ui(self, context)
 
 class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""
@@ -263,6 +265,7 @@ def register():
     global icons_dict
     spectrum.register()
     intensity.register()
+    addon_updater_ops.register(bl_info)
     icons_dict = bpy.utils.previews.new()
     icons_dir = os.path.join(os.path.dirname(__file__), "icons")
     icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
@@ -278,5 +281,6 @@ def unregister():
     nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()
+    addon_updater_ops.unregister()
     del bpy.types.Scene.kaleidoscope_props_import_files
     bpy.utils.unregister_module(__name__)

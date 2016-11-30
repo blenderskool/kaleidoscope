@@ -625,15 +625,23 @@ def update_settings_ui(self, context):
 		subcol = col.row(align=True)
 		subcol.scale_y = 1
 		split = subcol.split(align=True)
-		split.enabled = False
+		split.enabled = True
 		split.scale_y = button_scale
 		row_i = split.row(align=True)
 		row_i.scale_y = button_scale
+		row_i.enabled=True
 		for i in range(1, separators):
 			row_i.separator()
-		row_i.operator(addon_updater_check_now.bl_idname,
+		subsplit = row_i.split(percentage=0.93, align=True)
+		col_i = subsplit.column(align=True)
+		col_i.scale_y = button_scale
+		col_i.enabled=False
+		col_i.operator(addon_updater_check_now.bl_idname,
 						"Addon is up to date")
-		row_i.operator(addon_updater_check_now.bl_idname,
+		col_i2 = subsplit.column(align=True)
+		col_i2.enabled = True
+		col_i2.scale_y = button_scale
+		col_i2.operator(addon_updater_check_now.bl_idname,
 						text = "", icon="FILE_REFRESH")
 		for i in range(1, separators):
 			row_i.separator()
@@ -647,7 +655,7 @@ def update_settings_ui(self, context):
 					"Install old verison", icon='PREFERENCES')
 		else:
 			col.operator(addon_updater_update_target.bl_idname,
-					"Reinstall / install old verison", icon='PREFERENCES')
+					"Install old verison", icon='PREFERENCES')
 		lastdate = "none found"
 		backuppath = os.path.join(updater.stage_path,"backup")
 		if "backup_date" in updater.json and os.path.isdir(backuppath):
@@ -657,18 +665,19 @@ def update_settings_ui(self, context):
 				lastdate = updater.json["backup_date"]
 		col.operator(addon_updater_restore_backup.bl_idname, text="", icon='LOAD_FACTORY')
 
-	row = box.row()
+
+	col = box.column(align=True)
+	col.label("NOTE: Updating add-on does not remove the Saved Palettes")
 	lastcheck = updater.json["last_check"]
 	if updater.error != None and updater.error_msg != None:
-		row.label(updater.error_msg)
+		col.label(updater.error_msg)
 	elif movemosue == True:
-		row.label("Move mouse if button doesn't update")
+		col.label("Move mouse if button doesn't update")
 	elif lastcheck != "" and lastcheck != None:
 		lastcheck = lastcheck[0: lastcheck.index(".") ]
-		row.label("Last update check: " + lastcheck)
+		col.label("Last update check: " + lastcheck)
 	else:
-		row.label("Last update check: None")
-
+		col.label("Last update check: None")
 
 # a global function for tag skipping
 # a way to filter which tags are displayed,
@@ -750,7 +759,7 @@ def register(bl_info):
 
 	# allow 'master' as an option to update to, skipping any releases.
 	# releases are still accessible from re-install menu
-	updater.include_master = True
+	updater.include_master = False
 
 	# only allow manual install, thus prompting the user to open
 	# the webpage to download but not auto-installing. Useful if

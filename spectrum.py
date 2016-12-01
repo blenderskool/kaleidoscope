@@ -1414,22 +1414,40 @@ def unregister():
     palette.clear()
 
 def pre_frame_change(scene):
-    if scene.render.engine == 'CYCLES':
-        for m in bpy.data.materials:
-            if m.node_tree is not None:
-                for n in m.node_tree.nodes:
-                    if n.bl_idname == 'spectrum_palette.node':
-                        v = n.color1
-                        n.color1 = v
+    v = bpy.context.scene.kaleidoscope_spectrum_props.color1
+    bpy.context.scene.kaleidoscope_spectrum_props.color1 = v
 
-                        v = n.color2
-                        n.color2 = v
+    v = bpy.context.scene.kaleidoscope_spectrum_props.color2
+    bpy.context.scene.kaleidoscope_spectrum_props.color2 = v
 
-                        v = n.color3
-                        n.color3 = v
+    v = bpy.context.scene.kaleidoscope_spectrum_props.color3
+    bpy.context.scene.kaleidoscope_spectrum_props.color3 = v
 
-                        v = n.color4
-                        n.color4 = v
+    v = bpy.context.scene.kaleidoscope_spectrum_props.color4
+    bpy.context.scene.kaleidoscope_spectrum_props.color4 = v
 
-                        v = n.color5
-                        n.color5 = v
+    v = bpy.context.scene.kaleidoscope_spectrum_props.color5
+    bpy.context.scene.kaleidoscope_spectrum_props.color5 = v
+
+    v = bpy.context.scene.kaleidoscope_spectrum_props.hue_slider
+    bpy.context.scene.kaleidoscope_spectrum_props.hue_slider = v
+
+    v = bpy.context.scene.kaleidoscope_spectrum_props.saturation_slider
+    bpy.context.scene.kaleidoscope_spectrum_props.saturation_slider = v
+
+    v = bpy.context.scene.kaleidoscope_spectrum_props.value_slider
+    bpy.context.scene.kaleidoscope_spectrum_props.value_slider = v
+
+    for mat in bpy.data.materials:
+        if mat.node_tree is not None:
+            for node in mat.node_tree.nodes:
+                if node.bl_idname == 'spectrum.node':
+                    v = mat.kaleidoscope_spectrum_props.assign_colorramp
+                    mat.kaleidoscope_spectrum_props.assign_colorramp = v
+
+    for world in bpy.data.worlds:
+        if world.node_tree is not None:
+            for node in world.node_tree.nodes:
+                if node.bl_idname == 'spectrum.node':
+                    v = world.kaleidoscope_spectrum_props.assign_colorramp
+                    world.kaleidoscope_spectrum_props.assign_colorramp = v

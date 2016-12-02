@@ -1403,7 +1403,7 @@ def register():
     icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
     bpy.types.Scene.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumProperties)
     bpy.types.Material.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumMaterialProps)
-    bpy.app.handlers.frame_change_pre.append(pre_frame_change)
+    bpy.app.handlers.frame_change_pre.append(pre_spectrum_frame_change)
 
 def unregister():
     global icons_dict
@@ -1413,30 +1413,30 @@ def unregister():
     del bpy.types.Material.kaleidoscope_spectrum_props
     palette.clear()
 
-def pre_frame_change(scene):
-    v = bpy.context.scene.kaleidoscope_spectrum_props.color1
-    bpy.context.scene.kaleidoscope_spectrum_props.color1 = v
+def pre_spectrum_frame_change(scene):
+    v = scene.kaleidoscope_spectrum_props.color1
+    scene.kaleidoscope_spectrum_props.color1 = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.color2
-    bpy.context.scene.kaleidoscope_spectrum_props.color2 = v
+    v = scene.kaleidoscope_spectrum_props.color2
+    scene.kaleidoscope_spectrum_props.color2 = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.color3
-    bpy.context.scene.kaleidoscope_spectrum_props.color3 = v
+    v = scene.kaleidoscope_spectrum_props.color3
+    scene.kaleidoscope_spectrum_props.color3 = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.color4
-    bpy.context.scene.kaleidoscope_spectrum_props.color4 = v
+    v = scene.kaleidoscope_spectrum_props.color4
+    scene.kaleidoscope_spectrum_props.color4 = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.color5
-    bpy.context.scene.kaleidoscope_spectrum_props.color5 = v
+    v = scene.kaleidoscope_spectrum_props.color5
+    scene.kaleidoscope_spectrum_props.color5 = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.hue_slider
-    bpy.context.scene.kaleidoscope_spectrum_props.hue_slider = v
+    v = scene.kaleidoscope_spectrum_props.hue_slider
+    scene.kaleidoscope_spectrum_props.hue_slider = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.saturation_slider
-    bpy.context.scene.kaleidoscope_spectrum_props.saturation_slider = v
+    v = scene.kaleidoscope_spectrum_props.saturation_slider
+    scene.kaleidoscope_spectrum_props.saturation_slider = v
 
-    v = bpy.context.scene.kaleidoscope_spectrum_props.value_slider
-    bpy.context.scene.kaleidoscope_spectrum_props.value_slider = v
+    v = scene.kaleidoscope_spectrum_props.value_slider
+    scene.kaleidoscope_spectrum_props.value_slider = v
 
     for mat in bpy.data.materials:
         if mat.node_tree is not None:

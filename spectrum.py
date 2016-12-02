@@ -1429,14 +1429,14 @@ def pre_spectrum_frame_change(scene):
     v = scene.kaleidoscope_spectrum_props.color5
     scene.kaleidoscope_spectrum_props.color5 = v
 
-    v = scene.kaleidoscope_spectrum_props.hue_slider
+    """v = scene.kaleidoscope_spectrum_props.hue_slider
     scene.kaleidoscope_spectrum_props.hue_slider = v
 
     v = scene.kaleidoscope_spectrum_props.saturation_slider
     scene.kaleidoscope_spectrum_props.saturation_slider = v
 
     v = scene.kaleidoscope_spectrum_props.value_slider
-    scene.kaleidoscope_spectrum_props.value_slider = v
+    scene.kaleidoscope_spectrum_props.value_slider = v"""
 
     for mat in bpy.data.materials:
         if mat.node_tree is not None:

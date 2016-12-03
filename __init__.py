@@ -20,7 +20,6 @@ else:
     from . import spectrum, intensity, addon_updater_ops
 
 import bpy
-import bpy.utils.previews
 import nodeitems_utils, zipfile, os
 from nodeitems_utils import NodeCategory, NodeItem
 from bpy.types import Node
@@ -180,24 +179,21 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             col3.separator
         col4 = box.column(align=True)
         col4.separator()
-        col4.separator()
-        row4 = col4.row()
-        split = row4.split(percentage=0.8)
-        col4_1s = split.column(align=True)
-        row4 = col4_1s.row()
-        row4.separator()
-        row4.operator('wm.url_open', text="", icon_value=icons_dict["twitter"].icon_id, emboss=False).url="http://www.twitter.com/blenderskool"
-        row4.operator('wm.url_open', text="", icon_value=icons_dict["googleplus"].icon_id, emboss=False).url="https://plus.google.com/+AkashHamirwasia1"
-        row4.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
-        row4.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
-        row4_1 = row4.row(align=True)
-        row4_1.alignment = 'CENTER'
-        row4_1.label("Created by Akash Hamirwasia")
-        col4_2s = split.column(align=True)
-        row4_2 = col4_2s.row()
-        row4_2.scale_y = 1.2
-        row4_2.operator('wm.url_open', text="Donate", icon='SOLO_ON').url="http://bit.ly/donatetobs"
         addon_updater_ops.update_settings_ui(self, context)
+
+        box2 = layout.box()
+        row = box2.row(align=True)
+        split = row.split(percentage=0.8)
+        col1 = split.column(align=True)
+        row1 = col1.row(align=True)
+        row1.separator()
+        row1_1 = row1.row(align=True)
+        row1_1.alignment = 'CENTER'
+        row1_1.label("Created by Akash Hamirwasia")
+        col2 = split.column(align=True)
+        row2 = col2.row()
+        row2.scale_y = 1.2
+        row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://bit.ly/donatetobs"
 
 class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""
@@ -264,22 +260,13 @@ def register():
         bpy.utils.register_module(__name__)
     except:
         pass
-    global icons_dict
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)
-    icons_dict = bpy.utils.previews.new()
-    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-    icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
-    icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
-    icons_dict.load("twitter", os.path.join(icons_dir, "twitter_icon.png"), 'IMAGE')
-    icons_dict.load("googleplus", os.path.join(icons_dir, "googleplus_icon.png"), 'IMAGE')
     bpy.types.Scene.kaleidoscope_props_import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
     nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
 
 def unregister():
-    global icons_dict
-    bpy.utils.previews.remove(icons_dict)
     nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()

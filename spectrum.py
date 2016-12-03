@@ -4,6 +4,7 @@ import json, os
 import urllib.request
 from bpy.types import Node
 from mathutils import Color
+from collections import OrderedDict
 import random
 
 PaletteHistory = []
@@ -23,6 +24,7 @@ class SpectrumTreeNode:
         return b
 
 class SpectrumProperties(bpy.types.PropertyGroup):
+    """Properties of Spectrum which are created for every new scene"""
     def update_color_1(self, context):
         for world in bpy.data.worlds:
             if world.node_tree is not None:
@@ -292,6 +294,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default="", update=set_sync_path)
 
 class SpectrumMaterialProps(bpy.types.PropertyGroup):
+    """Spectrum Properties for Every Material"""
 
     def set_ramp(self, context):
         set_color_ramp(self)
@@ -326,14 +329,14 @@ class SavePalette(bpy.types.Operator):
         name = name.title()
         name = name.replace('_', ' ')
         kaleidoscope_spectrum_props.save_palette_name = name
-        palette_export[kaleidoscope_spectrum_props.save_palette_name] = {
-            "palette_name": kaleidoscope_spectrum_props.save_palette_name,
-            "color1": rgb_to_hex(kaleidoscope_spectrum_props.color1),
-            "color2": rgb_to_hex(kaleidoscope_spectrum_props.color2),
-            "color3": rgb_to_hex(kaleidoscope_spectrum_props.color3),
-            "color4": rgb_to_hex(kaleidoscope_spectrum_props.color4),
-            "color5": rgb_to_hex(kaleidoscope_spectrum_props.color5)
-        }
+        palette_export[kaleidoscope_spectrum_props.save_palette_name] = OrderedDict([
+            ("palette_name", kaleidoscope_spectrum_props.save_palette_name),
+            ("color1", rgb_to_hex(kaleidoscope_spectrum_props.color1)),
+            ("color2", rgb_to_hex(kaleidoscope_spectrum_props.color2)),
+            ("color3", rgb_to_hex(kaleidoscope_spectrum_props.color3)),
+            ("color4", rgb_to_hex(kaleidoscope_spectrum_props.color4)),
+            ("color5", rgb_to_hex(kaleidoscope_spectrum_props.color5))
+        ])
         name = kaleidoscope_spectrum_props.save_palette_name
         name = name.lower()
         kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
@@ -355,6 +358,7 @@ class SavePalette(bpy.types.Operator):
         return bpy.context.window_manager.invoke_props_dialog(self)
 
 def set_color_ramp(self):
+    """Set the Colors from the Palette to a ColorRamp node"""
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     ramp = None
     ramp_world = None
@@ -405,7 +409,7 @@ def set_color_ramp(self):
                     pass
 
 class SpectrumNode(Node, SpectrumTreeNode):
-    '''Spectrum node'''
+    """The Spectrum Node with all the Attributes"""
     bl_idname = 'spectrum_palette.node'
     bl_label = 'Spectrum Palette'
     bl_icon = 'INFO'
@@ -475,6 +479,7 @@ class SpectrumNode(Node, SpectrumTreeNode):
         return "Spectrum Palette"
 
 def SpectrumPaletteUI(self, context, layout):
+    """Spectrum Palette Interface, which can be accessed from any other class"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
     col = layout.column(align=True)
     row = col.row(align=True)
@@ -690,6 +695,7 @@ def update_caller(caller, input_name):
             break
 
 def hex_to_rgb(value):
+    """Convets a Hex code to a Blender RGB Value"""
     gamma = 2.2
     value = value.lstrip('#')
     lv = len(value)
@@ -705,6 +711,7 @@ def hex_to_rgb(value):
     return tuple(fin)
 
 def rgb_to_hex(rgb):
+    """Converts Blender RGB Value to Hex code"""
     gamma = 1/2.2
     fin = list(rgb)
     r = fin[0]*255
@@ -721,6 +728,7 @@ def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % fin
 
 def Spectrum_Engine(caller, context):
+    """Generates the Color Palettes. Use the PaletteGenerate Class for Palettes, as this requires some custom properties"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
     kaleidoscope_spectrum_props.hue_slider = 0.0
     kaleidoscope_spectrum_props.saturation_slider = 0.0
@@ -1154,6 +1162,7 @@ def Spectrum_Engine(caller, context):
             kaleidoscope_spectrum_props.use_internet_libs = False
 
 def set_palettes_list(caller, context):
+    """Saves the Palettes for History Purposes"""
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     #Palette History 1
     PaletteHistory[4].r = PaletteHistory[9].r

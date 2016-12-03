@@ -1,6 +1,5 @@
 # Intensity Node
 import bpy
-import bpy.utils.previews
 import os
 from bpy.types import Node
 
@@ -153,6 +152,20 @@ class IntensityNode(Node, IntensityTreeNode):
             pass
 
         try:
+            for lamps in bpy.data.lamps:
+                try:
+                    for node in lamps.node_tree.nodes:
+                        if node.bl_idname == "intensity.node":
+                            for out in node.outputs:
+                                if out.is_linked:
+                                    for o in out.links:
+                                        if o.is_valid:
+                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+                except:
+                    continue
+        except:
+            pass
+        try:
             for mat in bpy.data.materials:
                 try:
                     for node in mat.node_tree.nodes:
@@ -243,30 +256,32 @@ def IntensityUI(self, context, layout, current_node):
         col.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_out_value')
         col.label()
         row2 = col.row(align=True)
-        row2.operator('wm.url_open', text="", icon_value=icons_dict["blenderskool"].icon_id, emboss=False).url="http://www.blenderskool.cf"
         row2_1 = row2.row()
         row2_1.alignment = 'CENTER'
         row2_1.label("Akash Hamirwasia")
-        row2.operator('wm.url_open', text="", icon_value=icons_dict["youtube"].icon_id, emboss=False).url="http://www.youtube.com/AkashHamirwasia1"
 
 
 def register():
-    global icons_dict
-    icons_dict = bpy.utils.previews.new()
-    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-    icons_dict.load("blenderskool", os.path.join(icons_dir, "blenderskool_logo.png"), 'IMAGE')
-    icons_dict.load("youtube", os.path.join(icons_dir, "youtube_icon.png"), 'IMAGE')
     bpy.app.handlers.frame_change_pre.append(pre_intensity_frame_change)
 
 def unregister():
-    global icons_dict
-    bpy.utils.previews.remove(icons_dict)
+    pass
 
 def pre_intensity_frame_change(scene):
     for m in bpy.data.materials:
         try:
             if m.node_tree is not None:
                 for n in m.node_tree.nodes:
+                    if n.bl_idname == 'intensity.node':
+                        v = n.kaleidoscope_intensity_out_value
+                        n.kaleidoscope_intensity_out_value = v
+        except:
+            continue
+
+    for lamp in bpy.data.lamps:
+        try:
+            if lamp.node_tree is not None:
+                for n in lamp.node_tree.nodes:
                     if n.bl_idname == 'intensity.node':
                         v = n.kaleidoscope_intensity_out_value
                         n.kaleidoscope_intensity_out_value = v

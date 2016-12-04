@@ -135,7 +135,7 @@ class IntensityNode(Node, IntensityTreeNode):
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
         self.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
-        self.width = 187
+        self.width = 195.3
 
     def update(self):
         out = ""
@@ -256,9 +256,11 @@ def IntensityUI(self, context, layout, current_node):
         col.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_out_value')
         col.label()
         row2 = col.row(align=True)
-        row2_1 = row2.row()
+        row2_1 = row2.row(align=True)
         row2_1.alignment = 'CENTER'
         row2_1.label("Akash Hamirwasia")
+        row2_1.scale_y=1.2
+        row2_1.operator('wm.url_open', text="Support", icon='SOLO_ON').url='http://bit.ly/donatetobs'
 
 
 def register():

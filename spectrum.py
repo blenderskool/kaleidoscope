@@ -200,7 +200,6 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             i=i+1
 
         if check == True:
-            i=0
             for sub in os.listdir(val):
                 if os.path.isfile(os.path.join(val, str(sub))):
                     name = str(sub)
@@ -341,13 +340,13 @@ class SavePalette(bpy.types.Operator):
         name = name.lower()
         kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
         path = os.path.join(os.path.dirname(__file__), kaleidoscope_spectrum_props.save_palette_name+".json")
-        s = json.dumps(palette_export)
+        s = json.dumps(palette_export, sort_keys=True)
         with open(path, "w") as f:
             f.write(s)
 
         if kaleidoscope_spectrum_props.sync_path is not None:
             path = os.path.join(kaleidoscope_spectrum_props.sync_path, kaleidoscope_spectrum_props.save_palette_name+".json")
-            s = json.dumps(palette_export)
+            s = json.dumps(palette_export, sort_keys=True)
             with open(path, 'w') as f:
                 f.write(s)
         return{'FINISHED'}
@@ -656,6 +655,8 @@ def SpectrumPaletteUI(self, context, layout):
     row7_1 = row7.row(align=True)
     row7_1.alignment = 'CENTER'
     row7_1.label("Akash Hamirwasia")
+    row7_1.scale_y = 1.2
+    row7_1.operator('wm.url_open', text="Support", icon='SOLO_ON').url='http://bit.ly/donatetobs'
 
 def update_caller(caller, input_name):
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props

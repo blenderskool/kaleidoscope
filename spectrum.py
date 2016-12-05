@@ -728,7 +728,7 @@ def rgb_to_hex(rgb):
     fin = tuple(fin)
     return '#%02x%02x%02x' % fin
 
-def Spectrum_Engine(caller, context):
+def Spectrum_Engine():
     """Generates the Color Palettes. Use the PaletteGenerate Class for Palettes, as this requires some custom properties"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
     kaleidoscope_spectrum_props.hue_slider = 0.0
@@ -737,8 +737,9 @@ def Spectrum_Engine(caller, context):
 
     c = Color()
     c.hsv = 1.0, 0.0, 1.0
-    index = [1, 2, 3, 4, 5]
+    index = [0, 1, 2, 3, 4]
     random.shuffle(index)
+    color_palette = ["", "", "", "", ""]
     c.hsv = random.random(), random.random(), random.random()
     if random.randint(0, 3) /2 == 0:
         c.h = 0.0
@@ -782,33 +783,33 @@ def Spectrum_Engine(caller, context):
         c1.hsv = Hue, Saturation_more, Value_more
 
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c1.r, c1.g, c1.b, 1.0")
+            color_palette[index[0]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
-            kaleidoscope_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
+            color_palette[0] = rgb_to_hex((c1.r, c1.g, c1.b))
 
         c1.hsv = Hue, Saturation_more+0.1, Value_more
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c1.r, c1.g, c1.b, 1.0")
+            color_palette[index[1]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
-            kaleidoscope_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
+            color_palette[1] = rgb_to_hex((c1.r, c1.g, c1.b))
 
         c1.hsv = Hue, c.s, c.v
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c1.r, c1.g, c1.b, 1.0")
+            color_palette[index[2]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
-            kaleidoscope_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
+            color_palette[2] = rgb_to_hex((c1.r, c1.g, c1.b))
 
         c1.hsv = Hue, Saturation_more+0.1, Value_less-0.1
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c1.r, c1.g, c1.b, 1.0")
+            color_palette[index[3]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
-            kaleidoscope_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
+            color_palette[3] = rgb_to_hex((c1.r, c1.g, c1.b))
 
         c1.hsv = Hue, Saturation_less, Value_less-0.1
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c1.r, c1.g, c1.b, 1.0")
+            color_palette[index[4]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
-            kaleidoscope_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
+            color_palette[4] = rgb_to_hex((c1.r, c1.g, c1.b))
         kaleidoscope_spectrum_props.use_internet_libs == False
 
     elif kaleidoscope_spectrum_props.gen_type == "1" or kaleidoscope_spectrum_props.random_int == 1:
@@ -835,20 +836,20 @@ def Spectrum_Engine(caller, context):
         c2 = Color()
         c2.hsv = Hue1, Saturation-0.2, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[0]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
+            color_palette[2] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         Hue1_2 = random.uniform(c.h-0.07, c.h-0.2)
         if Hue1_2 == Hue1:
             Hue1_2 = Hue1_2-0.1
         c2.hsv = Hue, Saturation+0.2, Value1
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
-            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[1]] = rgb_to_hex((c2.r, c2.g, c2.b))
+            color_palette[index[2]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
-            kaleidoscope_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
+            color_palette[1] = rgb_to_hex((c2.r, c2.g, c2.b))
+            color_palette[0] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         Hue_1 = random.uniform(c.h, c.h-0.3)
         if Hue_1==0:
@@ -860,15 +861,15 @@ def Spectrum_Engine(caller, context):
             Hue1_2 = 1-abs(Hue1_2)
         c2.hsv = Hue1_2, Saturation, Value1
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[3]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
+            color_palette[3] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue_1, Saturation, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[4]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color5 = c2.r, c2.g, c2.b, 1.0
+            color_palette[4] = rgb_to_hex((c2.r, c2.g, c2.b))
         kaleidoscope_spectrum_props.use_internet_libs = False
 
     elif kaleidoscope_spectrum_props.gen_type == "2" or kaleidoscope_spectrum_props.random_int == 2:
@@ -905,33 +906,33 @@ def Spectrum_Engine(caller, context):
         c2 = Color()
         c2.hsv = Hue, Saturation_more, Value_less
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[0]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color1 = c2.r, c2.g, c2.b, 1.0
+            color_palette[0] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue, Saturation_less, Value_more
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[1]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color2 = c2.r, c2.g, c2.b, 1.0
+            color_palette[1] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue, Saturation, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[2]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color3 = c2.r, c2.g, c2.b, 1.0
+            color_palette[2] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue1, Saturation_more, Value_less
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[3]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color4 = c2.r, c2.g, c2.b, 1.0
+            color_palette[3] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue1, Saturation, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[4]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+            color_palette[4] = rgb_to_hex((c2.r, c2.g, c2.b))
         kaleidoscope_spectrum_props.use_internet_libs = False
 
     elif kaleidoscope_spectrum_props.gen_type == "3" or kaleidoscope_spectrum_props.random_int == 3:
@@ -976,33 +977,33 @@ def Spectrum_Engine(caller, context):
         c2 = Color()
         c2.hsv = Hue, Saturation_more, Value_less
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[0]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+            color_palette[0] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue, Saturation, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[1]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+            color_palette[1] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue3, Saturation_lesser, Value
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[2]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+            color_palette[2] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue2, Saturation_less-0.07, Value_less+0.1
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[3]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+            color_palette[3] = rgb_to_hex((c2.r, c2.g, c2.b))
 
         c2.hsv = Hue2, Saturation_less+0.07, Value_less-0.2
         if kaleidoscope_spectrum_props.use_organize == False:
-            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+            color_palette[index[4]] = rgb_to_hex((c2.r, c2.g, c2.b))
         else:
-            kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+            color_palette[4] = rgb_to_hex((c2.r, c2.g, c2.b))
         kaleidoscope_spectrum_props.use_internet_libs = False
 
     elif kaleidoscope_spectrum_props.gen_type == "4" or kaleidoscope_spectrum_props.random_int == 4:
@@ -1038,33 +1039,33 @@ def Spectrum_Engine(caller, context):
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[0]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+                color_palette[3] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.5)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[1]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+                color_palette[4] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[2]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+                color_palette[2] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = Hue, Saturation, Value1
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[3]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+                color_palette[1] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = Hue1, Saturation, Value
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[4]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+                color_palette[0] = rgb_to_hex((c2.r, c2.g, c2.b))
             kaleidoscope_spectrum_props.use_internet_libs = False
         elif kaleidoscope_spectrum_props.custom_gen_type=="1" or kaleidoscope_spectrum_props.random_custom_int == 1:
             #Gradient
@@ -1074,19 +1075,19 @@ def Spectrum_Engine(caller, context):
 
             c1 = Color()
             c1.hsv = Hue, 0.2, 0.9
-            kaleidoscope_spectrum_props.color1 = c1.r, c1.g, c1.b, 1.0
+            color_palette[0] = rgb_to_hex((c1.r, c1.g, c1.b))
 
             c1.hsv = Hue, 0.3, 0.9-0.1
-            kaleidoscope_spectrum_props.color2 = c1.r, c1.g, c1.b, 1.0
+            color_palette[1] = rgb_to_hex((c1.r, c1.g, c1.b))
 
             c1.hsv = Hue, Saturation, Value
-            kaleidoscope_spectrum_props.color3 = c1.r, c1.g, c1.b, 1.0
+            color_palette[2] = rgb_to_hex((c1.r, c1.g, c1.b))
 
             c1.hsv = Hue, 0.9-0.1, 0.1+0.1
-            kaleidoscope_spectrum_props.color4 = c1.r, c1.g, c1.b, 1.0
+            color_palette[3] = rgb_to_hex((c1.r, c1.g, c1.b))
 
             c1.hsv = Hue, 0.9, 0.1
-            kaleidoscope_spectrum_props.color5 = c1.r, c1.g, c1.b, 1.0
+            color_palette[4] = rgb_to_hex((c1.r, c1.g, c1.b))
             kaleidoscope_spectrum_props.use_internet_libs = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "2" or kaleidoscope_spectrum_props.random_custom_int == 2:
             #Popout
@@ -1098,33 +1099,33 @@ def Spectrum_Engine(caller, context):
             c2 = Color()
             c2.hsv = 0.0, 0.0, random.uniform(0.3, 0.7)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[0]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color4= c2.r, c2.g, c2.b, 1.0
+                color_palette[3] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = Hue, Saturation, Value
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[1]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color1= c2.r, c2.g, c2.b, 1.0
+                color_palette[0] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = 0.0, 0.0, random.uniform(0, 0.2)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[2]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color5= c2.r, c2.g, c2.b, 1.0
+                color_palette[4] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = Hue, Saturation-0.1, Value
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[3]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color2= c2.r, c2.g, c2.b, 1.0
+                color_palette[1] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             c2.hsv = 0.0, 0.0, random.uniform(0.7, 1)
             if kaleidoscope_spectrum_props.use_organize == False:
-                exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = c2.r, c2.g, c2.b, 1.0")
+                color_palette[index[4]] = rgb_to_hex((c2.r, c2.g, c2.b))
             else:
-                kaleidoscope_spectrum_props.color3= c2.r, c2.g, c2.b, 1.0
+                color_palette[2] = rgb_to_hex((c2.r, c2.g, c2.b))
 
             kaleidoscope_spectrum_props.use_internet_libs = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "4" or kaleidoscope_spectrum_props.random_custom_int == 3:
@@ -1145,22 +1146,23 @@ def Spectrum_Engine(caller, context):
                 kaleidoscope_spectrum_props.online_palette_index = index
                 online_check = True
 
-                for i in range(1, 6):
-                    exec("kaleidoscope_spectrum_props.color"+str(i)+" = hex_to_rgb(palette[index]['color"+str(i)+"']['hex'])")
+                for i in range(0, 5):
+                    color_palette[i] = palette[index]["color"+str(i+1)]['hex']
                 kaleidoscope_spectrum_props.use_internet_libs = True
             except:
                 online_check = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
             if kaleidoscope_spectrum_props.use_custom == True:
-                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = kaleidoscope_spectrum_props.hue[0], kaleidoscope_spectrum_props.hue[1], kaleidoscope_spectrum_props.hue[2], 1.0")
+                color_palette[index[0]] = rgb_to_hex(kaleidoscope_spectrum_props.hue[0], kaleidoscope_spectrum_props.hue[1], kaleidoscope_spectrum_props.hue[2])
             else:
-                exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
-            exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = hex_to_rgb(''.join([random.choice('0123456789ABCDEF') for x in range(6)]))")
+                color_palette[index[0]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
+            color_palette[index[1]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
+            color_palette[index[2]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
+            color_palette[index[3]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
+            color_palette[index[4]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
             kaleidoscope_spectrum_props.use_internet_libs = False
+    return color_palette
 
 def set_palettes_list(caller, context):
     """Saves the Palettes for History Purposes"""
@@ -1241,7 +1243,12 @@ class PaletteGenerate(bpy.types.Operator):
     def execute(self, context):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         if kaleidoscope_spectrum_props.custom_gen_type != "3":
-            Spectrum_Engine(self, context)
+            color_palette = Spectrum_Engine()
+            kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
+            kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])
+            kaleidoscope_spectrum_props.color3 = hex_to_rgb(color_palette[2])
+            kaleidoscope_spectrum_props.color4 = hex_to_rgb(color_palette[3])
+            kaleidoscope_spectrum_props.color5 = hex_to_rgb(color_palette[4])
         else:
             num = random.randint(0, 2)
             if num % 2 == 0:
@@ -1249,7 +1256,12 @@ class PaletteGenerate(bpy.types.Operator):
             else:
                 kaleidoscope_spectrum_props.random_int = random.randint(0, 4)
             kaleidoscope_spectrum_props.random_custom_int = random.randint(0, 4)
-            Spectrum_Engine(self, context)
+            color_palette = Spectrum_Engine()
+            kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
+            kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])
+            kaleidoscope_spectrum_props.color3 = hex_to_rgb(color_palette[2])
+            kaleidoscope_spectrum_props.color4 = hex_to_rgb(color_palette[3])
+            kaleidoscope_spectrum_props.color5 = hex_to_rgb(color_palette[4])
         set_palettes_list(self, context)
         for mat in bpy.data.materials:
             if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:

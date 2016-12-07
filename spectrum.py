@@ -244,17 +244,22 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         f.write(kaleidoscope_spectrum_props.sync_path)
         f.close()
         return None
+    def set_base_color(self, context):
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        if kaleidoscope_spectrum_props.use_realtime_base == True:
+            bpy.ops.spectrum_palette.palette_gen('INVOKE_DEFAULT')
+        return None
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=-0.5, max=0.5, default=0, update=set_global_settings)
-    color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_1)
-    color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_2)
-    color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_3)
-    color4 = bpy.props.FloatVectorProperty(name="Color4", description="Set Color 4 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_4)
-    color5 = bpy.props.FloatVectorProperty(name="Color5", description="Set Color 5 for the Palette", subtype="COLOR", size=4, max=1.0, min=0.0, update=update_color_5)
+    color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.009, 0.421, 0.554,1.0), size=4, max=1.0, min=0.0, update=update_color_1)
+    color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", default=(0.267, 0.639, 0.344,1.0), size=4, max=1.0, min=0.0, update=update_color_2)
+    color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", default=(0.612, 0.812, 0.194,1.0), size=4, max=1.0, min=0.0, update=update_color_3)
+    color4 = bpy.props.FloatVectorProperty(name="Color4", description="Set Color 4 for the Palette", subtype="COLOR", default=(0.974, 0.465, 0.08,1.0), size=4, max=1.0, min=0.0, update=update_color_4)
+    color5 = bpy.props.FloatVectorProperty(name="Color5", description="Set Color 5 for the Palette", subtype="COLOR", default=(1.0, 0.08, 0.087,1.0), size=4, max=1.0, min=0.0, update=update_color_5)
 
-    hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0))
+    hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0), update=set_base_color)
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
     custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from Internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not following any rule!')), update=set_type, default="0")
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
@@ -263,6 +268,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
     use_global = bpy.props.BoolProperty(name="Use Global Controls", description="Use Global Settings to control the overall Color of the Palette", default=False)
     use_internet_libs = bpy.props.BoolProperty(name="Internet Library Checker", description="Checks if the palette generated is from Internet library", default=False)
     use_organize = bpy.props.BoolProperty(name="Organize the Color Palette", description="Organize the Color palette generated", default=False)
+    use_realtime_base = bpy.props.BoolProperty(name="Real Time Base Color", description="Use Real time Update of the Base Color in the Palette", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
     assign_colorramp_world = bpy.props.BoolProperty(name="Assign ColorRamp World", description="Assign the Colors from Spectrum to ColorRamp in the World Material", default=False, update=set_ramp)
     sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
@@ -592,6 +598,7 @@ def SpectrumPaletteUI(self, context, layout):
             row = col1.row(align=True)
             row.label("Base Color:")
             row.prop(kaleidoscope_spectrum_props, "hue", text="")
+            row.prop(kaleidoscope_spectrum_props, "use_realtime_base", text="", icon='RESTRICT_VIEW_OFF')
 
     col2 = layout.column(align=True)
     row = col2.row(align=True)
@@ -1155,7 +1162,7 @@ def Spectrum_Engine():
         elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
             if kaleidoscope_spectrum_props.use_custom == True:
-                color_palette[index[0]] = rgb_to_hex(kaleidoscope_spectrum_props.hue[0], kaleidoscope_spectrum_props.hue[1], kaleidoscope_spectrum_props.hue[2])
+                color_palette[index[0]] = rgb_to_hex((kaleidoscope_spectrum_props.hue[0], kaleidoscope_spectrum_props.hue[1], kaleidoscope_spectrum_props.hue[2]))
             else:
                 color_palette[index[0]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
             color_palette[index[1]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))

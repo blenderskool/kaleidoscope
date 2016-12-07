@@ -695,7 +695,7 @@ def update_caller(caller, input_name):
             set_color_ramp(caller)
             break
 
-def hex_to_rgb(value):
+def hex_to_rgb(value, alpha=True):
     """Convets a Hex code to a Blender RGB Value"""
     gamma = 2.2
     value = value.lstrip('#')
@@ -708,7 +708,8 @@ def hex_to_rgb(value):
     fin.append(r)
     fin.append(g)
     fin.append(b)
-    fin.append(1.0)
+    if alpha == True:
+        fin.append(1.0)
     return tuple(fin)
 
 def rgb_to_hex(rgb):

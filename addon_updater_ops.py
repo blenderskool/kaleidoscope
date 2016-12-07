@@ -534,14 +534,13 @@ def update_notice_box_ui(self, context):
 # create a function that can be run inside user preferences panel for prefs UI
 # place inside UI draw using: addon_updater_ops.updaterSettingsUI(self, context)
 # or by: addon_updater_ops.updaterSettingsUI(context)
-def update_settings_ui(self, context):
+def update_settings_ui(self, context, box2):
 	settings = context.user_preferences.addons[__package__].preferences
 
 	layout = self.layout
-	box = layout.box()
+	box = box2
 
 	# auto-update settings
-	box.label("Updater Settings")
 	row = box.row()
 
 	# special case to tell user to restart blender, if set that way
@@ -678,6 +677,7 @@ def update_settings_ui(self, context):
 		col.label("Last update check: " + lastcheck)
 	else:
 		col.label("Last update check: None")
+	col.separator()
 
 # a global function for tag skipping
 # a way to filter which tags are displayed,

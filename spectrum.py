@@ -206,18 +206,20 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                     global_palette.append(name)
 
         i=0
-        for sub in os.listdir(os.path.dirname(__file__)):
-            if os.path.isfile(os.path.join(os.path.dirname(__file__), str(sub))):
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
+            os.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
+        for sub in os.listdir(os.path.join(os.path.dirname(__file__), "palettes")):
+            if os.path.isfile(os.path.join(os.path.dirname(__file__), "palettes", str(sub))):
                 name = str(sub)
                 if name.endswith('.json'):
                     name = name[:-5]
                     name = name.title()
                     name = name.replace('_', ' ')
                     if name in global_palette:
-                        saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from Synced Library", "URL", i))
+                        saved_palettes_list.append((name, name, "Choose the Saved Palette from Library", "URL", i))
                         synced_palette.append(name)
                     else:
-                        saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from Local Library", "FILE", i))
+                        saved_palettes_list.append((name, name, "Choose the Saved Palette from Local Library", "FILE", i))
                         local_palette.append(name)
             i=i+1
 
@@ -230,7 +232,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         name = name.title()
                         name = name.replace('_', ' ')
                         if name not in synced_palette and name not in local_palette:
-                            saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from the Synced Library", "WORLD", i))
+                            saved_palettes_list.append((name, name, "Choose the Saved Palette from the Synced Library", "WORLD", i))
                 i=i+1
 
         return saved_palettes_list
@@ -241,7 +243,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         name = name.replace(' ', '_')
         name = name+".json"
         try:
-            path = os.path.join(os.path.dirname(__file__), name)
+            path = os.path.join(os.path.dirname(__file__), "palettes", name)
             palette_file = open(path, 'r')
             self.palette = json.load(palette_file)
         except:
@@ -367,7 +369,9 @@ class SavePalette(bpy.types.Operator):
         name = kaleidoscope_spectrum_props.save_palette_name
         name = name.lower()
         kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
-        path = os.path.join(os.path.dirname(__file__), kaleidoscope_spectrum_props.save_palette_name+".json")
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
+            os.path.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
+        path = os.path.join(os.path.dirname(__file__), "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
         s = json.dumps(palette_export, sort_keys=True)
         with open(path, "w") as f:
             f.write(s)
@@ -1537,7 +1541,7 @@ class DeletePalette(bpy.types.Operator):
         name = kaleidoscope_spectrum_props.saved_palettes
         name = name.lower()
         name = name.replace(' ', '_')
-        path = os.path.join(os.path.dirname(__file__), name+".json")
+        path = os.path.join(os.path.dirname(__file__), "palettes", name+".json")
         try:
             os.remove(path)
         except:

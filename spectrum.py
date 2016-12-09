@@ -15,6 +15,28 @@ online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
 
+for i in range(0, 15):
+    if i % 5 == 0:
+        PaletteHistory[i].r = 0.009
+        PaletteHistory[i].g = 0.421
+        PaletteHistory[i].b = 0.554
+    elif i % 5 == 1:
+        PaletteHistory[i].r = 0.267
+        PaletteHistory[i].g = 0.639
+        PaletteHistory[i].b = 0.344
+    elif i % 5 == 2:
+        PaletteHistory[i].r = 0.612
+        PaletteHistory[i].g = 0.812
+        PaletteHistory[i].b = 0.194
+    elif i % 5 == 3:
+        PaletteHistory[i].r = 0.974
+        PaletteHistory[i].g = 0.465
+        PaletteHistory[i].b = 0.08
+    elif i % 5 == 4:
+        PaletteHistory[i].r = 1.0
+        PaletteHistory[i].g = 0.08
+        PaletteHistory[i].b = 0.087
+
 class SpectrumTreeNode:
     @classmethod
     def poll(cls, ntree):
@@ -192,10 +214,10 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                     name = name.title()
                     name = name.replace('_', ' ')
                     if name in global_palette:
-                        saved_palettes_list.append((name, name, "", "URL", i))
+                        saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from Synced Library", "URL", i))
                         synced_palette.append(name)
                     else:
-                        saved_palettes_list.append((name, name, "", "FILE", i))
+                        saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from Local Library", "FILE", i))
                         local_palette.append(name)
             i=i+1
 
@@ -208,7 +230,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                         name = name.title()
                         name = name.replace('_', ' ')
                         if name not in synced_palette and name not in local_palette:
-                            saved_palettes_list.append((name, name, "", "WORLD", i))
+                            saved_palettes_list.append((name, name, "Choose the '"+name+"' Palette from the Synced Library", "WORLD", i))
                 i=i+1
 
         return saved_palettes_list
@@ -632,7 +654,8 @@ def SpectrumPaletteUI(self, context, layout):
     else:
         row4.separator()
         row4.separator()
-    row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="ARROW_LEFTRIGHT")
+    row4.operator(PaletteInvert.bl_idname, text="Invert", icon="ARROW_LEFTRIGHT")
+    row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="LOOP_BACK")
     if kaleidoscope_spectrum_props.history_count != 0:
         row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT")
     else:
@@ -1446,31 +1469,62 @@ class PaletteShuffle(bpy.types.Operator):
         exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = col4.r, col4.g, col4.b, 1.0")
         exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = col5.r, col5.g, col5.b, 1.0")
 
-        kaleidoscope_spectrum_props.history_count = 0.0
+        current_history()
+        return{'FINISHED'}
 
-        PaletteHistory[14].r = kaleidoscope_spectrum_props.color5[0]
-        PaletteHistory[14].g = kaleidoscope_spectrum_props.color5[1]
-        PaletteHistory[14].b = kaleidoscope_spectrum_props.color5[2]
+def current_history():
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
 
-        PaletteHistory[13].r = kaleidoscope_spectrum_props.color4[0]
-        PaletteHistory[13].g = kaleidoscope_spectrum_props.color4[1]
-        PaletteHistory[13].b = kaleidoscope_spectrum_props.color4[2]
+    kaleidoscope_spectrum_props.history_count = 0.0
 
-        PaletteHistory[12].r = kaleidoscope_spectrum_props.color3[0]
-        PaletteHistory[12].g = kaleidoscope_spectrum_props.color3[1]
-        PaletteHistory[12].b = kaleidoscope_spectrum_props.color3[2]
+    PaletteHistory[14].r = kaleidoscope_spectrum_props.color5[0]
+    PaletteHistory[14].g = kaleidoscope_spectrum_props.color5[1]
+    PaletteHistory[14].b = kaleidoscope_spectrum_props.color5[2]
 
-        PaletteHistory[11].r = kaleidoscope_spectrum_props.color2[0]
-        PaletteHistory[11].g = kaleidoscope_spectrum_props.color2[1]
-        PaletteHistory[11].b = kaleidoscope_spectrum_props.color2[2]
+    PaletteHistory[13].r = kaleidoscope_spectrum_props.color4[0]
+    PaletteHistory[13].g = kaleidoscope_spectrum_props.color4[1]
+    PaletteHistory[13].b = kaleidoscope_spectrum_props.color4[2]
 
-        PaletteHistory[10].r = kaleidoscope_spectrum_props.color1[0]
-        PaletteHistory[10].g = kaleidoscope_spectrum_props.color1[1]
-        PaletteHistory[10].b = kaleidoscope_spectrum_props.color1[2]
+    PaletteHistory[12].r = kaleidoscope_spectrum_props.color3[0]
+    PaletteHistory[12].g = kaleidoscope_spectrum_props.color3[1]
+    PaletteHistory[12].b = kaleidoscope_spectrum_props.color3[2]
 
-        kaleidoscope_spectrum_props.hue_slider = 0.0
-        kaleidoscope_spectrum_props.saturation_slider = 0.0
-        kaleidoscope_spectrum_props.value_slider = 0.0
+    PaletteHistory[11].r = kaleidoscope_spectrum_props.color2[0]
+    PaletteHistory[11].g = kaleidoscope_spectrum_props.color2[1]
+    PaletteHistory[11].b = kaleidoscope_spectrum_props.color2[2]
+
+    PaletteHistory[10].r = kaleidoscope_spectrum_props.color1[0]
+    PaletteHistory[10].g = kaleidoscope_spectrum_props.color1[1]
+    PaletteHistory[10].b = kaleidoscope_spectrum_props.color1[2]
+
+    kaleidoscope_spectrum_props.hue_slider = 0.0
+    kaleidoscope_spectrum_props.saturation_slider = 0.0
+    kaleidoscope_spectrum_props.value_slider = 0.0
+
+class PaletteInvert(bpy.types.Operator):
+    """Invert the order of colors in the Palette"""
+    bl_idname = "spectrum_palette.palette_invert"
+    bl_label = "Invert Palette"
+
+    def execute(self, context):
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        color1 = Color()
+        color2 = Color()
+        color3 = Color()
+        color4 = Color()
+        color5 = Color()
+
+        for i in range(1, 6):
+            exec("color"+str(i)+".r = kaleidoscope_spectrum_props.color"+str(i)+"[0]")
+            exec("color"+str(i)+".g = kaleidoscope_spectrum_props.color"+str(i)+"[1]")
+            exec("color"+str(i)+".b = kaleidoscope_spectrum_props.color"+str(i)+"[2]")
+
+        for i in range(1, 6):
+            exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[0] = color"+str(i)+".r")
+            exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[1] = color"+str(i)+".g")
+            exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[2] = color"+str(i)+".b")
+
+        current_history()
         return{'FINISHED'}
 
 class DeletePalette(bpy.types.Operator):

@@ -109,7 +109,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
     bl_idname = __name__
 
     def draw(self, context):
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_props=bpy.context.scene.kaleidoscope_props
         layout = self.layout
         box = layout.box()
         col = box.column()
@@ -133,18 +133,29 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         row.label("")
         row.operator(KaleidoscopeExport.bl_idname, text='Export Files', icon='OOPS') #Install Presets button
         row.label("")
-        if bpy.context.scene.kaleidoscope_props_import_files == True:
+        if bpy.context.scene.kaleidoscope_props.import_files == True:
             col.label("There was a problem in importing the files.", icon='ERROR')
         col.label()
-        col.prop(kaleidoscope_spectrum_props, "sync_path", text="Path to Sync Palettes")
+
+        row = col.row(align=True)
+        for i in range(0, 5):
+            row.separator()
+        split = row.split(percentage=0.31, align=True)
+        col = split.column(align=True)
+        col.label("Path to Sync Palettes:")
+        col = split.column(align=True)
+        col.prop(bpy.context.scene.kaleidoscope_props, "sync_path", text="")
+        for i in range(0, 5):
+            row.separator()
         col.separator()
 
         box2 = box.box()
         col2 = box2.column(align=True)
-        if kaleidoscope_spectrum_props.sync_help == False:
-            col2.prop(kaleidoscope_spectrum_props, "sync_help", text="View Information for Syncing Palettes", toggle=True, icon='LAYER_USED')
+        row = col2.row(align=True)
+        if kaleidoscope_props.sync_help == False:
+            row.prop(kaleidoscope_props, "sync_help", text="View Information for Syncing Palettes", toggle=True, icon='LAYER_USED')
         else:
-            col2.prop(kaleidoscope_spectrum_props, "sync_help", text="Hide Information for Syncing Palettes", toggle=True, icon='LAYER_ACTIVE')
+            row.prop(kaleidoscope_props, "sync_help", text="Hide Information for Syncing Palettes", toggle=True, icon='LAYER_ACTIVE')
             col3 = box2.column(align=True)
             col3.separator()
             col3.label("Kaleidoscope add-on has the feature to sync the Saved Palettes of Spectrum Node in a cloud storage.")
@@ -179,10 +190,9 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             col3.separator
         col4 = box.column(align=True)
         col4.separator()
-        addon_updater_ops.update_settings_ui(self, context)
+        addon_updater_ops.update_settings_ui(self, context, box)
 
-        box2 = layout.box()
-        row = box2.row(align=True)
+        row = box.row(align=True)
         split = row.split(percentage=0.8)
         col1 = split.column(align=True)
         row1 = col1.row(align=True)
@@ -200,10 +210,10 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     bl_idname = "kaleidoscope.install_files"
     bl_label = "Install Files"
 
-    filename_ext = ".zip"
+    filename_ext = ".kal"
 
     filter_glob = bpy.props.StringProperty(
-            default="*.zip",
+            default="*.kal",
             options={'HIDDEN'},
             )
     def execute(self, context):
@@ -213,10 +223,9 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
             if (path != ""):
                 zipref.extractall(path) #Extract to the Enrich add-on Folder
                 zipref.close()
-                bpy.conte
-            bpy.context.scene.kaleidoscope_props_import_files = False
+            bpy.context.scene.kaleidoscope_props.import_files = False
         except:
-            bpy.context.scene.kaleidoscope_props_import_files = True
+            bpy.context.scene.kaleidoscope_props.import_files = True
         return {'FINISHED'}
 
 class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
@@ -255,6 +264,32 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, "There was an error, please check the file path!")
         return{'FINISHED'}
 
+class KaleidoscopeProps(bpy.types.PropertyGroup):
+    def set_sync_path(self, context):
+        path = os.path.join(os.path.dirname(__file__), "sync_directory.txt")
+        f = open(path, 'w')
+        f.write(bpy.context.scene.kaleidoscope_props.sync_path)
+        f.close()
+        return None
+
+    import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
+    sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
+
+    check = False
+    val = None
+    try:
+        f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
+        line = f.readlines()
+        val = line[0]
+        f.close()
+        check = True
+    except:
+        check = False
+    if check == True:
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default=val, update=set_sync_path)
+    else:
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default="", update=set_sync_path)
+
 def register():
     try:
         bpy.utils.register_module(__name__)
@@ -263,13 +298,14 @@ def register():
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)
-    bpy.types.Scene.kaleidoscope_props_import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
+    bpy.types.Scene.kaleidoscope_props = bpy.props.PointerProperty(type=KaleidoscopeProps)
     nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
+
 
 def unregister():
     nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()
     addon_updater_ops.unregister()
-    del bpy.types.Scene.kaleidoscope_props_import_files
+    del bpy.types.Scene.kaleidoscope_props
     bpy.utils.unregister_module(__name__)

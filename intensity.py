@@ -62,6 +62,8 @@ class IntensityNode(Node, IntensityTreeNode):
         return None
 
     def set_value(self, context):
+        global custom_values_list
+        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
         if self.kaleidoscope_intensity_main_category == '0':
             self.kaleidoscope_intensity_out_value = glass_ior[int(self.kaleidoscope_intensity_glass_category)]
         elif self.kaleidoscope_intensity_main_category == '1':
@@ -71,13 +73,21 @@ class IntensityNode(Node, IntensityTreeNode):
             name = name.lower()
             name = name.replace(" ", "_")+".json"
             path = os.path.join(os.path.dirname(__file__), "values", name)
-            value_file = open(path, 'r')
-            value = json.load(value_file)
+            value = None
+            try:
+                value_file = open(path, 'r')
+                value = json.load(value_file)
+            except:
+                if kaleidoscope_props.sync_path is not None:
+                    path = os.path.join(kaleidoscope_props.sync_path, "values", name)
+                    value_file = open(path, 'r')
+                    value = json.load(value_file)
 
             self.kaleidoscope_intensity_out_value = value["Value"]
             IntensityNode.active_custom_preset = custom_values_list[int(self.kaleidoscope_intensity_custom_category)]
         return None
     def set_previous(self, context):
+        global custom_values_list
         if self.kaleidoscope_intensity_main_category == '0':
             if int(self.kaleidoscope_intensity_glass_category) > 0:
                 self.kaleidoscope_intensity_glass_category = str(int(self.kaleidoscope_intensity_glass_category)-1)
@@ -95,6 +105,7 @@ class IntensityNode(Node, IntensityTreeNode):
                 self.kaleidoscope_intensity_custom_category = str(len(custom_values_list)-1)
         return None
     def set_next(self, context):
+        global custom_values_list
         if self.kaleidoscope_intensity_main_category == '0':
             if int(self.kaleidoscope_intensity_glass_category) < 16:
                 self.kaleidoscope_intensity_glass_category = str(int(self.kaleidoscope_intensity_glass_category)+1)
@@ -113,19 +124,74 @@ class IntensityNode(Node, IntensityTreeNode):
         return None
 
     def get_custom_vals(self, context):
+        global custom_values_list
         value_list = []
+        global_values = []
+        synced_values = []
+        local_values = []
+
         custom_values_list.clear()
-        directory = os.path.join(os.path.dirname(__file__), "values")
-        i='0'
-        for value in os.listdir(directory):
-            if str(value).endswith('.json'):
-                name1 = str(value)
-                name2 = os.path.splitext(value)[0]
-                name2 = name2.title()
-                name2 = name2.replace("_", " ")
-                value_list.append((i, name2, ""))
-                i=str(int(i)+1)
-                custom_values_list.append(name2)
+        check = False
+        val = None
+        try:
+            f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
+            line = f.readlines()
+            val = line[0]+"values"
+            f.close()
+            check = True
+        except:
+            check = False
+
+        if val is not None:
+            if not os.path.exists(val):
+                os.makedirs(val)
+
+        #if check == True:
+        for sub in os.listdir(val):
+            if os.path.isfile(os.path.join(val, str(sub))):
+                name = str(sub)
+                if name.endswith('.json'):
+                    name = name[:-5]
+                    name = name.title()
+                    name = name.replace('_', ' ')
+                    global_values.append(name)
+
+        i=0
+        m='0'
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), "values")):
+            os.makedirs(os.path.join(os.path.dirname(__file__), "values"))
+
+        for sub in os.listdir(os.path.join(os.path.dirname(__file__), "values")):
+            if os.path.isfile(os.path.join(os.path.dirname(__file__), "values", str(sub))):
+                name = str(sub)
+                if name.endswith('.json'):
+                    name = name[:-5]
+                    name = name.title()
+                    name = name.replace('_', ' ')
+                    if name in global_values:
+                        value_list.append((m, name, "Choose the Saved Value from Library", "URL", i))
+                        synced_values.append(name)
+                    else:
+                        value_list.append((m, name, "Choose the Saved Value from Local Library", "FILE", i))
+                        local_values.append(name)
+            i=i+1
+            m=str(int(m)+1)
+
+        if check == True:
+            for sub in os.listdir(val):
+                if os.path.isfile(os.path.join(val, str(sub))):
+                    name = str(sub)
+                    if name.endswith('.json'):
+                        name = name[:-5]
+                        name = name.title()
+                        name = name.replace('_', ' ')
+                        if name not in synced_values and name not in local_values:
+                            value_list.append((m, name, "Choose the Saved Value from the Synced Library", "WORLD", i))
+                i=i+1
+                m=str(int(m)+1)
+
+        for x in value_list:
+            custom_values_list.append(x[1])
         return value_list
 
     num_val = 0.0
@@ -235,22 +301,32 @@ class IntensityNode(Node, IntensityTreeNode):
 
 class RemoveValue(bpy.types.Operator):
     """Remove this Value from the list"""
-    bl_idname = "intensity.remove_palette"
+    bl_idname = "intensity.remove_value"
     bl_label = "Remove Intensity Value"
 
     def execute(self, context):
+        kaleidoscope_props=bpy.context.scene.kaleidoscope_props
         name = IntensityNode.active_custom_preset
         name = name.lower().replace(' ', '_')+".json"
         path = os.path.join(os.path.dirname(__file__), "values", name)
         try:
             os.remove(path)
         except:
-            self.report({'INFO'}, "Custom Preset is not Selected")
+            pass
+        try:
+            if kaleidoscope_props.sync_path is not None:
+                path = os.path.join(kaleidoscope_props.sync_path, "values", name)
+                try:
+                    os.remove(path)
+                except:
+                    self.report({'INFO'}, "Custom Preset is not Selected")
+        except:
+            pass
         return{'FINISHED'}
 
 class SaveValue(bpy.types.Operator):
     """Save the current Value for future use"""
-    bl_idname = "intensity.save_palette"
+    bl_idname = "intensity.save_value"
     bl_label = "Save Intensity Value"
 
     def set_name(self, context):
@@ -260,7 +336,7 @@ class SaveValue(bpy.types.Operator):
     name = bpy.props.StringProperty(name="Value Name", description="Enter the Name for the Value", default="My Value", update=set_name)
 
     def execute(self, context):
-        global palette_export
+        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
         name = self.name
         name = name.title()
         name = name.replace('_', ' ')
@@ -272,6 +348,10 @@ class SaveValue(bpy.types.Operator):
         name = self.name
         name = name.lower()
         self.name = name.replace(' ', '_')
+        if kaleidoscope_props.sync_path is not None:
+            if not os.path.exists(os.path.join(kaleidoscope_props.sync_path, "values")):
+                os.makedirs(os.path.join(kaleidoscope_props.sync_path, "values"))
+
         if not os.path.exists(os.path.join(os.path.dirname(__file__), "values")):
             os.makedirs(os.path.join(os.path.dirname(__file__), "values"))
         path = os.path.join(os.path.dirname(__file__), "values", self.name+".json")
@@ -279,11 +359,11 @@ class SaveValue(bpy.types.Operator):
         with open(path, "w") as f:
             f.write(s)
 
-        """if kaleidoscope_spectrum_props.sync_path is not None:
-            path = os.path.join(kaleidoscope_spectrum_props.sync_path, kaleidoscope_spectrum_props.save_palette_name+".json")
-            s = json.dumps(palette_export, sort_keys=True)
+        if kaleidoscope_props.sync_path is not None:
+            path = os.path.join(kaleidoscope_props.sync_path, "values", self.name+".json")
+            s = json.dumps(value_export, sort_keys=True)
             with open(path, 'w') as f:
-                f.write(s)"""
+                f.write(s)
         return{'FINISHED'}
 
     def invoke(self, context, event):
@@ -292,6 +372,7 @@ class SaveValue(bpy.types.Operator):
 
 
 def IntensityUI(self, context, layout, current_node):
+        global custom_values_list
         kaleidoscope_intensity_props = self
         col = layout.column(align=False)
         row = col.row()

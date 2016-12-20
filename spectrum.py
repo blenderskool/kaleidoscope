@@ -179,6 +179,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
         return None
     def get_saved_palettes(self, context):
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         saved_palettes_list = []
         global_palette = []
         local_palette = []
@@ -189,11 +190,15 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         try:
             f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
             line = f.readlines()
-            val = line[0]
+            val = line[0]+"palettes"
             f.close()
             check = True
         except:
             check = False
+
+        if val is not None:
+            if not os.path.exists(val):
+                os.makedirs(val)
 
         #if check == True:
         for sub in os.listdir(val):
@@ -208,6 +213,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         i=0
         if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
             os.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
+
         for sub in os.listdir(os.path.join(os.path.dirname(__file__), "palettes")):
             if os.path.isfile(os.path.join(os.path.dirname(__file__), "palettes", str(sub))):
                 name = str(sub)
@@ -247,8 +253,8 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             palette_file = open(path, 'r')
             self.palette = json.load(palette_file)
         except:
-            if kaleidoscope_spectrum_props.sync_path is not None:
-                path = os.path.join(kaleidoscope_spectrum_props.sync_path, name)
+            if bpy.context.scene.kaleidoscope_props.sync_path is not None:
+                path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name)
                 palette_file = open(path, 'r')
                 self.palette = json.load(palette_file)
         for i in range(1, 6):
@@ -261,13 +267,6 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         set_color_ramp(self)
         return None
 
-    def set_sync_path(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
-        path = os.path.join(os.path.dirname(__file__), "sync_directory.txt")
-        f = open(path, 'w')
-        f.write(kaleidoscope_spectrum_props.sync_path)
-        f.close()
-        return None
     def set_base_color(self, context):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         if kaleidoscope_spectrum_props.use_realtime_base == True:
@@ -276,7 +275,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
-    hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=-0.5, max=0.5, default=0, update=set_global_settings)
+    hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=0.0, max=1.0, default=0, update=set_global_settings)
     color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.009, 0.421, 0.554,1.0), size=4, max=1.0, min=0.0, update=update_color_1)
     color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", default=(0.267, 0.639, 0.344,1.0), size=4, max=1.0, min=0.0, update=update_color_2)
     color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", default=(0.612, 0.812, 0.194,1.0), size=4, max=1.0, min=0.0, update=update_color_3)
@@ -295,7 +294,6 @@ class SpectrumProperties(bpy.types.PropertyGroup):
     use_realtime_base = bpy.props.BoolProperty(name="Real Time Base Color", description="Use Real time Update of the Base Color in the Palette", default=False)
     view_help = bpy.props.BoolProperty(name="Color Rule Help", description="Get some knowledge about this color rule", default=False)
     assign_colorramp_world = bpy.props.BoolProperty(name="Assign ColorRamp World", description="Assign the Colors from Spectrum to ColorRamp in the World Material", default=False, update=set_ramp)
-    sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
 
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
     random_custom_int = bpy.props.IntProperty(name="Random Custom Integer", description="Used to use Random color rules and effects", default=0)
@@ -306,21 +304,6 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
     colorramp_world_name = bpy.props.StringProperty(name="ColorRamp name World", description="Select the ColorRamp in the World Material to assign the Colors", default="", update=set_ramp)
-
-    check = False
-    val = None
-    try:
-        f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
-        line = f.readlines()
-        val = line[0]
-        f.close()
-        check = True
-    except:
-        check = False
-    if check == True:
-        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default=val, update=set_sync_path)
-    else:
-        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default="", update=set_sync_path)
 
 class SpectrumMaterialProps(bpy.types.PropertyGroup):
     """Spectrum Properties for Every Material"""
@@ -370,14 +353,14 @@ class SavePalette(bpy.types.Operator):
         name = name.lower()
         kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
         if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
-            os.path.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
+            os.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
         path = os.path.join(os.path.dirname(__file__), "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
         s = json.dumps(palette_export, sort_keys=True)
         with open(path, "w") as f:
             f.write(s)
 
-        if kaleidoscope_spectrum_props.sync_path is not None:
-            path = os.path.join(kaleidoscope_spectrum_props.sync_path, kaleidoscope_spectrum_props.save_palette_name+".json")
+        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
+            path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
             s = json.dumps(palette_export, sort_keys=True)
             with open(path, 'w') as f:
                 f.write(s)
@@ -845,7 +828,7 @@ def Spectrum_Engine():
             color_palette[index[4]] = rgb_to_hex((c1.r, c1.g, c1.b))
         else:
             color_palette[4] = rgb_to_hex((c1.r, c1.g, c1.b))
-        kaleidoscope_spectrum_props.use_internet_libs == False
+        kaleidoscope_spectrum_props.use_internet_libs = False
 
     elif kaleidoscope_spectrum_props.gen_type == "1" or kaleidoscope_spectrum_props.random_int == 1:
         #Analogous
@@ -1169,7 +1152,7 @@ def Spectrum_Engine():
             #Online
             try:
                 if kaleidoscope_spectrum_props.new_file != 0:
-                    palette_file = str(urllib.request.urlopen("https://gist.githubusercontent.com/blenderskool/609fa91ca7954efb913466a68b7e63a7/raw").read(), 'UTF-8')
+                    palette_file = str(urllib.request.urlopen("http://bit.ly/onlinepalettesbs").read(), 'UTF-8')
                     kaleidoscope_spectrum_props.new_file = 0
                     palette = json.loads(palette_file)
                 index = random.randint(0, len(palette)-1)
@@ -1547,9 +1530,9 @@ class DeletePalette(bpy.types.Operator):
         except:
             pass
 
-        if kaleidoscope_spectrum_props.sync_path is not None:
+        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
             try:
-                path = os.path.join(kaleidoscope_spectrum_props.sync_path, name+".json")
+                path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name+".json")
                 os.remove(path)
             except:
                 pass

@@ -451,6 +451,8 @@ class SpectrumNode(Node, SpectrumTreeNode):
                             if out.is_linked:
                                 for o in out.links:
                                     if o.is_valid:
+                                        if o.to_node.bl_idname == "NodeReroute":
+                                            update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, out.name)
                                         o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
         except:
             pass
@@ -464,6 +466,8 @@ class SpectrumNode(Node, SpectrumTreeNode):
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
+                                            if o.to_node.bl_idname == "NodeReroute":
+                                                update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, out.name)
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
                 except:
                     continue
@@ -478,6 +482,8 @@ class SpectrumNode(Node, SpectrumTreeNode):
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
+                                            if o.to_node.bl_idname == "NodeReroute":
+                                                update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, out.name)
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
                 except:
                     continue
@@ -684,6 +690,8 @@ def update_caller(caller, input_name):
                     if node.outputs[input_name].is_linked:
                         for o in node.outputs[input_name].links:
                             if o.is_valid:
+                                if o.to_node.bl_idname == "NodeReroute":
+                                    update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, input_name)
                                 o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
 
     for mat in bpy.data.materials:
@@ -693,6 +701,8 @@ def update_caller(caller, input_name):
                     if node.outputs[input_name].is_linked:
                         for o in node.outputs[input_name].links:
                             if o.is_valid:
+                                if o.to_node.bl_idname == "NodeReroute":
+                                    update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, input_name)
                                 o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
 
     for lamps in bpy.data.lamps:
@@ -703,6 +713,8 @@ def update_caller(caller, input_name):
                         if node.outputs[input_name].is_linked:
                             for o in node.outputs[input_name].links:
                                 if o.is_valid:
+                                    if o.to_node.bl_idname == "NodeReroute":
+                                        update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, input_name)
                                     o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
             except:
                 continue
@@ -711,6 +723,31 @@ def update_caller(caller, input_name):
         if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
             set_color_ramp(caller)
             break
+
+def update_reroutes(tree_type, material_name, kaleidoscope_node_name, reroute_name, input_name):
+    if tree_type == "ShaderNodeTree":
+        node_tree_type = bpy.data.materials[material_name]
+    elif tree_type == "WorldNodeTree":
+        node_tree_type = bpy.data.worlds[material_name]
+    elif tree_type == "LampNodeTree":
+        node_tree_type = bpy.data.lamps[material_name]
+    else:
+        return ("NodeTree Type not in [\"ShaderNodeTree\", \"WorldNodeTree\", \"LampNodeTree\"]")
+
+    reroute = node_tree_type.node_tree.nodes[reroute_name]
+    node = node_tree_type.node_tree.nodes[kaleidoscope_node_name]
+    links = node_tree_type.node_tree.links
+    try:
+        if reroute.outputs['Output'].is_linked:
+            for ro in reroute.outputs['Output'].links:
+                if ro.is_valid:
+                    next_node = node_tree_type.node_tree.nodes[ro.to_node.name]
+                    links.new(node.outputs[input_name], next_node.inputs[ro.to_socket.name])
+                    if next_node.bl_idname == "NodeReroute":
+                        update_reroutes(tree_type, material_name, kaleidoscope_node_name, next_node.name, input_name)
+    except:
+        pass
+
 
 def hex_to_rgb(value, alpha=True):
     """Convets a Hex code to a Blender RGB Value"""

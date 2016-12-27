@@ -4,6 +4,7 @@ import os
 from bpy.types import Node
 from collections import OrderedDict
 import json
+from . import spectrum
 
 glass_ior = [1,
             1.000293,
@@ -256,6 +257,8 @@ class IntensityNode(Node, IntensityTreeNode):
                             if out.is_linked:
                                 for o in out.links:
                                     if o.is_valid:
+                                        if o.to_node.bl_idname == "NodeReroute":
+                                            spectrum.update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, "Value")
                                         o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
         except:
             pass
@@ -269,6 +272,8 @@ class IntensityNode(Node, IntensityTreeNode):
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
+                                            if o.to_node.bl_idname == "NodeReroute":
+                                                spectrum.update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, "Value")
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
                 except:
                     continue
@@ -283,6 +288,8 @@ class IntensityNode(Node, IntensityTreeNode):
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
+                                            if o.to_node.bl_idname == "NodeReroute":
+                                                spectrum.update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, "Value")
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
                 except:
                     continue

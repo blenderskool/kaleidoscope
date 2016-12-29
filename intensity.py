@@ -4,7 +4,11 @@ import os
 from bpy.types import Node
 from collections import OrderedDict
 import json
-from . import spectrum
+from . import spectrum, saving_deleting
+if "bpy" in locals():
+    import importlib
+    importlib.reload(spectrum)
+    importlib.reload(saving_deleting)
 
 glass_ior = [1,
             1.000293,
@@ -245,7 +249,7 @@ class IntensityNode(Node, IntensityTreeNode):
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
         self.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
-        self.width = 195.3
+        self.width = 200.3
 
     def update(self):
         out = ""
@@ -305,78 +309,6 @@ class IntensityNode(Node, IntensityTreeNode):
     #Node Label
     def draw_label(self):
         return "Intensity"
-
-class RemoveValue(bpy.types.Operator):
-    """Remove this Value from the list"""
-    bl_idname = "intensity.remove_value"
-    bl_label = "Remove Intensity Value"
-
-    def execute(self, context):
-        kaleidoscope_props=bpy.context.scene.kaleidoscope_props
-        name = IntensityNode.active_custom_preset
-        name = name.lower().replace(' ', '_')+".json"
-        path = os.path.join(os.path.dirname(__file__), "values", name)
-        try:
-            os.remove(path)
-        except:
-            pass
-        try:
-            if kaleidoscope_props.sync_path is not None:
-                path = os.path.join(kaleidoscope_props.sync_path, "values", name)
-                try:
-                    os.remove(path)
-                except:
-                    self.report({'INFO'}, "Custom Preset is not Selected")
-        except:
-            pass
-        return{'FINISHED'}
-
-class SaveValue(bpy.types.Operator):
-    """Save the current Value for future use"""
-    bl_idname = "intensity.save_value"
-    bl_label = "Save Intensity Value"
-
-    def set_name(self, context):
-        self.name = (self.name.replace(' ', '_')).lower()
-        return None
-
-    name = bpy.props.StringProperty(name="Value Name", description="Enter the Name for the Value", default="My Value", update=set_name)
-
-    def execute(self, context):
-        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
-        name = self.name
-        name = name.title()
-        name = name.replace('_', ' ')
-        print(IntensityNode.num_val)
-        value_export = OrderedDict([
-            ("value_name", name),
-            ("Value", float(IntensityNode.num_val))
-        ])
-        name = self.name
-        name = name.lower()
-        self.name = name.replace(' ', '_')
-        if kaleidoscope_props.sync_path is not None:
-            if not os.path.exists(os.path.join(kaleidoscope_props.sync_path, "values")):
-                os.makedirs(os.path.join(kaleidoscope_props.sync_path, "values"))
-
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "values")):
-            os.makedirs(os.path.join(os.path.dirname(__file__), "values"))
-        path = os.path.join(os.path.dirname(__file__), "values", self.name+".json")
-        s = json.dumps(value_export, sort_keys=True)
-        with open(path, "w") as f:
-            f.write(s)
-
-        if kaleidoscope_props.sync_path is not None:
-            path = os.path.join(kaleidoscope_props.sync_path, "values", self.name+".json")
-            s = json.dumps(value_export, sort_keys=True)
-            with open(path, 'w') as f:
-                f.write(s)
-        return{'FINISHED'}
-
-    def invoke(self, context, event):
-        self.name = self.name
-        return bpy.context.window_manager.invoke_props_dialog(self)
-
 
 def IntensityUI(self, context, layout, current_node):
         global custom_values_list
@@ -452,9 +384,9 @@ def IntensityUI(self, context, layout, current_node):
                 row.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_custom_category", text="")
             else:
                 row.label("No Custom Value")
-        row.operator(SaveValue.bl_idname, text="", icon="ZOOMIN")
+        row.operator(saving_deleting.SaveValueMenu.bl_idname, text="", icon="ZOOMIN")
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2' and len(custom_values_list) != 0:
-            row.operator(RemoveValue.bl_idname, text="", icon="ZOOMOUT")
+            row.operator(saving_deleting.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")
         col4 = split2.column(align=True)
         col4.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
         col.label()
@@ -465,7 +397,7 @@ def IntensityUI(self, context, layout, current_node):
         row2_1.alignment = 'CENTER'
         row2_1.label("Akash Hamirwasia")
         row2_1.scale_y=1.2
-        row2_1.operator('wm.url_open', text="Support", icon='SOLO_ON').url='http://bit.ly/donatetobs'
+        row2_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://bit.ly/donatetobs'
 
 def register():
     bpy.app.handlers.frame_change_pre.append(pre_intensity_frame_change)

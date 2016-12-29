@@ -7,11 +7,14 @@ from bpy.types import Node
 from mathutils import Color
 from collections import OrderedDict
 import random
+from . import saving_deleting
+if "bpy" in locals():
+    import importlib
+    importlib.reload(saving_deleting)
 
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
-palette_export = {}
 online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
@@ -316,60 +319,6 @@ class SpectrumMaterialProps(bpy.types.PropertyGroup):
     colorramp_name = bpy.props.StringProperty(name="ColorRamp name", description="Select the ColorRamp to assign the Colors", default="", update=set_ramp)
     assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp in the Object Material", default=False, update=set_ramp)
 
-class SavePalette(bpy.types.Operator):
-    """Save the current Palette for future use"""
-    bl_idname = "spectrum.save_palette"
-    bl_label = "Save Spectrum Palette"
-
-    def set_name(self, context):
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        kaleidoscope_spectrum_props.save_palette_name = self.name
-
-        name = self.name
-        name = name.lower()
-        self.name = name.replace(' ', '_')
-        return None
-
-    name = bpy.props.StringProperty(name="Palette Name", description="Enter the Name for the Palette", default="My Palette", update=set_name)
-
-    def execute(self, context):
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        kaleidoscope_spectrum_props.save_palette_name = self.name
-        global palette_export
-        name = kaleidoscope_spectrum_props.save_palette_name
-        name = name.title()
-        name = name.replace('_', ' ')
-        kaleidoscope_spectrum_props.save_palette_name = name
-        palette_export[kaleidoscope_spectrum_props.save_palette_name] = OrderedDict([
-            ("palette_name", kaleidoscope_spectrum_props.save_palette_name),
-            ("color1", rgb_to_hex(kaleidoscope_spectrum_props.color1)),
-            ("color2", rgb_to_hex(kaleidoscope_spectrum_props.color2)),
-            ("color3", rgb_to_hex(kaleidoscope_spectrum_props.color3)),
-            ("color4", rgb_to_hex(kaleidoscope_spectrum_props.color4)),
-            ("color5", rgb_to_hex(kaleidoscope_spectrum_props.color5))
-        ])
-        name = kaleidoscope_spectrum_props.save_palette_name
-        name = name.lower()
-        kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
-            os.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
-        path = os.path.join(os.path.dirname(__file__), "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
-        s = json.dumps(palette_export, sort_keys=True)
-        with open(path, "w") as f:
-            f.write(s)
-
-        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
-            path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
-            s = json.dumps(palette_export, sort_keys=True)
-            with open(path, 'w') as f:
-                f.write(s)
-        return{'FINISHED'}
-
-    def invoke(self, context, event):
-        #kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        #self.name = kaleidoscope_spectrum_props.save_palette_name
-        return context.window_manager.invoke_props_dialog(self)
-
 def set_color_ramp(self):
     """Set the Colors from the Palette to a ColorRamp node"""
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
@@ -659,8 +608,8 @@ def SpectrumPaletteUI(self, context, layout):
         row5.prop(kaleidoscope_spectrum_props, "saved_palettes", text="")
     else:
         row5.label("No Saved Presets")
-    row5.operator(SavePalette.bl_idname, text="", icon='ZOOMIN')
-    row5.operator(DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
+    row5.operator(saving_deleting.SavePaletteMenu.bl_idname, text="", icon='ZOOMIN')
+    row5.operator(saving_deleting.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
     col4.label()
     row6 = col4.row(align=True)
     try:
@@ -1548,78 +1497,6 @@ class PaletteInvert(bpy.types.Operator):
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[2] = color"+str(i)+".b")
 
         current_history()
-        return{'FINISHED'}
-
-class DeletePaletteMenu(bpy.types.Operator):
-    """Delete the Current Selected Palette"""
-    bl_idname = "spectrum.save_palette_remove"
-    bl_label = "Delete"
-
-    def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Are you sure you want to", icon="ERROR")
-        col.label("delete the current saved palette?")
-        col.label()
-
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(DeletePaletteYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(DeletePaletteNo.bl_idname, text="Cancel")
-
-    def execute(self, context):
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_popup(self)
-
-class DeletePaletteYes(bpy.types.Operator):
-    """Delete the Current Selected Palette"""
-    bl_idname = "spectrum.save_palette_remove_yes"
-    bl_label = "Delete Yes"
-
-    def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
-        local_error = False
-        global_error = False
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        name = kaleidoscope_spectrum_props.saved_palettes
-        temp_name = name
-        name = name.lower()
-        name = name.replace(' ', '_')
-        path = os.path.join(os.path.dirname(__file__), "palettes", name+".json")
-        try:
-            os.remove(path)
-        except:
-            local_error = True
-
-        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
-            try:
-                path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name+".json")
-                os.remove(path)
-            except:
-                global_error = True
-
-        if local_error == False or global_error == False:
-            self.report({'INFO'}, temp_name+" palette was successfully deleted")
-        else:
-            self.report({'WARNING'}, temp_name+" could not be deleted")
-        return{'CANCELLED'}
-
-class DeletePaletteNo(bpy.types.Operator):
-    """Do not Delete the Saved Palette"""
-    bl_idname = "spectrum.save_palette_remove_no"
-    bl_label = "Delete No"
-
-    def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
         return{'FINISHED'}
 
 def register():

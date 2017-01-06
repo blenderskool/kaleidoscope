@@ -547,7 +547,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
             row = col_box.row(align=True)
             row.scale_y = 1.1
-            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://bit.ly/kaleidoscopebugbs"
+            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://links.blenderskool.cf/kalbugs"
         if kaleidoscope_spectrum_props.gen_type != '4' and kaleidoscope_spectrum_props.custom_gen_type != '4':
             col_box.label()
         col_box.prop(kaleidoscope_spectrum_props, "view_help", text="Close Help", icon='INFO')
@@ -627,7 +627,7 @@ def SpectrumPaletteUI(self, context, layout):
     row7_1.alignment = 'CENTER'
     row7_1.label("Akash Hamirwasia")
     row7_1.scale_y = 1.2
-    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://bit.ly/donatetobs'
+    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://links.blenderskool.cf/donate'
 
 def update_caller(caller, input_name):
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
@@ -1137,7 +1137,7 @@ def Spectrum_Engine():
             #Online
             try:
                 if kaleidoscope_spectrum_props.new_file != 0:
-                    palette_file = str(urllib.request.urlopen("http://bit.ly/onlinepalettesbs").read(), 'UTF-8')
+                    palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalonlinepal").read(), 'UTF-8')
                     kaleidoscope_spectrum_props.new_file = 0
                     palette = json.loads(palette_file)
                 index = random.randint(0, len(palette)-1)

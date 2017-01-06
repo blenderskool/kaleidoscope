@@ -1,6 +1,6 @@
 #Saving and Deleting System for the Spectrum and Intensity Node
 import bpy
-import ctypes, json, os
+import ctypes, json, os, requests
 from collections import OrderedDict
 from . import spectrum, intensity
 if "bpy" in locals():
@@ -62,6 +62,38 @@ class SavePaletteMenu(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_popup(self)
 
+class PublishPaletteMenu(bpy.types.Operator):
+    """Publish the current Palette"""
+    bl_idname = "spectrum.publish_palette"
+    bl_label = "Publish Spectrum Palette"
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column(align=True)
+        col.scale_y = 1.2
+        col.label("Publish a Color Palette", icon="WORLD")
+        col.label("Are you sure you want to publish this palette?")
+        col.label()
+        col.label("This will be added to Community Online Palettes list")
+        col.label("Make Sure your palette looks nice otherwise it")
+        col.label("will get DELETED")
+        for i in range(1, 4):
+            col.separator()
+        row = layout.row(align = False)
+        row.scale_y = 1.2
+        for i in range(1, 8):
+            row.separator()
+        row.alert = True
+        row.operator(PublishPaletteYes.bl_idname, text="Yes")
+        row.alert = False
+        row.operator(CancelProcess.bl_idname, text="Cancel")
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_popup(self)
+
 class SavePaletteYes(bpy.types.Operator):
     """Save the Current Color Palette with the above name and sync it too"""
     bl_idname = "spectrum.save_palette_yes"
@@ -102,6 +134,19 @@ class SavePaletteYes(bpy.types.Operator):
                 f.write(s)
         temp_name = temp_name.title().replace("_", " ")
         self.report({'INFO'}, temp_name+" palette was saved successfully")
+        return{'FINISHED'}
+
+class PublishPaletteYes(bpy.types.Operator):
+    """Publish the Current Color Palette"""
+    bl_idname = "spectrum.publish_palette_yes"
+    bl_label = "Publish Yes"
+
+    def execute(self, context):
+        VK_ESCAPE = 0x1B
+        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#'))
+        out = requests.post(post_url)
         return{'FINISHED'}
 
 class DeletePaletteMenu(bpy.types.Operator):

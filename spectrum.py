@@ -15,6 +15,7 @@ if "bpy" in locals():
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
+community_palette = {}
 online_check = True
 for i in range(1, 16):
     PaletteHistory.append(Color())
@@ -289,6 +290,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0), update=set_base_color)
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
     custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from Internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not following any rule!')), update=set_type, default="0")
+    online_type = bpy.props.EnumProperty(name="Type of Online Palette", description="Select the Type of Online Palettes", items=(('0', 'Standard', 'Use the Online Palettes that I have selected just for you. This includes the best picks by me'), ('1', 'Community', 'Explore the Color Palettes added by users all around the world')), default='0')
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
@@ -302,6 +304,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
     random_custom_int = bpy.props.IntProperty(name="Random Custom Integer", description="Used to use Random color rules and effects", default=0)
     new_file = bpy.props.IntProperty(name="File Count",description="", default=1)
+    new_community_file = bpy.props.IntProperty(name="Community File Count",description="", default=1)
     online_palette_index = bpy.props.IntProperty(name="Palette Index", description="Stores the Index of the Online Palette")
 
     history_count = bpy.props.IntProperty(name="History Counter", description="Value to Count the Current History Value", default=0)
@@ -456,6 +459,8 @@ def SpectrumPaletteUI(self, context, layout):
     col1.prop(kaleidoscope_spectrum_props, "gen_type", text="Rule")
     if kaleidoscope_spectrum_props.gen_type == "4":
         col1.prop(kaleidoscope_spectrum_props, "custom_gen_type", "Type")
+        if kaleidoscope_spectrum_props.custom_gen_type == "4":
+            col1.prop(kaleidoscope_spectrum_props, "online_type", "Source")
     col2 = split.column()
     row2 = col2.row(align=True)
     if kaleidoscope_spectrum_props.gen_type != '4' or kaleidoscope_spectrum_props.custom_gen_type == '3' or kaleidoscope_spectrum_props.custom_gen_type == '0' or kaleidoscope_spectrum_props.custom_gen_type == '2':
@@ -609,7 +614,9 @@ def SpectrumPaletteUI(self, context, layout):
     else:
         row5.label("No Saved Presets")
     row5.operator(saving_deleting.SavePaletteMenu.bl_idname, text="", icon='ZOOMIN')
-    row5.operator(saving_deleting.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
+    if len(kaleidoscope_spectrum_props.saved_palettes) != 0:
+        row5.operator(saving_deleting.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
+    row5.operator(saving_deleting.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
     col4.label()
     row6 = col4.row(align=True)
     try:
@@ -1132,28 +1139,54 @@ def Spectrum_Engine():
 
             kaleidoscope_spectrum_props.use_internet_libs = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "4" or kaleidoscope_spectrum_props.random_custom_int == 3:
-            global palette
-            global online_check
-            #Online
-            try:
-                if kaleidoscope_spectrum_props.new_file != 0:
-                    palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalonlinepal").read(), 'UTF-8')
-                    kaleidoscope_spectrum_props.new_file = 0
-                    palette = json.loads(palette_file)
-                index = random.randint(0, len(palette)-1)
-                for i in range(0, 20):
-                    if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
-                        index = random.randint(0, len(palette)-1)
-                    else:
-                        break
-                kaleidoscope_spectrum_props.online_palette_index = index
-                online_check = True
 
-                for i in range(0, 5):
-                    color_palette[i] = palette[index]["color"+str(i+1)]['hex']
-                kaleidoscope_spectrum_props.use_internet_libs = True
-            except:
-                online_check = False
+            #Online
+            if kaleidoscope_spectrum_props.online_type == '0':
+                try:
+                    global palette
+                    global community_palette
+                    global online_check
+                    if kaleidoscope_spectrum_props.new_file != 0:
+                        palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalonlinepal").read(), 'UTF-8')
+                        kaleidoscope_spectrum_props.new_file = 0
+                        palette = json.loads(palette_file)
+                    index = random.randint(0, len(palette)-1)
+                    for i in range(0, 20):
+                        if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
+                            index = random.randint(0, len(palette)-1)
+                        else:
+                            break
+                    kaleidoscope_spectrum_props.online_palette_index = index
+                    online_check = True
+
+                    for i in range(0, 5):
+                        color_palette[i] = palette[index]["color"+str(i+1)]['hex']
+                    kaleidoscope_spectrum_props.use_internet_libs = True
+                except:
+                    online_check = False
+            elif kaleidoscope_spectrum_props.online_type == '1':
+                try:
+                    global palette
+                    global community_palette
+                    global online_check
+                    if kaleidoscope_spectrum_props.new_community_file != 0:
+                        community_palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalcommunitypal").read(), 'UTF-8')
+                        kaleidoscope_spectrum_props.new_community_file = 0
+                        community_palette = json.loads(community_palette_file)
+                    index = random.randint(0, len(community_palette['Palettes'])-1)
+                    for i in range(0, 20):
+                        if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
+                            index = random.randint(0, len(community_palette)-1)
+                        else:
+                            break
+                    kaleidoscope_spectrum_props.online_palette_index = index
+                    online_check = True
+
+                    for i in range(0, 5):
+                        color_palette[i] = str(community_palette['Palettes'][index]["Color_"+str(i+1)])
+                    kaleidoscope_spectrum_props.use_internet_libs = True
+                except:
+                    online_check = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
             if kaleidoscope_spectrum_props.use_custom == True:
@@ -1506,6 +1539,7 @@ def register():
 
 def unregister():
     bpy.context.scene.kaleidoscope_spectrum_props.new_file = 1
+    bpy.context.scene.kaleidoscope_spectrum_props.new_community_file = 1
     del bpy.types.Scene.kaleidoscope_spectrum_props
     del bpy.types.Material.kaleidoscope_spectrum_props
     palette.clear()

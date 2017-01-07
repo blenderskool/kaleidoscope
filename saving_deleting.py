@@ -147,6 +147,10 @@ class PublishPaletteYes(bpy.types.Operator):
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
         post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#'))
         out = requests.post(post_url)
+        if out.staus_code == 200:
+            self.report({'INFO'}, 'Palette Successfully Published, reload the addon to view changes')
+        else:
+            self.report({'WARNING'}, 'There was a Problem. Try again Later')
         return{'FINISHED'}
 
 class DeletePaletteMenu(bpy.types.Operator):

@@ -203,7 +203,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         col2 = split.column(align=True)
         row2 = col2.row()
         row2.scale_y = 1.2
-        row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://blskl.cf/donate"
+        row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://blskl.cf/kalsupport"
 
 class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""

@@ -1,6 +1,7 @@
 #Saving and Deleting System for the Spectrum and Intensity Node
 import bpy
 import ctypes, json, os, requests
+import urllib.request
 from collections import OrderedDict
 from . import spectrum, intensity
 if "bpy" in locals():
@@ -144,13 +145,44 @@ class PublishPaletteYes(bpy.types.Operator):
     def execute(self, context):
         VK_ESCAPE = 0x1B
         ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        duplicate = False
+        url = None
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#'))
-        out = requests.post(post_url)
-        if out.staus_code == 200:
-            self.report({'INFO'}, 'Palette Successfully Published, reload the addon to view changes')
+
+        if kaleidoscope_spectrum_props.new_community_file != 0:
+            url = str(urllib.request.urlopen("http://blskl.cf/kalgetcmitylink").read(), 'UTF-8')
+            url = url.replace('\n', '')
+            if url == "Off":
+                spectrum.community_maintain = True
+            else:
+                community_palette_file = str(urllib.request.urlopen(url).read(), 'UTF-8')
+                kaleidoscope_spectrum_props.new_community_file = 0
+                spectrum.community_palette = json.loads(community_palette_file)
+                spectrum.community_maintain = False
+
+        pal = [spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5)]
+        if url != "Off":
+            for palettes in community_palette['Palettes']:
+                pal1 = int(pal[0].lstrip('#'), base=16)
+                pal2 = int(pal[1].lstrip('#'), base=16)
+                pal3 = int(pal[2].lstrip('#'), base=16)
+                pal4 = int(pal[3].lstrip('#'), base=16)
+                pal5 = int(pal[4].lstrip('#'), base=16)
+                if (abs(int(palettes['Color_1'].lstrip('#'), base=16)- pal1) < 7000) and (abs(int(palettes['Color_2'].lstrip('#'), base=16)- pal2) < 7000) and (abs(int(palettes['Color_3'].lstrip('#'), base=16)- pal3) < 7000) and (abs(int(palettes['Color_4'].lstrip('#'), base=16)- pal4) < 7000) and (abs(int(palettes['Color_5'].lstrip('#'), base=16)- pal5) < 7000):
+                    duplicate = True
+                    break
+                else:
+                    duplicate = False
+
+        if duplicate == False:
+            post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#'))
+            out = requests.post(post_url)
+            if out.status_code == 200:
+                self.report({'INFO'}, 'Palette Successfully Published, reload the addon to view changes')
+            else:
+                self.report({'WARNING'}, 'There was a Problem. Try again Later')
         else:
-            self.report({'WARNING'}, 'There was a Problem. Try again Later')
+            self.report({'WARNING'}, 'A Palette of those colors already exists')
         return{'FINISHED'}
 
 class DeletePaletteMenu(bpy.types.Operator):

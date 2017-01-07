@@ -206,15 +206,15 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             if not os.path.exists(val):
                 os.makedirs(val)
 
-        #if check == True:
-        for sub in os.listdir(val):
-            if os.path.isfile(os.path.join(val, str(sub))):
-                name = str(sub)
-                if name.endswith('.json'):
-                    name = name[:-5]
-                    name = name.title()
-                    name = name.replace('_', ' ')
-                    global_palette.append(name)
+        if check == True:
+            for sub in os.listdir(val):
+                if os.path.isfile(os.path.join(val, str(sub))):
+                    name = str(sub)
+                    if name.endswith('.json'):
+                        name = name[:-5]
+                        name = name.title()
+                        name = name.replace('_', ' ')
+                        global_palette.append(name)
 
         i=0
         if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
@@ -529,10 +529,23 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("Really Minimal Color Scheme.")
                 col_box.label()
             elif kaleidoscope_spectrum_props.custom_gen_type == "4":
-                col_box.label("Online mode provides you with")
-                col_box.label("some amazing color palettes")
-                col_box.label("from the Internet.")
-                col_box.label()
+                if kaleidoscope_spectrum_props.online_type == "0":
+                    col_box.label("Standard Online mode provides")
+                    col_box.label("you with some amazing color")
+                    col_box.label("palettes that I have personally")
+                    col_box.label("added for you.")
+                    col_box.label()
+                elif kaleidoscope_spectrum_props.online_type == "1":
+                    col_box.label("Community Online mode provides")
+                    col_box.label("you with the published color")
+                    col_box.label("palettes that users have added")
+                    col_box.label("using the add-on.")
+                    col_box.label()
+                    col_box.label("NOTE: I don't personally add")
+                    col_box.label("palettes to this list. If palette")
+                    col_box.label("does not look good, it will get")
+                    col_box.label("removed")
+                    col_box.label()
             elif kaleidoscope_spectrum_props.custom_gen_type == "3":
                 col_box.label("Random option allows you to")
                 col_box.label("generate a palette from any rule")
@@ -638,7 +651,7 @@ def SpectrumPaletteUI(self, context, layout):
     row7_1.alignment = 'CENTER'
     row7_1.label("Akash Hamirwasia")
     row7_1.scale_y = 1.2
-    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/donate'
+    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/kalsupport'
 
 def update_caller(caller, input_name):
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
@@ -1143,14 +1156,13 @@ def Spectrum_Engine():
 
             kaleidoscope_spectrum_props.use_internet_libs = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "4" or kaleidoscope_spectrum_props.random_custom_int == 3:
-
+            global palette
+            global community_maintain
+            global community_palette
+            global online_check
             #Online
             if kaleidoscope_spectrum_props.online_type == '0':
                 try:
-                    global palette
-                    global community_maintain
-                    global community_palette
-                    global online_check
                     if kaleidoscope_spectrum_props.new_file != 0:
                         palette_file = str(urllib.request.urlopen("http://blskl.cf/kalonlinepal").read(), 'UTF-8')
                         kaleidoscope_spectrum_props.new_file = 0
@@ -1170,10 +1182,6 @@ def Spectrum_Engine():
                 except:
                     online_check = False
             elif kaleidoscope_spectrum_props.online_type == '1':
-                global palette
-                global community_maintain
-                global community_palette
-                global online_check
                 url = None
                 if kaleidoscope_spectrum_props.new_community_file != 0:
                     url = str(urllib.request.urlopen("http://blskl.cf/kalgetcmitylink").read(), 'UTF-8')

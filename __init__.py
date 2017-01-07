@@ -7,7 +7,7 @@ bl_info = {
     "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",
     "warning": "",
     "wiki_url": "http://www.blenderskool.cf",
-    "tracker_url": "http://links.blenderskool.cf/kalbugs",
+    "tracker_url": "http://blskl.cf/kalbugs",
     "category": "Node"}
 
 
@@ -203,7 +203,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         col2 = split.column(align=True)
         row2 = col2.row()
         row2.scale_y = 1.2
-        row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://links.blenderskool.cf/donate"
+        row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://blskl.cf/donate"
 
 class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
     """Install .zip file in the add-on"""

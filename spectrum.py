@@ -15,6 +15,7 @@ if "bpy" in locals():
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
+community_maintain = False
 community_palette = {}
 online_check = True
 for i in range(1, 16):
@@ -552,7 +553,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
             row = col_box.row(align=True)
             row.scale_y = 1.1
-            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://links.blenderskool.cf/kalbugs"
+            row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://blskl.cf/kalbugs"
         if kaleidoscope_spectrum_props.gen_type != '4' and kaleidoscope_spectrum_props.custom_gen_type != '4':
             col_box.label()
         col_box.prop(kaleidoscope_spectrum_props, "view_help", text="Close Help", icon='INFO')
@@ -582,6 +583,9 @@ def SpectrumPaletteUI(self, context, layout):
     if online_check == False:
         col3.label("There was some problem,", icon='ERROR')
         col3.label("try again")
+    if community_maintain == True:
+        col3.label("The Community Palettes,", icon='INFO')
+        col3.label("are not available now")
     if kaleidoscope_spectrum_props.use_global == False:
         col3.prop(kaleidoscope_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
     else:
@@ -634,7 +638,7 @@ def SpectrumPaletteUI(self, context, layout):
     row7_1.alignment = 'CENTER'
     row7_1.label("Akash Hamirwasia")
     row7_1.scale_y = 1.2
-    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://links.blenderskool.cf/donate'
+    row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/donate'
 
 def update_caller(caller, input_name):
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
@@ -1144,10 +1148,11 @@ def Spectrum_Engine():
             if kaleidoscope_spectrum_props.online_type == '0':
                 try:
                     global palette
+                    global community_maintain
                     global community_palette
                     global online_check
                     if kaleidoscope_spectrum_props.new_file != 0:
-                        palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalonlinepal").read(), 'UTF-8')
+                        palette_file = str(urllib.request.urlopen("http://blskl.cf/kalonlinepal").read(), 'UTF-8')
                         kaleidoscope_spectrum_props.new_file = 0
                         palette = json.loads(palette_file)
                     index = random.randint(0, len(palette)-1)
@@ -1165,14 +1170,24 @@ def Spectrum_Engine():
                 except:
                     online_check = False
             elif kaleidoscope_spectrum_props.online_type == '1':
-                try:
-                    global palette
-                    global community_palette
-                    global online_check
-                    if kaleidoscope_spectrum_props.new_community_file != 0:
-                        community_palette_file = str(urllib.request.urlopen("http://links.blenderskool.cf/kalcommunitypal").read(), 'UTF-8')
+                global palette
+                global community_maintain
+                global community_palette
+                global online_check
+                url = None
+                if kaleidoscope_spectrum_props.new_community_file != 0:
+                    url = str(urllib.request.urlopen("http://blskl.cf/kalgetcmitylink").read(), 'UTF-8')
+                    url = url.replace('\n', '')
+                    if url == "Off":
+                        community_maintain = True
+                        for i in range(0, 5):
+                            color_palette[i] = "000000"
+                    else:
+                        community_palette_file = str(urllib.request.urlopen(url).read(), 'UTF-8')
                         kaleidoscope_spectrum_props.new_community_file = 0
                         community_palette = json.loads(community_palette_file)
+                        community_maintain = False
+                if url != "Off":
                     index = random.randint(0, len(community_palette['Palettes'])-1)
                     for i in range(0, 20):
                         if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
@@ -1185,8 +1200,8 @@ def Spectrum_Engine():
                     for i in range(0, 5):
                         color_palette[i] = str(community_palette['Palettes'][index]["Color_"+str(i+1)])
                     kaleidoscope_spectrum_props.use_internet_libs = True
-                except:
-                    online_check = False
+                #except:
+                    #online_check = False
         elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
             if kaleidoscope_spectrum_props.use_custom == True:

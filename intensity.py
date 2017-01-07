@@ -151,15 +151,15 @@ class IntensityNode(Node, IntensityTreeNode):
             if not os.path.exists(val):
                 os.makedirs(val)
 
-        #if check == True:
-        for sub in os.listdir(val):
-            if os.path.isfile(os.path.join(val, str(sub))):
-                name = str(sub)
-                if name.endswith('.json'):
-                    name = name[:-5]
-                    name = name.title()
-                    name = name.replace('_', ' ')
-                    global_values.append(name)
+        if check == True:
+            for sub in os.listdir(val):
+                if os.path.isfile(os.path.join(val, str(sub))):
+                    name = str(sub)
+                    if name.endswith('.json'):
+                        name = name[:-5]
+                        name = name.title()
+                        name = name.replace('_', ' ')
+                        global_values.append(name)
 
         i=0
         m='0'
@@ -397,7 +397,7 @@ def IntensityUI(self, context, layout, current_node):
         row2_1.alignment = 'CENTER'
         row2_1.label("Akash Hamirwasia")
         row2_1.scale_y=1.2
-        row2_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://bit.ly/donatetobs'
+        row2_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/kalsupport'
 
 def register():
     bpy.app.handlers.frame_change_pre.append(pre_intensity_frame_change)

@@ -259,7 +259,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
             palette_file = open(path, 'r')
             self.palette = json.load(palette_file)
         except:
-            if bpy.context.scene.kaleidoscope_props.sync_path is not None:
+            if bpy.context.scene.kaleidoscope_props.sync_path != '':
                 path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name)
                 palette_file = open(path, 'r')
                 self.palette = json.load(palette_file)

@@ -29,10 +29,6 @@ class SavePaletteMenu(bpy.types.Operator):
     def set_name(self, context):
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
         kaleidoscope_spectrum_props.save_palette_name = self.name
-
-        name = self.name
-        name = name.lower()
-        self.name = name.replace(' ', '_')
         return None
 
     name = bpy.props.StringProperty(name="Palette Name", description="Enter the Name for the Palette", default="My Palette", update=set_name)
@@ -128,7 +124,7 @@ class SavePaletteYes(bpy.types.Operator):
         with open(path, "w") as f:
             f.write(s)
 
-        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
+        if bpy.context.scene.kaleidoscope_props.sync_path != '':
             path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
             s = json.dumps(palette_export, sort_keys=True)
             with open(path, 'w') as f:
@@ -162,7 +158,7 @@ class PublishPaletteYes(bpy.types.Operator):
 
         pal = [spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5)]
         if url != "Off":
-            for palettes in community_palette['Palettes']:
+            for palettes in spectrum.community_palette['Palettes']:
                 pal1 = int(pal[0].lstrip('#'), base=16)
                 pal2 = int(pal[1].lstrip('#'), base=16)
                 pal3 = int(pal[2].lstrip('#'), base=16)
@@ -234,7 +230,7 @@ class DeletePaletteYes(bpy.types.Operator):
         except:
             local_error = True
 
-        if bpy.context.scene.kaleidoscope_props.sync_path is not None:
+        if bpy.context.scene.kaleidoscope_props.sync_path != '':
             try:
                 path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name+".json")
                 os.remove(path)
@@ -253,8 +249,7 @@ class SaveValueMenu(bpy.types.Operator):
     bl_idname = "intensity.save_value"
     bl_label = "Save Intensity Value"
     def set_name(self, context):
-        self.name = (self.name.replace(' ', '_')).lower()
-        SaveValueMenu.pass_name = self.name
+        SaveValueMenu.pass_name = (self.name.replace(' ', '_')).lower()
         return None
 
     pass_name = None
@@ -299,7 +294,6 @@ class SaveValueYes(bpy.types.Operator):
         temp_name = name
         name = name.title()
         name = name.replace('_', ' ')
-        print(intensity.IntensityNode.num_val)
         value_export = OrderedDict([
             ("value_name", name),
             ("Value", float(intensity.IntensityNode.num_val))
@@ -307,7 +301,7 @@ class SaveValueYes(bpy.types.Operator):
         name = SaveValueMenu.pass_name
         name = name.lower()
         SaveValueMenu.pass_name = name.replace(' ', '_')
-        if kaleidoscope_props.sync_path is not None:
+        if kaleidoscope_props.sync_path != '':
             if not os.path.exists(os.path.join(kaleidoscope_props.sync_path, "values")):
                 os.makedirs(os.path.join(kaleidoscope_props.sync_path, "values"))
 
@@ -318,7 +312,7 @@ class SaveValueYes(bpy.types.Operator):
         with open(path, "w") as f:
             f.write(s)
 
-        if kaleidoscope_props.sync_path is not None:
+        if kaleidoscope_props.sync_path != '':
             path = os.path.join(kaleidoscope_props.sync_path, "values", SaveValueMenu.pass_name+".json")
             s = json.dumps(value_export, sort_keys=True)
             with open(path, 'w') as f:
@@ -376,7 +370,7 @@ class DeleteValueYes(bpy.types.Operator):
         except:
             local_error = True
         try:
-            if kaleidoscope_props.sync_path is not None:
+            if kaleidoscope_props.sync_path != '':
                 path = os.path.join(kaleidoscope_props.sync_path, "values", name)
                 try:
                     os.remove(path)

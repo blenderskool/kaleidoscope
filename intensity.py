@@ -32,8 +32,6 @@ blackbody = [1700,
             2400,
             2550,
             2700,
-            3000,
-            3200,
             3350,
             4150,
             5000,
@@ -83,7 +81,7 @@ class IntensityNode(Node, IntensityTreeNode):
                 value_file = open(path, 'r')
                 value = json.load(value_file)
             except:
-                if kaleidoscope_props.sync_path is not None:
+                if kaleidoscope_props.sync_path != '':
                     path = os.path.join(kaleidoscope_props.sync_path, "values", name)
                     value_file = open(path, 'r')
                     value = json.load(value_file)
@@ -249,7 +247,7 @@ class IntensityNode(Node, IntensityTreeNode):
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
         self.outputs["Value"].default_value = self.kaleidoscope_intensity_out_value
-        self.width = 200.3
+        self.width = 216.3
 
     def update(self):
         out = ""

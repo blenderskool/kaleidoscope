@@ -6,7 +6,7 @@ bl_info = {
     "location": "NodeEditor > MaterialView > Add Node Menu",
     "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",
     "warning": "",
-    "wiki_url": "http://www.blenderskool.cf",
+    "wiki_url": "http://blskl.cf/kaldocs",
     "tracker_url": "http://blskl.cf/kalbugs",
     "category": "Node"}
 
@@ -185,7 +185,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             row = col3.row(align=True)
             row.scale_y = 1.15
             row.label()
-            row.operator('wm.url_open', text="Video Tutorial", icon='CLIP').url = "http://www.blenderskool.cf"
+            row.operator('wm.url_open', text="Video Tutorial", icon='CLIP').url = "http://blskl.cf/kaldocs"
             row.label()
             col3.separator
         col4 = box.column(align=True)

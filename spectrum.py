@@ -160,6 +160,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         kaleidoscope_spectrum_props.random_int = int(kaleidoscope_spectrum_props.gen_type)
         kaleidoscope_spectrum_props.random_custom_int = int(kaleidoscope_spectrum_props.custom_gen_type)
+        kaleidoscope_spectrum_props.random_online_int = int(kaleidoscope_spectrum_props.online_type)
         return None
     def set_global_settings(self, context):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
@@ -304,6 +305,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     random_int = bpy.props.IntProperty(name="Random Integer", description="Used to use Random color rules and effects", default=0)
     random_custom_int = bpy.props.IntProperty(name="Random Custom Integer", description="Used to use Random color rules and effects", default=0)
+    random_online_int = bpy.props.IntProperty(name="Random Online Integer", description="Used the use Random color rules from online type", default=0)
     new_file = bpy.props.IntProperty(name="File Count",description="", default=1)
     new_community_file = bpy.props.IntProperty(name="Community File Count",description="", default=1)
     online_palette_index = bpy.props.IntProperty(name="Palette Index", description="Stores the Index of the Online Palette")
@@ -581,6 +583,8 @@ def SpectrumPaletteUI(self, context, layout):
             row.label("Base Color:")
             row.prop(kaleidoscope_spectrum_props, "hue", text="")
             row.prop(kaleidoscope_spectrum_props, "use_realtime_base", text="", icon='RESTRICT_VIEW_OFF')
+    else:
+        col.label()
 
     col2 = layout.column(align=True)
     row = col2.row(align=True)
@@ -1161,7 +1165,7 @@ def Spectrum_Engine():
             global community_palette
             global online_check
             #Online
-            if kaleidoscope_spectrum_props.online_type == '0':
+            if kaleidoscope_spectrum_props.online_type == '0' or kaleidoscope_spectrum_props.random_online_int == 0:
                 try:
                     if kaleidoscope_spectrum_props.new_file != 0:
                         palette_file = str(urllib.request.urlopen("http://blskl.cf/kalonlinepal").read(), 'UTF-8')
@@ -1181,7 +1185,7 @@ def Spectrum_Engine():
                     kaleidoscope_spectrum_props.use_internet_libs = True
                 except:
                     online_check = False
-            elif kaleidoscope_spectrum_props.online_type == '1':
+            elif kaleidoscope_spectrum_props.online_type == '1' or kaleidoscope_spectrum_props.random_online_int == 1:
                 url = None
                 if kaleidoscope_spectrum_props.new_community_file != 0:
                     url = str(urllib.request.urlopen("http://blskl.cf/kalgetcmitylink").read(), 'UTF-8')
@@ -1315,6 +1319,7 @@ class PaletteGenerate(bpy.types.Operator):
             else:
                 kaleidoscope_spectrum_props.random_int = random.randint(0, 4)
             kaleidoscope_spectrum_props.random_custom_int = random.randint(0, 4)
+            kaleidoscope_spectrum_props.random_online_int = random.randint(0, 1)
             color_palette = Spectrum_Engine()
             kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
             kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])

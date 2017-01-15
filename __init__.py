@@ -125,13 +125,13 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         row = col.row()
         row.scale_y = 1.2
         row.label("")
-        row.operator(KaleidoscopeImport.bl_idname, text='Import Files', icon='PACKAGE') #Install Presets button
+        row.operator(KaleidoscopeImport.bl_idname, text='Import Files', icon='PACKAGE') #Install Files button
         row.label("")
         col.separator()
         row = col.row()
         row.scale_y = 1.12
         row.label("")
-        row.operator(KaleidoscopeExport.bl_idname, text='Export Files', icon='OOPS') #Install Presets button
+        row.operator(KaleidoscopeExport.bl_idname, text='Export Files', icon='OOPS') #Install Files button
         row.label("")
         if bpy.context.scene.kaleidoscope_props.import_files == True:
             col.label("There was a problem in importing the files.", icon='ERROR')
@@ -142,7 +142,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             row.separator()
         split = row.split(percentage=0.31, align=True)
         col = split.column(align=True)
-        col.label("Path to Sync Palettes:")
+        col.label("Path to Sync:")
         col = split.column(align=True)
         col.prop(bpy.context.scene.kaleidoscope_props, "sync_path", text="")
         for i in range(0, 5):
@@ -153,15 +153,15 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         col2 = box2.column(align=True)
         row = col2.row(align=True)
         if kaleidoscope_props.sync_help == False:
-            row.prop(kaleidoscope_props, "sync_help", text="View Information for Syncing Palettes", toggle=True, icon='LAYER_USED')
+            row.prop(kaleidoscope_props, "sync_help", text="View Information for Syncing", toggle=True, icon='LAYER_USED')
         else:
-            row.prop(kaleidoscope_props, "sync_help", text="Hide Information for Syncing Palettes", toggle=True, icon='LAYER_ACTIVE')
+            row.prop(kaleidoscope_props, "sync_help", text="Hide Information for Syncing", toggle=True, icon='LAYER_ACTIVE')
             col3 = box2.column(align=True)
             col3.separator()
-            col3.label("Kaleidoscope add-on has the feature to sync the Saved Palettes of Spectrum Node in a cloud storage.")
-            col3.label("This allows you to Use Saved palettes on any system, anywhere.")
+            col3.label("Kaleidoscope add-on has the feature to sync the Saved Palettes and Values in a cloud storage.")
+            col3.label("This allows you to Use Saved palettes and Values on any system, anywhere.")
             col3.label()
-            col3.label("Instructions to setup Syncing of Palettes:")
+            col3.label("Instructions to setup Syncing:")
             col3.label("   1) Start by signing up with a Cloud Storage Service (Eg. Dropbox, Google Drive, etc.)")
             col3.label("   2) Then install the Desktop Application (NOTE: Only Popular Cloud Services Provide this)")
             col3.label("   3) Select the Sync folder that was created by Desktop Application, in the sync path above")
@@ -173,13 +173,13 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             row3.label("Keys:")
             row3 = col3.row(align=True)
             row3.alignment='CENTER'
-            row3.label("- Palette saved Locally, and is NOT synced.", icon='FILE')
+            row3.label("- Saved Locally, and is NOT synced.", icon='FILE')
             row3 = col3.row(align=True)
             row3.alignment='CENTER'
-            row3.label("- Palette is NOT saved Locally, but is synced.", icon='WORLD')
+            row3.label("- NOT saved Locally, but is synced.", icon='WORLD')
             row3 = col3.row(align=True)
             row3.alignment='CENTER'
-            row3.label("- Palette is saved Locally and synced too.", icon='URL')
+            row3.label("- Saved Locally and synced too.", icon='URL')
             col3.separator()
             col3.separator()
             row = col3.row(align=True)
@@ -205,7 +205,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         row2.scale_y = 1.2
         row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://blskl.cf/kalsupport"
 
-class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
+class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Files
     """Install .zip file in the add-on"""
     bl_idname = "kaleidoscope.install_files"
     bl_label = "Install Files"
@@ -229,7 +229,7 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Presets
         return {'FINISHED'}
 
 class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
-    """Export the Color Palettes in a .zip format"""
+    """Export the Saved Palettes and Values in a .zip format"""
     bl_idname = 'kaleidoscope.export_files'
     bl_label = 'Export Files'
 
@@ -259,7 +259,7 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
                         arcname = absname[len(abs_src) + 1:]
                         zf.write(absname, arcname)
             zf.close()
-            self.report({'INFO'}, "Palettes Exported Successfully to "+self.filepath)
+            self.report({'INFO'}, "Files Exported Successfully to "+self.filepath)
         except:
             self.report({'ERROR'}, "There was an error, please check the file path!")
         return{'FINISHED'}
@@ -273,7 +273,7 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
         return None
 
     import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
-    sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing of Saved Palettes", default=False)
+    sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing", default=False)
 
     check = False
     val = None
@@ -286,9 +286,9 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
     except:
         check = False
     if check == True:
-        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default=val, update=set_sync_path)
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync", subtype='DIR_PATH', default=val, update=set_sync_path)
     else:
-        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync the Saved Palettes", subtype='DIR_PATH', default="", update=set_sync_path)
+        sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync", subtype='DIR_PATH', default="", update=set_sync_path)
 
 def register():
     try:

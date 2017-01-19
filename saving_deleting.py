@@ -142,33 +142,40 @@ class PublishPaletteYes(bpy.types.Operator):
         VK_ESCAPE = 0x1B
         ctypes.windll.user32.keybd_event(VK_ESCAPE)
         duplicate = False
-        url = None
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
 
+        community_palette_file = None
         if kaleidoscope_spectrum_props.new_community_file != 0:
-            url = str(urllib.request.urlopen("http://blskl.cf/kalgetcmitylink").read(), 'UTF-8')
-            url = url.replace('\n', '')
-            if url == "Off":
+            community_palette_file = str(urllib.request.urlopen("http://blskl.cf/kalcommunitypal").read(), 'UTF-8')
+            if community_palette_file == "Off":
                 spectrum.community_maintain = True
             else:
-                community_palette_file = str(urllib.request.urlopen(url).read(), 'UTF-8')
                 kaleidoscope_spectrum_props.new_community_file = 0
                 spectrum.community_palette = json.loads(community_palette_file)
                 spectrum.community_maintain = False
 
         pal = [spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5)]
-        if url != "Off":
+        if community_palette_file != "Off":
             for palettes in spectrum.community_palette['Palettes']:
                 pal1 = int(pal[0].lstrip('#'), base=16)
                 pal2 = int(pal[1].lstrip('#'), base=16)
                 pal3 = int(pal[2].lstrip('#'), base=16)
                 pal4 = int(pal[3].lstrip('#'), base=16)
                 pal5 = int(pal[4].lstrip('#'), base=16)
-                if (abs(int(palettes['Color_1'].lstrip('#'), base=16)- pal1) < 7000) and (abs(int(palettes['Color_2'].lstrip('#'), base=16)- pal2) < 7000) and (abs(int(palettes['Color_3'].lstrip('#'), base=16)- pal3) < 7000) and (abs(int(palettes['Color_4'].lstrip('#'), base=16)- pal4) < 7000) and (abs(int(palettes['Color_5'].lstrip('#'), base=16)- pal5) < 7000):
+
+                onl_pal1 = int(palettes['Color_1'].lstrip('#'), base=16)
+                onl_pal2 = int(palettes['Color_2'].lstrip('#'), base=16)
+                onl_pal3 = int(palettes['Color_3'].lstrip('#'), base=16)
+                onl_pal4 = int(palettes['Color_4'].lstrip('#'), base=16)
+                onl_pal5 = int(palettes['Color_5'].lstrip('#'), base=16)
+
+                if (abs(onl_pal1- pal1) < 10000) and (abs(onl_pal2- pal2) < 10000) and (abs(onl_pal3- pal3) < 10000) and (abs(onl_pal4- pal4) < 10000) and (abs(onl_pal5- pal5) < 10000):
                     duplicate = True
                     break
                 else:
                     duplicate = False
+        else:
+            self.report({'INFO'}, "Community Palettes Database is going through maintenance, check later")
 
         if duplicate == False:
             post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#'))

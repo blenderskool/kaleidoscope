@@ -1205,7 +1205,7 @@ def Spectrum_Engine():
                                 index = random.randint(0, len(community_palette)-1)
                             else:
                                 break
-                        kaleidoscope_spectrum_props.online_palette_index = index
+                        kaleidoscope_spectrum_props.online_palette_index = index+1
                         online_check = True
 
                         for i in range(0, 5):
@@ -1301,6 +1301,18 @@ class PaletteGenerate(bpy.types.Operator):
     """Generate a new Color Palette"""
     bl_idname="spectrum_palette.palette_gen"
     bl_label="Refresh Palette"
+
+    def invoke(self, context, event):
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        if event.shift:
+            if kaleidoscope_spectrum_props.online_type == "0":
+                kaleidoscope_spectrum_props.new_file = 1
+                self.report({'INFO'}, "Online Palettes list has been updated")
+            elif kaleidoscope_spectrum_props.online_type == "1":
+                kaleidoscope_spectrum_props.new_community_file = 1
+                self.report({'INFO'}, "Community Palettes list has been updated")
+        self.execute(context)
+        return {'FINISHED'}
 
     def execute(self, context):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props

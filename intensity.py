@@ -10,23 +10,33 @@ if "bpy" in locals():
     importlib.reload(spectrum)
     importlib.reload(saving_deleting)
 
-glass_ior = [1,
-            1.000293,
-            1.000036,
-            1.000132,
-            1.00045,
-            1.333,
-            1.36,
-            1.47,
-            1.31,
-            1.46,
-            1.49,
-            1.52,
-            1.62,
-            2.15,
-            2.42,
-            2.65,
-            2.67]
+glass_ior = [1, #Vacuum
+            1.000293, #Air
+            1.000036, #Helium
+            1.000132, #Hydrogen
+            1.00045, #Carbon dioxide
+            1.31, #Ice
+            1.333, #Water
+            1.345, #Beer
+            1.35, #Milk
+            1.36, #Alcohol
+            1.38, #Sugar Solution
+            1.41, #Lens
+            1.47, #Olive Oil
+            1.473, #Glycerine
+            1.46, #Plastic
+            1.46, #Soda-lime Glass
+            1.49, #Plexiglas
+            1.50, #Honey
+            1.52, #Crown glass
+            1.53, #Nylon
+            1.56, #Emerald
+            1.62, #Flint glass
+            2.00, #Crystal
+            2.15, #Cubic zirconia
+            2.42, #Diamond
+            2.65, #Moissanite
+            2.67] #Zinc selenide
 blackbody = [1700,
             1850,
             2400,
@@ -214,18 +224,28 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                 ('2', 'Helium', ''),
                                                                                                                                                 ('3', 'Hydrogen', ''),
                                                                                                                                                 ('4', 'Carbon dioxide', ''),
-                                                                                                                                                ('5', 'Water', ''),
-                                                                                                                                                ('6', 'Ethanol', ''),
-                                                                                                                                                ('7', 'Olive Oil', ''),
-                                                                                                                                                ('8', 'Ice', ''),
-                                                                                                                                                ('9', 'Soda-lime Glass', ''),
-                                                                                                                                                ('10', 'Plexiglas', ''),
-                                                                                                                                                ('11', 'Crown glass', ''),
-                                                                                                                                                ('12', 'Flint glass', ''),
-                                                                                                                                                ('13', 'Cubic zirconia', ''),
-                                                                                                                                                ('14', 'Diamond', ''),
-                                                                                                                                                ('15', 'Moissanite', ''),
-                                                                                                                                                ('16', 'Zinc selenide', '')), default='0', update=set_value)
+                                                                                                                                                ('5', 'Ice', ''),
+                                                                                                                                                ('6', 'Water', ''),
+                                                                                                                                                ('7', 'Beer', ''),
+                                                                                                                                                ('8', 'Alcohol', ''),
+                                                                                                                                                ('9', 'Sugar Solution', ''),
+                                                                                                                                                ('10', 'Milk', ''),
+                                                                                                                                                ('11', 'Lens', ''),
+                                                                                                                                                ('12', 'Olive Oil', ''),
+                                                                                                                                                ('13', 'Glycerine', ''),
+                                                                                                                                                ('14', 'Plastic', ''),
+                                                                                                                                                ('15', 'Soda-lime Glass', ''),
+                                                                                                                                                ('16', 'Plexiglas', ''),
+                                                                                                                                                ('17', 'Honey', ''),
+                                                                                                                                                ('18', 'Crown glass', ''),
+                                                                                                                                                ('19', 'Nylon', ''),
+                                                                                                                                                ('20', 'Emerald', ''),
+                                                                                                                                                ('21', 'Flint glass', ''),
+                                                                                                                                                ('22', 'Crystal', ''),
+                                                                                                                                                ('23', 'Cubic zirconia', ''),
+                                                                                                                                                ('24', 'Diamond', ''),
+                                                                                                                                                ('25', 'Moissanite', ''),
+                                                                                                                                                ('26', 'Zinc selenide', '')), default='0', update=set_value)
     kaleidoscope_intensity_black_body_category = bpy.props.EnumProperty(name="Blackbody", description="Select the Predefined Value for the Blackbody (Color Temperature)", items=(('0', 'Match Flame', ''),
                                                                                                                                                           ('1', 'Candle Flame', ''),
                                                                                                                                                           ('2', 'Standard incandescent lamps', ''),
@@ -242,7 +262,7 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                           ('13', 'Daylight', ''),
                                                                                                                                                           ('14', 'LCD, CRT screen', ''),
                                                                                                                                                           ('15', 'Clear Blue Sky', '')), default='0', update=set_value)
-    kaleidoscope_intensity_custom_category = bpy.props.EnumProperty(name="Custom", description="Seleect the Predefined Values from the Custom Category", items=get_custom_vals, update=set_value)
+    kaleidoscope_intensity_custom_category = bpy.props.EnumProperty(name="Custom Values", description="Seleect the Predefined Values from the Custom Category", items=get_custom_vals, update=set_value)
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
@@ -381,7 +401,7 @@ def IntensityUI(self, context, layout, current_node):
             if len(custom_values_list) != 0:
                 row.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_custom_category", text="")
             else:
-                row.label("No Custom Value")
+                row.label("No Saved Value")
         row.operator(saving_deleting.SaveValueMenu.bl_idname, text="", icon="ZOOMIN")
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2' and len(custom_values_list) != 0:
             row.operator(saving_deleting.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")

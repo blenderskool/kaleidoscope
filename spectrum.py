@@ -199,9 +199,9 @@ class SpectrumProperties(bpy.types.PropertyGroup):
         check = False
         val = None
         try:
-            f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
-            line = f.readlines()
-            val = line[0]+"palettes"
+            f = open(os.path.join(os.path.dirname(__file__), "settings.json"), 'r')
+            settings = json.load(f)
+            val = os.path.join(settings['sync_directory'], "palettes")
             f.close()
             check = True
         except:

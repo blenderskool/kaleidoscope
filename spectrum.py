@@ -15,6 +15,10 @@ if "bpy" in locals():
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
 palette = {}
+
+shuffle_time = 1
+before_shuffle_colors=[]
+
 community_maintain = False
 community_palette = {}
 online_check = True
@@ -482,6 +486,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("varying saturation and")
             col_box.label("brightness. It is useful when")
             col_box.label("used in a proper way.")
+            col_box.label()
         elif kaleidoscope_spectrum_props.gen_type == "1":
             col_box.label("Analogous Scheme uses")
             col_box.label("colors of different hues. It")
@@ -489,6 +494,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("and uses colors near it in the")
             col_box.label("color wheel, with varying")
             col_box.label("saturation and brightness.")
+            col_box.label()
         elif kaleidoscope_spectrum_props.gen_type == "2":
             col_box.label("Complementary Scheme is")
             col_box.label("interesting rule where colors")
@@ -497,6 +503,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("scheme should be used")
             col_box.label("carefully because of contrasting")
             col_box.label("shades.")
+            col_box.label()
         elif kaleidoscope_spectrum_props.gen_type == "3":
             col_box.label("Triadic Scheme uses")
             col_box.label("one color as base color")
@@ -504,6 +511,7 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label("chosen from the color wheel")
             col_box.label("such that all three form an")
             col_box.label("equilateral triangle.")
+            col_box.label()
         elif kaleidoscope_spectrum_props.gen_type == "4":
             col_box.label("Custom schemes are some")
             col_box.label("simple rules exclusive to")
@@ -561,7 +569,6 @@ def SpectrumPaletteUI(self, context, layout):
                 col_box.label("scene, then use this option.")
                 col_box.label("This option 'Randomly' generates")
                 col_box.label("the colors for the palette.")
-                col_box.label()
                 if kaleidoscope_spectrum_props.use_internet_libs == True:
                     col_box.label()
         if kaleidoscope_spectrum_props.use_internet_libs == True:
@@ -1305,12 +1312,13 @@ class PaletteGenerate(bpy.types.Operator):
     def invoke(self, context, event):
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         if event.shift:
-            if kaleidoscope_spectrum_props.online_type == "0":
-                kaleidoscope_spectrum_props.new_file = 1
-                self.report({'INFO'}, "Online Palettes list has been updated")
-            elif kaleidoscope_spectrum_props.online_type == "1":
-                kaleidoscope_spectrum_props.new_community_file = 1
-                self.report({'INFO'}, "Community Palettes list has been updated")
+            if kaleidoscope_spectrum_props.gen_type == '4' and kaleidoscope_spectrum_props.custom_gen_type == '4':
+                if kaleidoscope_spectrum_props.online_type == "0":
+                    kaleidoscope_spectrum_props.new_file = 1
+                    self.report({'INFO'}, "Online Palettes list has been updated")
+                elif kaleidoscope_spectrum_props.online_type == "1":
+                    kaleidoscope_spectrum_props.new_community_file = 1
+                    self.report({'INFO'}, "Community Palettes list has been updated")
         self.execute(context)
         return {'FINISHED'}
 
@@ -1342,6 +1350,12 @@ class PaletteGenerate(bpy.types.Operator):
             if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
                 set_color_ramp(self)
                 break
+
+        global shuffle_time
+        global before_shuffle_colors
+        shuffle_time=1
+
+        before_shuffle_colors.clear()
         return{'FINISHED'}
 
 class PreviousPalette(bpy.types.Operator):
@@ -1409,6 +1423,9 @@ class PreviousPalette(bpy.types.Operator):
         kaleidoscope_spectrum_props.hue_slider = 0.0
         kaleidoscope_spectrum_props.saturation_slider = 0.0
         kaleidoscope_spectrum_props.value_slider = 0.0
+
+        global shuffle_time
+        shuffle_time=1
         return{'FINISHED'}
 
 class NextPalette(bpy.types.Operator):
@@ -1468,6 +1485,9 @@ class NextPalette(bpy.types.Operator):
         kaleidoscope_spectrum_props.hue_slider = 0.0
         kaleidoscope_spectrum_props.saturation_slider = 0.0
         kaleidoscope_spectrum_props.value_slider = 0.0
+
+        global shuffle_time
+        shuffle_time=1
         return{'FINISHED'}
 
 class PaletteShuffle(bpy.types.Operator):
@@ -1475,7 +1495,25 @@ class PaletteShuffle(bpy.types.Operator):
     bl_idname="spectrum_palette.palette_shuffle"
     bl_label="Shufle Palette"
 
+    def invoke(self, context, event):
+        global shuffle_time
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        if event.shift:
+            if shuffle_time != 1:
+                global before_shuffle_colors
+                for i in range(1, 6):
+                    exec("kaleidoscope_spectrum_props.color"+str(i)+" = before_shuffle_colors["+str(i-1)+"]")
+                shuffle_time = 1
+                self.report({'INFO'}, 'Palette was reset to the order before it was shuffled')
+            else:
+                self.report({'INFO'}, 'Palette is not shuffled')
+        else:
+            self.execute(context)
+        return {'FINISHED'}
+
     def execute(self, context):
+        global before_shuffle_colors
+        global shuffle_time
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
 
         col1 = Color()
@@ -1484,36 +1522,23 @@ class PaletteShuffle(bpy.types.Operator):
         col4 = Color()
         col5 = Color()
 
-        col1.r = kaleidoscope_spectrum_props.color1[0]
-        col1.g = kaleidoscope_spectrum_props.color1[1]
-        col1.b = kaleidoscope_spectrum_props.color1[2]
+        for i in range(1, 6):
+            exec("col"+str(i)+".r = kaleidoscope_spectrum_props.color"+str(i)+"[0]")
+            exec("col"+str(i)+".g = kaleidoscope_spectrum_props.color"+str(i)+"[1]")
+            exec("col"+str(i)+".b = kaleidoscope_spectrum_props.color"+str(i)+"[2]")
 
-        col2.r = kaleidoscope_spectrum_props.color2[0]
-        col2.g = kaleidoscope_spectrum_props.color2[1]
-        col2.b = kaleidoscope_spectrum_props.color2[2]
-
-        col3.r = kaleidoscope_spectrum_props.color3[0]
-        col3.g = kaleidoscope_spectrum_props.color3[1]
-        col3.b = kaleidoscope_spectrum_props.color3[2]
-
-        col4.r = kaleidoscope_spectrum_props.color4[0]
-        col4.g = kaleidoscope_spectrum_props.color4[1]
-        col4.b = kaleidoscope_spectrum_props.color4[2]
-
-        col5.r = kaleidoscope_spectrum_props.color5[0]
-        col5.g = kaleidoscope_spectrum_props.color5[1]
-        col5.b = kaleidoscope_spectrum_props.color5[2]
+        if shuffle_time == 1:
+            before_shuffle_colors.clear()
+            before_shuffle_colors.extend([(col1.r, col1.g, col1.b, 1.0), (col2.r, col2.g, col2.b, 1.0), (col3.r, col3.g, col3.b, 1.0), (col4.r, col4.g, col4.b, 1.0), (col5.r, col5.g, col5.b, 1.0)])
 
         index = [1, 2, 3, 4, 5]
         random.shuffle(index)
 
-        exec("kaleidoscope_spectrum_props.color"+str(index[0])+" = col1.r, col1.g, col1.b, 1.0")
-        exec("kaleidoscope_spectrum_props.color"+str(index[1])+" = col2.r, col2.g, col2.b, 1.0")
-        exec("kaleidoscope_spectrum_props.color"+str(index[2])+" = col3.r, col3.g, col3.b, 1.0")
-        exec("kaleidoscope_spectrum_props.color"+str(index[3])+" = col4.r, col4.g, col4.b, 1.0")
-        exec("kaleidoscope_spectrum_props.color"+str(index[4])+" = col5.r, col5.g, col5.b, 1.0")
+        for i in range(1, 6):
+            exec("kaleidoscope_spectrum_props.color"+str(index[i-1])+" = col"+str(i)+".r, col"+str(i)+".g, col"+str(i)+".b, 1.0")
 
         current_history()
+        shuffle_time=shuffle_time+1
         return{'FINISHED'}
 
 def current_history():
@@ -1551,6 +1576,8 @@ class PaletteInvert(bpy.types.Operator):
     bl_label = "Invert Palette"
 
     def execute(self, context):
+        global shuffle_time
+        global before_shuffle_colors
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         color1 = Color()
         color2 = Color()
@@ -1563,12 +1590,17 @@ class PaletteInvert(bpy.types.Operator):
             exec("color"+str(i)+".g = kaleidoscope_spectrum_props.color"+str(i)+"[1]")
             exec("color"+str(i)+".b = kaleidoscope_spectrum_props.color"+str(i)+"[2]")
 
+        if shuffle_time == 1:
+            before_shuffle_colors.clear()
+            before_shuffle_colors.extend([(color1.r, color1.g, color1.b, 1.0), (color2.r, color2.g, color2.b, 1.0), (color3.r, color3.g, color3.b, 1.0), (color4.r, color4.g, color4.b, 1.0), (color5.r, color5.g, color5.b, 1.0)])
+
         for i in range(1, 6):
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[0] = color"+str(i)+".r")
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[1] = color"+str(i)+".g")
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[2] = color"+str(i)+".b")
 
         current_history()
+        shuffle_time = shuffle_time+1
         return{'FINISHED'}
 
 def register():

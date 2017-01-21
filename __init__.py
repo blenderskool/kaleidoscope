@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "Kaleidoscope - A small package of nodes for Cycles Materials",
+    "name": "Kaleidoscope - A small package of nodes for materials",
     "author": "Akash Hamirwasia",
     "version": (1, 0),
     "blender": (2, 75, 0),
@@ -20,7 +20,7 @@ else:
     from . import spectrum, intensity, addon_updater_ops
 
 import bpy
-import nodeitems_utils, zipfile, os
+import nodeitems_utils, zipfile, os, json
 from nodeitems_utils import NodeCategory, NodeItem
 from bpy.types import Node
 from bpy_extras.io_utils import ImportHelper, ExportHelper
@@ -266,10 +266,11 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
 
 class KaleidoscopeProps(bpy.types.PropertyGroup):
     def set_sync_path(self, context):
-        path = os.path.join(os.path.dirname(__file__), "sync_directory.txt")
-        f = open(path, 'w')
-        f.write(bpy.context.scene.kaleidoscope_props.sync_path)
-        f.close()
+        settings = {"sync_directory": bpy.context.scene.kaleidoscope_props.sync_path}
+        path = os.path.join(os.path.dirname(__file__), "settings.json")
+        s = json.dumps(settings, sort_keys=True)
+        with open(path, 'w') as f:
+            f.write(s)
         return None
 
     import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
@@ -278,10 +279,9 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
     check = False
     val = None
     try:
-        f = open(os.path.join(os.path.dirname(__file__), "sync_directory.txt"), 'r')
-        line = f.readlines()
-        val = line[0]
-        f.close()
+        f = open(os.path.join(os.path.dirname(__file__), "settings.json"), 'r')
+        settings = json.load(f)
+        val = settings["sync_directory"]
         check = True
     except:
         check = False
@@ -291,10 +291,7 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
         sync_path = bpy.props.StringProperty(name="Sync Path", description="Select the Directory to Sync", subtype='DIR_PATH', default="", update=set_sync_path)
 
 def register():
-    try:
-        bpy.utils.register_module(__name__)
-    except:
-        pass
+    bpy.utils.register_module(__name__)
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)

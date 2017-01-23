@@ -7,10 +7,10 @@ from bpy.types import Node
 from mathutils import Color
 from collections import OrderedDict
 import random
-from . import saving_deleting
+from . import client
 if "bpy" in locals():
     import importlib
-    importlib.reload(saving_deleting)
+    importlib.reload(client)
 
 PaletteHistory = []
 Palette_idHistory = [0, 0, 0]
@@ -641,10 +641,10 @@ def SpectrumPaletteUI(self, context, layout):
         row5.prop(kaleidoscope_spectrum_props, "saved_palettes", text="")
     else:
         row5.label("No Saved Palettes")
-    row5.operator(saving_deleting.SavePaletteMenu.bl_idname, text="", icon='ZOOMIN')
+    row5.operator(client.SavePaletteMenu.bl_idname, text="", icon='ZOOMIN')
     if len(kaleidoscope_spectrum_props.saved_palettes) != 0:
-        row5.operator(saving_deleting.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
-    row5.operator(saving_deleting.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
+        row5.operator(client.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
+    row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
     col4.label()
     row6 = col4.row(align=True)
     try:
@@ -1216,7 +1216,7 @@ def Spectrum_Engine():
                         online_check = True
 
                         for i in range(0, 5):
-                            color_palette[i] = str(community_palette['Palettes'][index]["Color_"+str(i+1)])
+                            color_palette[i] = str(community_palette['Palettes'][index]["Color_"+str(i+1)].rstrip('t'))
                         kaleidoscope_spectrum_props.use_internet_libs = True
                 except:
                     online_check = False

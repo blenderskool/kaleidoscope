@@ -4,11 +4,11 @@ import os
 from bpy.types import Node
 from collections import OrderedDict
 import json
-from . import spectrum, saving_deleting
+from . import spectrum, client
 if "bpy" in locals():
     import importlib
     importlib.reload(spectrum)
-    importlib.reload(saving_deleting)
+    importlib.reload(client)
 
 glass_ior = [1, #Vacuum
             1.000293, #Air
@@ -402,9 +402,9 @@ def IntensityUI(self, context, layout, current_node):
                 row.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_custom_category", text="")
             else:
                 row.label("No Saved Value")
-        row.operator(saving_deleting.SaveValueMenu.bl_idname, text="", icon="ZOOMIN")
+        row.operator(client.SaveValueMenu.bl_idname, text="", icon="ZOOMIN")
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2' and len(custom_values_list) != 0:
-            row.operator(saving_deleting.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")
+            row.operator(client.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")
         col4 = split2.column(align=True)
         col4.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
         col.label()

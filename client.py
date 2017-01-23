@@ -165,11 +165,11 @@ class PublishPaletteYes(bpy.types.Operator):
                 pal4 = int(pal[3].lstrip('#'), base=16)
                 pal5 = int(pal[4].lstrip('#'), base=16)
 
-                onl_pal1 = int(palettes['Color_1'].lstrip('t'), base=16)
-                onl_pal2 = int(palettes['Color_2'].lstrip('t'), base=16)
-                onl_pal3 = int(palettes['Color_3'].lstrip('t'), base=16)
-                onl_pal4 = int(palettes['Color_4'].lstrip('t'), base=16)
-                onl_pal5 = int(palettes['Color_5'].lstrip('t'), base=16)
+                onl_pal1 = int(palettes['Color_1'].rstrip('t'), base=16)
+                onl_pal2 = int(palettes['Color_2'].rstrip('t'), base=16)
+                onl_pal3 = int(palettes['Color_3'].rstrip('t'), base=16)
+                onl_pal4 = int(palettes['Color_4'].rstrip('t'), base=16)
+                onl_pal5 = int(palettes['Color_5'].rstrip('t'), base=16)
 
                 if (abs(onl_pal1- pal1) < 10000) and (abs(onl_pal2- pal2) < 10000) and (abs(onl_pal3- pal3) < 10000) and (abs(onl_pal4- pal4) < 10000) and (abs(onl_pal5- pal5) < 10000):
                     duplicate = True

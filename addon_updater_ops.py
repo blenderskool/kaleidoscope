@@ -586,16 +586,25 @@ def update_settings_ui(self, context, box2):
 		subcol = col.row(align=True)
 		subcol.scale_y = 1
 		split = subcol.split(align=True)
-		split.enabled = False
 		split.scale_y = button_scale
 		row_i = split.row(align=True)
 		row_i.scale_y = button_scale
 		for i in range(1, separators):
 			row_i.separator()
-		row_i.operator(addon_updater_check_now.bl_idname,
+		col = row_i.column(align=True)
+		row = col.row(align=True)
+		row.scale_y = button_scale
+		row.enabled = False
+		row.operator(addon_updater_check_now.bl_idname,
 						"Checking...", icon='URL')
-		row_i.operator(addon_updater_end_background.bl_idname,
+
+		col = row_i.column(align=True)
+		row = col.row(align=True)
+		row.scale_y = button_scale
+		row.enabled = True
+		row.operator(addon_updater_end_background.bl_idname,
 						text = "", icon="X")
+
 		for i in range(1, separators):
 			row_i.separator()
 
@@ -747,7 +756,7 @@ def register(bl_info):
 
 	# optional, consider turning off for production or allow as an option
 	# This will print out additional debugging info to the console
-	updater.verbose = True # make False for production default
+	updater.verbose = False # make False for production default
 
 	# optional, customize where the addon updater processing subfolder is,
 	# needs to be within the same folder as the addon itself

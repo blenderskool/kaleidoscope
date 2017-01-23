@@ -213,7 +213,7 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Files
     filename_ext = ".kal"
 
     filter_glob = bpy.props.StringProperty(
-            default="*.kal",
+            default="*.kal;*.zip",
             options={'HIDDEN'},
             )
     def execute(self, context):
@@ -233,17 +233,29 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
     bl_idname = 'kaleidoscope.export_files'
     bl_label = 'Export Files'
 
-    filename_ext = ".zip"
+    filename_ext = ""
 
     filter_glob = bpy.props.StringProperty(
-            default="*.zip",
+            default="*.zip;*.kal",
             options={'HIDDEN'}
             )
 
+    export_type = bpy.props.EnumProperty(name="Format", description="Format in which you want to export the Files", items=(('0', '.zip', 'Use .zip if you want to save it as a backup for yourself'),
+                                        ('1', '.kal', 'Use .kal if you want to share your files with other users')), default='0')
+
     def execute(self, context):
         try:
-            if self.filepath.endswith(".zip") == False:
-                self.filepath = self.filepath+".zip"
+            if self.export_type == '0':
+                if self.filepath.endswith(".kal") == True:
+                    self.filepath = self.filepath.replace(".kal", ".zip")
+                if self.filepath.endswith(".zip") == False:
+                    self.filepath = self.filepath+".zip"
+
+            elif self.export_type == '1':
+                if self.filepath.endswith(".zip") == True:
+                    self.filepath = self.filepath.replace(".zip", ".kal")
+                if self.filepath.endswith(".kal") == False:
+                    self.filepath = self.filepath+".kal"
 
             zf = zipfile.ZipFile(self.filepath, "w", zipfile.ZIP_DEFLATED)
             path = os.path.dirname(__file__)
@@ -255,9 +267,10 @@ class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
                     subdirs.remove('kaleidoscope_updater')
                 for filename in files: #Do not include the main code files
                     if filename.endswith(".json"):
-                        absname = os.path.abspath(os.path.join(dirname, filename))
-                        arcname = absname[len(abs_src) + 1:]
-                        zf.write(absname, arcname)
+                        if filename != "settings.json":
+                            absname = os.path.abspath(os.path.join(dirname, filename))
+                            arcname = absname[len(abs_src) + 1:]
+                            zf.write(absname, arcname)
             zf.close()
             self.report({'INFO'}, "Files Exported Successfully to "+self.filepath)
         except:

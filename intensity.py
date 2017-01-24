@@ -42,6 +42,8 @@ blackbody = [1700,
             2400,
             2550,
             2700,
+            3000,
+            3200,
             3350,
             4150,
             5000,
@@ -66,7 +68,7 @@ class IntensityNode(Node, IntensityTreeNode):
     """Intensity node"""
     bl_idname = 'intensity.node'
     bl_label = 'Intensity'
-    bl_icon = 'INFO'
+    bl_icon = 'NONE'
 
     def update_value(self, context):
         self.outputs['Value'].default_value = self.kaleidoscope_intensity_out_value

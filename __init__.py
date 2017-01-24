@@ -221,7 +221,7 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Files
             zipref = zipfile.ZipFile(self.filepath, 'r')
             path = os.path.dirname(__file__)
             if (path != ""):
-                zipref.extractall(path) #Extract to the Enrich add-on Folder
+                zipref.extractall(path) #Extract to the kaleidoscope add-on Folder
                 zipref.close()
             bpy.context.scene.kaleidoscope_props.import_files = False
         except:

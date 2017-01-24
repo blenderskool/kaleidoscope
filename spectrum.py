@@ -8,6 +8,7 @@ from mathutils import Color
 from collections import OrderedDict
 import random
 from . import client
+from .icons import load_icons
 if "bpy" in locals():
     import importlib
     importlib.reload(client)
@@ -384,7 +385,7 @@ class SpectrumNode(Node, SpectrumTreeNode):
     """The Spectrum Node with all the Attributes"""
     bl_idname = 'spectrum_palette.node'
     bl_label = 'Spectrum Palette'
-    bl_icon = 'INFO'
+    bl_icon = 'NONE'
 
     def init(self, context):
         self.outputs.new('NodeSocketColor', "Color 1")
@@ -459,6 +460,7 @@ class SpectrumNode(Node, SpectrumTreeNode):
 def SpectrumPaletteUI(self, context, layout):
     """Spectrum Palette Interface, which can be accessed from any other class"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+    icons = load_icons()
     col = layout.column(align=True)
     row = col.row(align=True)
     split = row.split(percentage=0.8)
@@ -585,7 +587,9 @@ def SpectrumPaletteUI(self, context, layout):
             col.prop(kaleidoscope_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
         if kaleidoscope_spectrum_props.use_custom == True:
             col.prop(kaleidoscope_spectrum_props, "use_custom", text="Hide Custom Base Color", toggle=True, icon="LAYER_ACTIVE")
-            col1 = layout.column()
+            box = col.box()
+
+            col1 = box.column()
             row = col1.row(align=True)
             row.label("Base Color:")
             row.prop(kaleidoscope_spectrum_props, "hue", text="")
@@ -614,7 +618,8 @@ def SpectrumPaletteUI(self, context, layout):
         col3.prop(kaleidoscope_spectrum_props, "use_global", text="View Global Controls", icon='LAYER_USED', toggle=True)
     else:
         col3.prop(kaleidoscope_spectrum_props, "use_global", text="Hide Global Controls", icon='LAYER_ACTIVE', toggle=True)
-        col4 = layout.column(align=True)
+        box = col3.box()
+        col4 = box.column(align=True)
         row4 = col4.row(align=True)
         col4.prop(kaleidoscope_spectrum_props, "hue_slider", text="Hue", slider=True)
         col4.prop(kaleidoscope_spectrum_props, "saturation_slider", text="Saturation", slider=True)
@@ -644,7 +649,9 @@ def SpectrumPaletteUI(self, context, layout):
     row5.operator(client.SavePaletteMenu.bl_idname, text="", icon='ZOOMIN')
     if len(kaleidoscope_spectrum_props.saved_palettes) != 0:
         row5.operator(client.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
-    row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
+
+    publish_icon = icons.get("ka_PUBLISH")
+    row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon_value=publish_icon.icon_id)
     col4.label()
     row6 = col4.row(align=True)
     try:

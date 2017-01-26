@@ -5,7 +5,6 @@ import ctypes, json, os, requests
 import urllib.request
 from collections import OrderedDict
 from . import spectrum, intensity
-from .icons import load_icons
 if "bpy" in locals():
     import importlib
     importlib.reload(spectrum)
@@ -39,10 +38,7 @@ class SavePaletteMenu(bpy.types.Operator):
         layout = self.layout
         col = layout.column(align=True)
         col.scale_y = 1.2
-        icons = load_icons()
-
-        save_icon = icons.get("ka_SAVE")
-        col.label("Save a Color Palette", icon_value=save_icon.icon_id)
+        col.label("Save a Color Palette", icon='FILE_TICK')
         col.label("(Palette will be synced if Sync Path is specified)")
         for i in range(1, 4):
             col.separator()
@@ -115,10 +111,7 @@ class PublishPaletteMenu(bpy.types.Operator):
         layout = self.layout
         col = layout.column(align=True)
         col.scale_y = 1.2
-        icons = load_icons()
-
-        publish_icon = icons.get("ka_PUBLISH")
-        col.label("Publish a Color Palette", icon_value=publish_icon.icon_id)
+        col.label("Publish a Color Palette", icon='WORLD')
         col.label("Are you sure you want to publish this palette?")
         col.label("On Publishing, all Kaleidoscope users will be able")
         col.label("to access your palette")
@@ -277,10 +270,7 @@ class SaveValueMenu(bpy.types.Operator):
         layout = self.layout
         col = layout.column(align=True)
         col.scale_y = 1.2
-        icons = load_icons()
-
-        save_icon = icons.get("ka_SAVE")
-        col.label("Save a Value", icon_value=save_icon.icon_id)
+        col.label("Save a Value", icon='FILE_TICK')
         col.label("(Value will be synced if Sync Path is specified)")
         for i in range(1, 4):
             col.separator()

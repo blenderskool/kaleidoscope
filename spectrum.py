@@ -8,7 +8,6 @@ from mathutils import Color
 from collections import OrderedDict
 import random
 from . import client
-from .icons import load_icons
 if "bpy" in locals():
     import importlib
     importlib.reload(client)
@@ -460,7 +459,6 @@ class SpectrumNode(Node, SpectrumTreeNode):
 def SpectrumPaletteUI(self, context, layout):
     """Spectrum Palette Interface, which can be accessed from any other class"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
-    icons = load_icons()
     col = layout.column(align=True)
     row = col.row(align=True)
     split = row.split(percentage=0.8)
@@ -650,8 +648,7 @@ def SpectrumPaletteUI(self, context, layout):
     if len(kaleidoscope_spectrum_props.saved_palettes) != 0:
         row5.operator(client.DeletePaletteMenu.bl_idname, text="", icon='ZOOMOUT')
 
-    publish_icon = icons.get("ka_PUBLISH")
-    row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon_value=publish_icon.icon_id)
+    row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
     col4.label()
     row6 = col4.row(align=True)
     try:

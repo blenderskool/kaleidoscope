@@ -22,6 +22,62 @@ class CancelProcess(bpy.types.Operator):
         ctypes.windll.user32.keybd_event(VK_ESCAPE)
         return{'FINISHED'}
 
+#General Structure of layout which will be used by all the popups
+def menu_layout_builder(self, yes_operator, process_type):
+    layout = self.layout
+    col = layout.column(align=True)
+    col.scale_y = 1.2
+    if process_type == "spectrum_save":
+        col.label("Save a Color Palette", icon='FILE_TICK')
+        col.label("(Palette will be synced if Sync Path is specified)")
+        for i in range(1, 4):
+            col.separator()
+        col.prop(self, "name")
+        col.separator()
+        col.separator()
+    elif process_type == "spectrum_publish":
+        col.label("Publish a Color Palette", icon='WORLD')
+        col.label("Are you sure you want to publish this palette?")
+        col.label("On Publishing, all Kaleidoscope users will be able")
+        col.label("to access your palette")
+        col.label()
+        col.label("This will be added to Community Online Palettes list")
+        col.label("Make Sure your palette looks nice otherwise it")
+        col.label("will get DELETED")
+        for i in range(1, 4):
+            col.separator()
+    elif process_type == "spectrum_remove":
+        col.label("Are you sure you want to", icon="ERROR")
+        col.label("delete the current saved palette?")
+        col.label()
+
+    elif process_type == "intensity_save":
+        col.label("Save a Value", icon='FILE_TICK')
+        col.label("(Value will be synced if Sync Path is specified)")
+        for i in range(1, 4):
+            col.separator()
+        col.prop(self, "name")
+        col.separator()
+        col.separator()
+    elif process_type == "intensity_remove":
+        col.label("Are you sure you want to", icon="ERROR")
+        col.label("delete the current saved value?")
+        col.label()
+
+        row = layout.row(align = False)
+        row.scale_y = 1.2
+        for i in range(1, 8):
+            row.separator()
+
+    row = layout.row(align = False)
+    row.scale_y = 1.2
+    for i in range(1, 8):
+        row.separator()
+    row.alert = True
+    row.operator(yes_operator, text="Yes")
+    row.alert = False
+    row.operator(CancelProcess.bl_idname, text="Cancel")
+
 class SavePaletteMenu(bpy.types.Operator):
     """Save the current Palette for future use"""
     bl_idname = "spectrum.save_palette"
@@ -35,24 +91,7 @@ class SavePaletteMenu(bpy.types.Operator):
     name = bpy.props.StringProperty(name="Palette Name", description="Enter the Name for the Palette", default="My Palette", update=set_name)
 
     def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Save a Color Palette", icon='FILE_TICK')
-        col.label("(Palette will be synced if Sync Path is specified)")
-        for i in range(1, 4):
-            col.separator()
-        col.prop(self, "name")
-        col.separator()
-        col.separator()
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(SavePaletteYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(CancelProcess.bl_idname, text="Cancel")
+        menu_layout_builder(self, SavePaletteYes.bl_idname, "spectrum_save")
 
     def execute(self, context):
         return {'FINISHED'}
@@ -108,27 +147,7 @@ class PublishPaletteMenu(bpy.types.Operator):
     bl_label = "Publish Spectrum Palette"
 
     def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Publish a Color Palette", icon='WORLD')
-        col.label("Are you sure you want to publish this palette?")
-        col.label("On Publishing, all Kaleidoscope users will be able")
-        col.label("to access your palette")
-        col.label()
-        col.label("This will be added to Community Online Palettes list")
-        col.label("Make Sure your palette looks nice otherwise it")
-        col.label("will get DELETED")
-        for i in range(1, 4):
-            col.separator()
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(PublishPaletteYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(CancelProcess.bl_idname, text="Cancel")
+        menu_layout_builder(self, PublishPaletteYes.bl_idname, "spectrum_publish")
 
     def execute(self, context):
         return {'FINISHED'}
@@ -198,21 +217,7 @@ class DeletePaletteMenu(bpy.types.Operator):
     bl_label = "Delete"
 
     def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Are you sure you want to", icon="ERROR")
-        col.label("delete the current saved palette?")
-        col.label()
-
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(DeletePaletteYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(CancelProcess.bl_idname, text="Cancel")
+        menu_layout_builder(self, DeletePaletteYes.bl_idname, "spectrum_remove")
 
     def execute(self, context):
         return {'FINISHED'}
@@ -259,6 +264,7 @@ class SaveValueMenu(bpy.types.Operator):
     """Save the current Value for future use"""
     bl_idname = "intensity.save_value"
     bl_label = "Save Intensity Value"
+
     def set_name(self, context):
         SaveValueMenu.pass_name = (self.name.replace(' ', '_')).lower()
         return None
@@ -267,24 +273,7 @@ class SaveValueMenu(bpy.types.Operator):
     name = bpy.props.StringProperty(name="Value Name", description="Enter the Name for the Value", default="My Value", update=set_name)
 
     def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Save a Value", icon='FILE_TICK')
-        col.label("(Value will be synced if Sync Path is specified)")
-        for i in range(1, 4):
-            col.separator()
-        col.prop(self, "name")
-        col.separator()
-        col.separator()
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(SaveValueYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(CancelProcess.bl_idname, text="Cancel")
+        menu_layout_builder(self, SaveValueYes.bl_idname, "intensity_save")
 
     def execute(self, context):
         return {'FINISHED'}
@@ -339,21 +328,7 @@ class DeleteValueMenu(bpy.types.Operator):
     bl_label = "Remove Intensity Value"
 
     def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        col.label("Are you sure you want to", icon="ERROR")
-        col.label("delete the current saved value?")
-        col.label()
-
-        row = layout.row(align = False)
-        row.scale_y = 1.2
-        for i in range(1, 8):
-            row.separator()
-        row.alert = True
-        row.operator(DeleteValueYes.bl_idname, text="Yes")
-        row.alert = False
-        row.operator(CancelProcess.bl_idname, text="Cancel")
+        menu_layout_builder(self, DeleteValueYes.bl_idname, "intensity_remove")
 
     def execute(self, context):
         return {'FINISHED'}

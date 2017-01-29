@@ -2,7 +2,6 @@
 import bpy
 import os
 from bpy.types import Node
-from collections import OrderedDict
 import json
 from . import spectrum, client
 if "bpy" in locals():

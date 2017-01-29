@@ -97,6 +97,8 @@ class KaleidoscopeCategory(NodeCategory):
         return b
 
 # all categories in a list
+
+
 node_categories = [
     KaleidoscopeCategory("KALEIDOSCOPENODES", "Kaleidoscope", items=[
         NodeItem("kaleidoscope_hybrid.node"),
@@ -206,7 +208,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         row2.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url="http://blskl.cf/kalsupport"
 
 class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Files
-    """Install .zip file in the add-on"""
+    """Install .zip or .kal file in the add-on"""
     bl_idname = "kaleidoscope.install_files"
     bl_label = "Install Files"
 
@@ -229,7 +231,7 @@ class KaleidoscopeImport(bpy.types.Operator, ImportHelper): #Importing Files
         return {'FINISHED'}
 
 class KaleidoscopeExport(bpy.types.Operator, ExportHelper):
-    """Export the Saved Palettes and Values in a .zip format"""
+    """Export the Saved Palettes and Values in a .zip or .kal format"""
     bl_idname = 'kaleidoscope.export_files'
     bl_label = 'Export Files'
 

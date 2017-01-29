@@ -675,7 +675,7 @@ def update_settings_ui(self, context, box2):
 
 
 	col = box.column(align=True)
-	col.label("NOTE: Updating add-on does not remove the Saved Palettes")
+	col.label("NOTE: Updating add-on does not remove the Saved Palettes and Values")
 	lastcheck = updater.json["last_check"]
 	if updater.error != None and updater.error_msg != None:
 		col.label(updater.error_msg)

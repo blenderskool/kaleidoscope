@@ -1,11 +1,9 @@
 # Spectrum Palette Node
 import bpy
-import ctypes
 import json, os
 import urllib.request
 from bpy.types import Node
 from mathutils import Color
-from collections import OrderedDict
 import random
 from . import client
 if "bpy" in locals():

@@ -35,7 +35,6 @@ These tools have inspired and helped me in making this add-on for Blender:
   <li><a href="http://www.coolors.co">Coolors</a></li>
   <li><a href="https://color.adobe.com/">Adobe Color CC</a></li>
 </ul>
-<br>
 Files and Community Database is hosted on:
 <ul>
   <li><a href="https://www.github.com">GitHub</a></li>

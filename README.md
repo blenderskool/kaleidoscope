@@ -27,3 +27,11 @@ The two Categories which are available in the Intensity node are Glass IOR, and 
 I have designed Kaleidoscope add-on in such a way, that it can also run on any other Blender add-on also. Since the Spectrum Node modifies an object's material, the spectrum.py file can be imported into other add-ons and used more productively. I did create a Grease Pencil Palette generator with the spectrum.py file in minutes.
 
 I would be glad to see other people use the Kaleidoscope add-on in their projects, and in other add-ons too. This add-on would be constantly updated with more features and improvements :)
+
+<h1>Credits</h1>
+These tools have inspired and helped me in making this add-on for Blender:
+<ul>
+  <li><a href="http://www.colorlovers.com">ColorLovers</a></li>
+  <li><a href="http://www.coolors.co">Coolors</a></li>
+  <li><a href="https://color.adobe.com/">Adobe Color CC</a></li>
+</ul>

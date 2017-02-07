@@ -187,7 +187,7 @@ class Kaleidoscope(bpy.types.AddonPreferences):
             row = col3.row(align=True)
             row.scale_y = 1.15
             row.label()
-            row.operator('wm.url_open', text="Video Tutorial", icon='CLIP').url = "http://blskl.cf/kaldocs"
+            row.operator('wm.url_open', text="Video Tutorial", icon='CLIP').url = "http://blskl.cf/kaldocs-sync"
             row.label()
             col3.separator
         col4 = box.column(align=True)

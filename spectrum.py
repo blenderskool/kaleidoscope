@@ -468,12 +468,17 @@ def SpectrumPaletteUI(self, context, layout):
             col1.prop(kaleidoscope_spectrum_props, "online_type", "Source")
     col2 = split.column()
     row2 = col2.row(align=True)
-    if kaleidoscope_spectrum_props.gen_type != '4' or kaleidoscope_spectrum_props.custom_gen_type == '3' or kaleidoscope_spectrum_props.custom_gen_type == '0' or kaleidoscope_spectrum_props.custom_gen_type == '2':
-        if kaleidoscope_spectrum_props.use_organize == False:
-            row2.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_OFF', emboss=False)
-        else:
-            row2.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_ON', emboss=False)
-    row2.prop(kaleidoscope_spectrum_props, "view_help", toggle=True, text="", icon='INFO', emboss=False)
+    colr = row2.column(align=True)
+    if (kaleidoscope_spectrum_props.gen_type != '4' or kaleidoscope_spectrum_props.custom_gen_type == '3' or kaleidoscope_spectrum_props.custom_gen_type == '0' or kaleidoscope_spectrum_props.custom_gen_type == '2') and kaleidoscope_spectrum_props.use_internet_libs == False:
+        colr.enabled = True
+    else:
+        colr.enabled = False
+    if kaleidoscope_spectrum_props.use_organize == False:
+        colr.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_OFF', emboss=False)
+    else:
+        colr.prop(kaleidoscope_spectrum_props, "use_organize", toggle=True, text="", icon='SNAP_ON', emboss=False)
+    colr = row2.column(align=True)
+    colr.prop(kaleidoscope_spectrum_props, "view_help", toggle=True, text="", icon='INFO', emboss=False)
     if kaleidoscope_spectrum_props.view_help == True:
         box = layout.box()
         col_box = box.column(align=True)
@@ -579,19 +584,20 @@ def SpectrumPaletteUI(self, context, layout):
         col_box.prop(kaleidoscope_spectrum_props, "view_help", text="Close Help", icon='INFO')
     col = layout.column(align=True)
     if kaleidoscope_spectrum_props.use_internet_libs != True:
-        if kaleidoscope_spectrum_props.use_custom == False:
-            col.prop(kaleidoscope_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
-        if kaleidoscope_spectrum_props.use_custom == True:
-            col.prop(kaleidoscope_spectrum_props, "use_custom", text="Hide Custom Base Color", toggle=True, icon="LAYER_ACTIVE")
-            box = col.box()
-
-            col1 = box.column()
-            row = col1.row(align=True)
-            row.label("Base Color:")
-            row.prop(kaleidoscope_spectrum_props, "hue", text="")
-            row.prop(kaleidoscope_spectrum_props, "use_realtime_base", text="", icon='RESTRICT_VIEW_OFF')
+        col.enabled = True
     else:
-        col.label()
+        col.enabled = False
+    if kaleidoscope_spectrum_props.use_custom == False:
+        col.prop(kaleidoscope_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
+    else:
+        col.prop(kaleidoscope_spectrum_props, "use_custom", text="Hide Custom Base Color", toggle=True, icon="LAYER_ACTIVE")
+        box = col.box()
+
+        col1 = box.column()
+        row = col1.row(align=True)
+        row.label("Base Color:")
+        row.prop(kaleidoscope_spectrum_props, "hue", text="")
+        row.prop(kaleidoscope_spectrum_props, "use_realtime_base", text="", icon='RESTRICT_VIEW_OFF')
 
     col2 = layout.column(align=True)
     row = col2.row(align=True)

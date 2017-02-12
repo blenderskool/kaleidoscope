@@ -774,6 +774,12 @@ def rgb_to_hex(rgb):
     fin = tuple(fin)
     return '#%02x%02x%02x' % fin
 
+def hex_to_real_rgb(value):
+    """Return (red, green, blue) for the color given as #rrggbb."""
+    value = value.lstrip('#')
+    lv = len(value)
+    return list(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+
 def Spectrum_Engine():
     """Generates the Color Palettes. Use the PaletteGenerate Class for Palettes, as this requires some custom properties"""
     kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props

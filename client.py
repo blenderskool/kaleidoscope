@@ -1,6 +1,7 @@
 #Client System for the Spectrum and Intensity Node
 #Used for Saving, Deleting and Publishing Files by Kaleidoscope
 import bpy
+import math
 import ctypes, json, os, requests
 import urllib.request
 from collections import OrderedDict
@@ -161,6 +162,9 @@ class PublishPaletteYes(bpy.types.Operator):
     bl_idname = "spectrum.publish_palette_yes"
     bl_label = "Publish Yes"
 
+    def compare_colors(self, color1, color2):
+        return math.pow((color1[0]-color2[0]), 2) + math.pow((color1[1]-color2[1]), 2) + math.pow((color1[2]-color2[2]), 2) # based on https://en.wikipedia.org/wiki/Color_difference
+
     def execute(self, context):
         VK_ESCAPE = 0x1B
         ctypes.windll.user32.keybd_event(VK_ESCAPE)
@@ -177,22 +181,27 @@ class PublishPaletteYes(bpy.types.Operator):
                 spectrum.community_palette = json.loads(community_palette_file)
                 spectrum.community_maintain = False
 
-        pal = [spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4), spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5)]
         if community_palette_file != "Off":
             for palettes in spectrum.community_palette['Palettes']:
-                pal1 = int(pal[0].lstrip('#'), base=16)
-                pal2 = int(pal[1].lstrip('#'), base=16)
-                pal3 = int(pal[2].lstrip('#'), base=16)
-                pal4 = int(pal[3].lstrip('#'), base=16)
-                pal5 = int(pal[4].lstrip('#'), base=16)
+                col1 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1))
+                col2 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2))
+                col3 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3))
+                col4 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4))
+                col5 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5))
 
-                onl_pal1 = int(palettes['Color_1'].rstrip('t'), base=16)
-                onl_pal2 = int(palettes['Color_2'].rstrip('t'), base=16)
-                onl_pal3 = int(palettes['Color_3'].rstrip('t'), base=16)
-                onl_pal4 = int(palettes['Color_4'].rstrip('t'), base=16)
-                onl_pal5 = int(palettes['Color_5'].rstrip('t'), base=16)
+                onl_col1 = spectrum.hex_to_real_rgb(palettes['Color_1'].rstrip('t'))
+                onl_col2 = spectrum.hex_to_real_rgb(palettes['Color_2'].rstrip('t'))
+                onl_col3 = spectrum.hex_to_real_rgb(palettes['Color_3'].rstrip('t'))
+                onl_col4 = spectrum.hex_to_real_rgb(palettes['Color_4'].rstrip('t'))
+                onl_col5 = spectrum.hex_to_real_rgb(palettes['Color_5'].rstrip('t'))
 
-                if (abs(onl_pal1- pal1) < 10000) and (abs(onl_pal2- pal2) < 10000) and (abs(onl_pal3- pal3) < 10000) and (abs(onl_pal4- pal4) < 10000) and (abs(onl_pal5- pal5) < 10000):
+                comp1 = self.compare_colors(color1 = col1, color2 = onl_col1)
+                comp2 = self.compare_colors(color1 = col2, color2 = onl_col2)
+                comp3 = self.compare_colors(color1 = col3, color2 = onl_col3)
+                comp4 = self.compare_colors(color1 = col4, color2 = onl_col4)
+                comp5 = self.compare_colors(color1 = col5, color2 = onl_col5)
+
+                if comp1 <= 3 and comp2 <= 3 and comp3 <= 3 and comp4 <= 3 and comp5 <= 3:
                     duplicate = True
                     break
                 else:

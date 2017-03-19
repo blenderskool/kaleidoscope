@@ -16,8 +16,9 @@ if "bpy" in locals():
     importlib.reload(spectrum)
     importlib.reload(intensity)
     importlib.reload(addon_updater_ops)
+    importlib.reload(color_picker)
 else:
-    from . import spectrum, intensity, addon_updater_ops
+    from . import spectrum, intensity, addon_updater_ops, color_picker
 
 import bpy
 import nodeitems_utils, zipfile, os, json
@@ -138,6 +139,10 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         if bpy.context.scene.kaleidoscope_props.import_files == True:
             col.label("There was a problem in importing the files.", icon='ERROR')
         col.label()
+        row = col.row(align=True)
+        row.alignment = 'CENTER'
+        row.prop(kaleidoscope_props, 'modal_hide', text="Hide the Color Picker Modal Button")
+        col.separator()
 
         row = col.row(align=True)
         for i in range(0, 5):
@@ -288,8 +293,21 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
             f.write(s)
         return None
 
+    def hide_modal_update(self, context):
+        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
+        if kaleidoscope_props.modal_hide == True:
+            bpy.utils.unregister_class(color_picker.ColorPickerModalButton)
+            color_picker.remove_modal()
+        else:
+            try:
+                bpy.utils.register_class(color_picker.ColorPickerModalButton)
+                color_picker.set_modal(self)
+            except:
+                pass
+
     import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
     sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing", default=False)
+    modal_hide = bpy.props.BoolProperty(name="Hide the Modal", description="Hide the Color Picker Modal Button", default=False, update=hide_modal_update)
 
     check = False
     val = None
@@ -310,14 +328,15 @@ def register():
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)
+    bpy.app.handlers.scene_update_pre.append(color_picker.set_modal)
     bpy.types.Scene.kaleidoscope_props = bpy.props.PointerProperty(type=KaleidoscopeProps)
     nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
-
 
 def unregister():
     nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()
     addon_updater_ops.unregister()
+    color_picker.remove_modal()
     del bpy.types.Scene.kaleidoscope_props
     bpy.utils.unregister_module(__name__)

@@ -163,38 +163,41 @@ class ColorPickerModalButton(bpy.types.Operator):
     bl_label = "Color Picker Button"
 
     def modal(self, context, event):
-        def in_area(area, x, y):
+        if bpy.context.scene.kaleidoscope_props.modal_hide == False:
+            def in_area(area, x, y):
 
-            return (area.x < x < area.x + area.width and area.y < y < area.y + area.height)
+                return (area.x < x < area.x + area.width and area.y < y < area.y + area.height)
 
-        screen = context.screen
-        mx = event.mouse_x
-        my = event.mouse_y
-        global click_area_x
-        global click_area_y
-        global width
-        global height
-        areas = [i for i, a in enumerate(screen.areas) if a.type.startswith('NODE_EDITOR') and in_area(a, mx, my)]
+            screen = context.screen
+            mx = event.mouse_x
+            my = event.mouse_y
+            global click_area_x
+            global click_area_y
+            global width
+            global height
+            areas = [i for i, a in enumerate(screen.areas) if a.type.startswith('NODE_EDITOR') and in_area(a, mx, my)]
 
-        for i in areas:
-            a = screen.areas[i]
-            region = a.regions[-1]
-            x = mx - region.x
-            y = my - region.y
+            for i in areas:
+                a = screen.areas[i]
+                region = a.regions[-1]
+                x = mx - region.x
+                y = my - region.y
 
-            if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
+                if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
 
-                if x >= click_area_x and x <= click_area_x+width:
-                    if y >= click_area_y and y <= click_area_y+height:
-                        try:
-                            for a in bpy.context.screen.areas:
-                                if a.type == 'IMAGE_EDITOR':
-                                    override = {'area': a, 'region': a.regions[-1]}
-                                    bpy.ops.kaleidoscope.color_picker(override, 'INVOKE_SCREEN')
-                        except:
-                            pass
+                    if x >= click_area_x and x <= click_area_x+width:
+                        if y >= click_area_y and y <= click_area_y+height:
+                            try:
+                                for a in bpy.context.screen.areas:
+                                    if a.type == 'IMAGE_EDITOR':
+                                        override = {'area': a, 'region': a.regions[-1]}
+                                        bpy.ops.kaleidoscope.color_picker(override, 'INVOKE_SCREEN')
+                            except:
+                                pass
 
-        return {'PASS_THROUGH'}
+            return {'PASS_THROUGH'}
+        else:
+            return{'FINISHED'}
 
     def invoke(self, context, event):
         context.window_manager.modal_handler_add(self)

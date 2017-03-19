@@ -296,14 +296,9 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
     def hide_modal_update(self, context):
         kaleidoscope_props = bpy.context.scene.kaleidoscope_props
         if kaleidoscope_props.modal_hide == True:
-            bpy.utils.unregister_class(color_picker.ColorPickerModalButton)
             color_picker.remove_modal()
         else:
-            try:
-                bpy.utils.register_class(color_picker.ColorPickerModalButton)
-                color_picker.set_modal(self)
-            except:
-                pass
+            color_picker.set_modal(self)
 
     import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
     sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing", default=False)

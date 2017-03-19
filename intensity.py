@@ -68,6 +68,8 @@ class IntensityNode(Node, IntensityTreeNode):
     bl_idname = 'intensity.node'
     bl_label = 'Intensity'
     bl_icon = 'NONE'
+    bl_width_min = 216.3
+    bl_width_max = 330.0
 
     def update_value(self, context):
         self.outputs['Value'].default_value = self.kaleidoscope_intensity_out_value
@@ -321,7 +323,7 @@ class IntensityNode(Node, IntensityTreeNode):
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
-        IntensityUI(self, context, layout, self.name)
+        intensity_ui(self, context, layout, self.name)
         global node_name
         node_name = self.name
 
@@ -329,7 +331,7 @@ class IntensityNode(Node, IntensityTreeNode):
     def draw_label(self):
         return "Intensity"
 
-def IntensityUI(self, context, layout, current_node):
+def intensity_ui(self, context, layout, current_node):
         global custom_values_list
         kaleidoscope_intensity_props = self
         col = layout.column(align=False)

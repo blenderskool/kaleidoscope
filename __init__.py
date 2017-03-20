@@ -139,10 +139,6 @@ class Kaleidoscope(bpy.types.AddonPreferences):
         if bpy.context.scene.kaleidoscope_props.import_files == True:
             col.label("There was a problem in importing the files.", icon='ERROR')
         col.label()
-        row = col.row(align=True)
-        row.alignment = 'CENTER'
-        row.prop(kaleidoscope_props, 'modal_hide', text="Hide the Color Picker Modal Button")
-        col.separator()
 
         row = col.row(align=True)
         for i in range(0, 5):
@@ -293,16 +289,8 @@ class KaleidoscopeProps(bpy.types.PropertyGroup):
             f.write(s)
         return None
 
-    def hide_modal_update(self, context):
-        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
-        if kaleidoscope_props.modal_hide == True:
-            color_picker.remove_modal()
-        else:
-            color_picker.set_modal(self)
-
     import_files = bpy.props.BoolProperty(name="Kaleidoscope Import", description="Checks if the zip file is properly imported", default=False)
     sync_help = bpy.props.BoolProperty(name="Syncing Information", description="View/Hide Information on how to setup Syncing", default=False)
-    modal_hide = bpy.props.BoolProperty(name="Hide the Modal", description="Hide the Color Picker Modal Button", default=False, update=hide_modal_update)
 
     check = False
     val = None
@@ -323,7 +311,7 @@ def register():
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)
-    bpy.app.handlers.scene_update_pre.append(color_picker.set_modal)
+    bpy.types.NODE_PT_active_node_properties.append(color_picker.color_picker_button_ui)
     bpy.types.Scene.kaleidoscope_props = bpy.props.PointerProperty(type=KaleidoscopeProps)
     nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
 
@@ -332,6 +320,6 @@ def unregister():
     spectrum.unregister()
     intensity.unregister()
     addon_updater_ops.unregister()
-    color_picker.remove_modal()
+    bpy.types.NODE_PT_active_node_properties.remove(color_picker.color_picker_button_ui)
     del bpy.types.Scene.kaleidoscope_props
     bpy.utils.unregister_module(__name__)

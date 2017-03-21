@@ -6,12 +6,8 @@ import math
 import bgl
 from . import spectrum
 
-click_area_x = None
-click_area_y = None
-width = None
-height = None
+node_tree_type = None
 start_draw = False
-ui = None
 x_loc = 0
 y_loc = 0
 
@@ -108,38 +104,51 @@ class ModalPickerOperator(bpy.types.Operator):
                 total_colors = len(col_list)
                 if total_colors > 32:
                     total_colors = 32
-                if bpy.context.object.active_material.node_tree.nodes.active.type == 'VALTORGB':
-                    node = bpy.context.object.active_material.node_tree.nodes.active
-                    while len(node.color_ramp.elements) > 1:
-                        node.color_ramp.elements.remove(node.color_ramp.elements[0])
-                    i=1
-                    color1 = None
-                    for color in col_list:
-                        if i > 1:
-                            color_rgb = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
-                            res = math.pow((color_rgb[0]-color1[0]), 2) + math.pow((color_rgb[1]-color1[1]), 2) + math.pow((color_rgb[2]-color1[2]), 2)
-                            if res > 10:
-                                color = spectrum.hex_to_rgb(spectrum.real_rgb_to_hex(color_rgb))
-                                try:
-                                    element = node.color_ramp.elements.new(i/total_colors)
-                                    element.color[0] = color[0]
-                                    element.color[1] = color[1]
-                                    element.color[2] = color[2]
-                                except:
-                                    self.report({'INFO'}, 'ColorRamp limit exceed, some colors have been removed')
-                                color1 = color_rgb
-                                i=i+1
-                            else:
-                                i=i+1
-                                continue
-                        elif i == 1:
-                            color1 = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
-                            color = spectrum.hex_to_rgb(spectrum.real_rgb_to_hex(color1))
-                            node.color_ramp.elements[0].position = i/total_colors
-                            node.color_ramp.elements[0].color[0] = color[0]
-                            node.color_ramp.elements[0].color[1] = color[1]
-                            node.color_ramp.elements[0].color[2] = color[2]
+                if node_tree_type == 'OBJECT':
+                    # Objects
+                    if bpy.context.object.active_material.node_tree.nodes.active.type == 'VALTORGB':
+                        node = bpy.context.object.active_material.node_tree.nodes.active
+                elif node_tree_type == 'WORLD':
+                    # World
+                    if bpy.context.scene.world.node_tree.nodes.active.type == 'VALTORGB':
+                        node = bpy.context.scene.world.node_tree.nodes.active
+                elif node_tree_type == 'LAMP':
+                    # Lamps
+                    for lamp in bpy.data.lamps:
+                        if lamp.name == bpy.context.active_object.name:
+                            if lamp.node_tree.nodes.active.type == 'VALTORGB':
+                                node = lamp.node_tree.nodes.active
+                                break
+                while len(node.color_ramp.elements) > 1:
+                    node.color_ramp.elements.remove(node.color_ramp.elements[0])
+                i=1
+                color1 = None
+                for color in col_list:
+                    if i > 1:
+                        color_rgb = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
+                        res = math.pow((color_rgb[0]-color1[0]), 2) + math.pow((color_rgb[1]-color1[1]), 2) + math.pow((color_rgb[2]-color1[2]), 2)
+                        if res > 10:
+                            color = spectrum.hex_to_rgb(spectrum.real_rgb_to_hex(color_rgb))
+                            try:
+                                element = node.color_ramp.elements.new(i/total_colors)
+                                element.color[0] = color[0]
+                                element.color[1] = color[1]
+                                element.color[2] = color[2]
+                            except:
+                                self.report({'INFO'}, 'ColorRamp limit exceed, some colors have been removed')
+                            color1 = color_rgb
                             i=i+1
+                        else:
+                            i=i+1
+                            continue
+                    elif i == 1:
+                        color1 = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
+                        color = spectrum.hex_to_rgb(spectrum.real_rgb_to_hex(color1))
+                        node.color_ramp.elements[0].position = i/total_colors
+                        node.color_ramp.elements[0].color[0] = color[0]
+                        node.color_ramp.elements[0].color[1] = color[1]
+                        node.color_ramp.elements[0].color[2] = color[2]
+                        i=i+1
 
         elif event.type == 'ESC':
             if self.cursor_set:
@@ -190,18 +199,57 @@ class ColorPickerButton(bpy.types.Operator):
         return{'FINISHED'}
 
 def color_picker_button_ui(self, context):
+    global node_tree_type
     layout = self.layout
     layout.separator()
     box = layout.box()
     box.label("Kaleidoscope Picker", icon='COLOR')
     row = box.row(align=True)
-    if bpy.context.object.active_material.node_tree.nodes.active.type == 'VALTORGB':
-        row.enabled = True
+    if bpy.context.space_data.shader_type == 'OBJECT' and bpy.context.active_object.type != 'LAMP':
+        # Object
+        node_tree_type = 'OBJECT'
+        if bpy.context.object.active_material.node_tree.nodes.active.type == 'VALTORGB':
+            row.enabled = True
+        else:
+            row.enabled = False
+
+    elif bpy.context.space_data.shader_type == 'WORLD':
+        # World
+        node_tree_type = 'WORLD'
+        if bpy.context.scene.world.node_tree.nodes.active.type == 'VALTORGB':
+            row.enabled = True
+        else:
+            row.enabled = False
     else:
-        row.enabled = False
+        # Lamps
+        for lamp in bpy.data.lamps:
+            if lamp.name == bpy.context.active_object.name:
+                node_tree_type = 'LAMP'
+                if bpy.context.scene.world.node_tree.nodes.active.type == 'VALTORGB':
+                    row.enabled = True
+                else:
+                    row.enabled = False
+                break
     row.scale_y = 1.2
     row.operator(ColorPickerButton.bl_idname, text='Use Color Picker', icon='EYEDROPPER')
-    if bpy.context.object.active_material.node_tree.nodes.active.type != 'VALTORGB':
-        col = box.column(align=True)
-        col.label("Active Node is not")
-        col.label("a valid ColorRamp node.")
+    if bpy.context.space_data.shader_type == 'OBJECT' and bpy.context.active_object.type != 'LAMP':
+        # Object
+        if bpy.context.object.active_material.node_tree.nodes.active.type != 'VALTORGB':
+            col = box.column(align=True)
+            col.label("Active Node is not")
+            col.label("a valid ColorRamp node.")
+    elif bpy.context.space_data.shader_type == 'WORLD':
+        # World
+        if bpy.context.scene.world.node_tree.nodes.active.type != 'VALTORGB':
+            col = box.column(align=True)
+            col.label("Active Node is not")
+            col.label("a valid ColorRamp node.")
+    else:
+        # Lamps
+        for lamp in bpy.data.lamps:
+            if lamp.name == bpy.context.active_object.name:
+                if bpy.context.scene.world.node_tree.nodes.active.type != 'VALTORGB':
+                    col = box.column(align=True)
+                    col.label("Active Node is not")
+                    col.label("a valid ColorRamp node.")
+                    break

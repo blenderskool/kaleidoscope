@@ -406,53 +406,54 @@ class SpectrumNode(Node, SpectrumTreeNode):
         self.width = 226
 
     def update(self):
-        out = ""
-        try:
-            for world in bpy.data.worlds:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        for out in node.outputs:
-                            if out.is_linked:
-                                for o in out.links:
-                                    if o.is_valid:
-                                        if o.to_node.bl_idname == "NodeReroute":
-                                            update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, out.name)
-                                        o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-        except:
-            pass
+        if bpy.context.scene.render.engine == 'CYCLES':
+            out = ""
+            try:
+                for world in bpy.data.worlds:
+                    for node in world.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            for out in node.outputs:
+                                if out.is_linked:
+                                    for o in out.links:
+                                        if o.is_valid:
+                                            if o.to_node.bl_idname == "NodeReroute":
+                                                update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, out.name)
+                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+            except:
+                pass
 
-        try:
-            for lamps in bpy.data.lamps:
-                try:
-                    for node in lamps.node_tree.nodes:
-                        if node.bl_idname == 'spectrum_palette.node':
-                            for out in node.outputs:
-                                if out.is_linked:
-                                    for o in out.links:
-                                        if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, out.name)
-                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
-        except:
-            pass
-        try:
-            for mat in bpy.data.materials:
-                try:
-                    for node in mat.node_tree.nodes:
-                        if node.bl_idname == 'spectrum_palette.node':
-                            for out in node.outputs:
-                                if out.is_linked:
-                                    for o in out.links:
-                                        if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, out.name)
-                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
-        except:
-            pass
+            try:
+                for lamps in bpy.data.lamps:
+                    try:
+                        for node in lamps.node_tree.nodes:
+                            if node.bl_idname == 'spectrum_palette.node':
+                                for out in node.outputs:
+                                    if out.is_linked:
+                                        for o in out.links:
+                                            if o.is_valid:
+                                                if o.to_node.bl_idname == "NodeReroute":
+                                                    update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, out.name)
+                                                o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+                    except:
+                        continue
+            except:
+                pass
+            try:
+                for mat in bpy.data.materials:
+                    try:
+                        for node in mat.node_tree.nodes:
+                            if node.bl_idname == 'spectrum_palette.node':
+                                for out in node.outputs:
+                                    if out.is_linked:
+                                        for o in out.links:
+                                            if o.is_valid:
+                                                if o.to_node.bl_idname == "NodeReroute":
+                                                    update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, out.name)
+                                                o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+                    except:
+                        continue
+            except:
+                pass
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):

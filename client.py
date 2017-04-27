@@ -19,8 +19,11 @@ class CancelProcess(bpy.types.Operator):
     bl_label = "Cancel Process"
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         return{'FINISHED'}
 
 #General Structure of layout which will be used by all the popups
@@ -72,12 +75,14 @@ def menu_layout_builder(self, yes_operator, process_type):
 
     row = layout.row(align = False)
     row.scale_y = 1.2
-    for i in range(1, 8):
+    for i in range(1, 13):
         row.separator()
-    row.alert = True
-    row.operator(yes_operator, text="Yes")
     row.alert = False
-    row.operator(CancelProcess.bl_idname, text="Cancel")
+    row.separator()
+    row.operator(yes_operator, text="Yes")
+    """
+    row.alert = False
+    row.operator(CancelProcess.bl_idname, text="Cancel")"""
 
 class SavePaletteMenu(bpy.types.Operator):
     """Save the current Palette for future use"""
@@ -106,8 +111,11 @@ class SavePaletteYes(bpy.types.Operator):
     bl_label = "Save Yes"
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
         global palette_export
         name = kaleidoscope_spectrum_props.save_palette_name
@@ -166,8 +174,11 @@ class PublishPaletteYes(bpy.types.Operator):
         return math.pow((color1[0]-color2[0]), 2) + math.pow((color1[1]-color2[1]), 2) + math.pow((color1[2]-color2[2]), 2) # based on https://en.wikipedia.org/wiki/Color_difference
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         duplicate = False
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
 
@@ -240,8 +251,11 @@ class DeletePaletteYes(bpy.types.Operator):
     bl_label = "Delete Yes"
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         local_error = False
         global_error = False
         kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
@@ -296,8 +310,11 @@ class SaveValueYes(bpy.types.Operator):
     bl_label = "Save Yes"
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         kaleidoscope_props = bpy.context.scene.kaleidoscope_props
         name = SaveValueMenu.pass_name
         temp_name = name
@@ -351,8 +368,11 @@ class DeleteValueYes(bpy.types.Operator):
     bl_label = "Delete Yes"
 
     def execute(self, context):
-        VK_ESCAPE = 0x1B
-        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        try:
+            VK_ESCAPE = 0x1B
+            ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        except AttributeError:
+            pass
         kaleidoscope_props=bpy.context.scene.kaleidoscope_props
         local_error = False
         global_error = False

@@ -30,9 +30,9 @@ def draw_call(self, context):
 
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glColor4f(1.0, 1.0, 1.0, 0.98)
-    font_id = 0  # XXX, need to find out how best to get this.
+    font_id = 0
 
-    # draw some text
+    #Info of the Modal
     blf.position(font_id, 25, 20, 0)
     blf.size(font_id, 20, 57)
     blf.draw(font_id, "Press Enter to Confirm")
@@ -43,10 +43,10 @@ def draw_call(self, context):
 
     bgl.glBegin(bgl.GL_QUADS)
     bgl.glColor3f(c[0][0], c[0][1], c[0][2])
-    bgl.glVertex3f(x_loc+10,y_loc+10,0)
-    bgl.glVertex3f(x_loc+10+width,y_loc+10,0)
-    bgl.glVertex3f(x_loc+10+width,y_loc+height+10,0)
-    bgl.glVertex3f(x_loc+10,y_loc+height+10,0)
+    bgl.glVertex3f(x_loc+20,y_loc+20,0)
+    bgl.glVertex3f(x_loc+20+width,y_loc+20,0)
+    bgl.glVertex3f(x_loc+20+width,y_loc+height+20,0)
+    bgl.glVertex3f(x_loc+20,y_loc+height+20,0)
     bgl.glEnd()
 
     if c[0][0] < 0.1 and c[0][1] < 0.1 and c[0][2] < 0.1:
@@ -56,11 +56,11 @@ def draw_call(self, context):
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(1)
     bgl.glBegin(bgl.GL_LINE_STRIP)
-    bgl.glVertex2f(x_loc+10-1, y_loc+10-1)
-    bgl.glVertex2f(x_loc+10+width+1, y_loc+10-1)
-    bgl.glVertex2f(x_loc+10+width, y_loc+10+height+1)
-    bgl.glVertex2f(x_loc+10-1, y_loc+10+height)
-    bgl.glVertex2f(x_loc+10-1, y_loc+10-1)
+    bgl.glVertex2f(x_loc+20-1, y_loc+20-1)
+    bgl.glVertex2f(x_loc+20+width+1, y_loc+20-1)
+    bgl.glVertex2f(x_loc+20+width, y_loc+20+height+1)
+    bgl.glVertex2f(x_loc+20-1, y_loc+20+height)
+    bgl.glVertex2f(x_loc+20-1, y_loc+20-1)
     bgl.glEnd()
 
 c = bgl.Buffer(bgl.GL_FLOAT, [1,3])

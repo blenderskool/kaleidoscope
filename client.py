@@ -2,7 +2,11 @@
 #Used for Saving, Deleting and Publishing Files by Kaleidoscope
 import bpy
 import math
-import ctypes, json, os, requests
+try:
+    import ctypes
+except:
+    pass
+import json, os, requests
 import urllib.request
 from collections import OrderedDict
 from . import spectrum, intensity

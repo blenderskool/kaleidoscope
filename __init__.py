@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Kaleidoscope - A small package of nodes for materials",
     "author": "Akash Hamirwasia",
-    "version": (1, 0),
+    "version": (1, 0, 5),
     "blender": (2, 75, 0),
     "location": "NodeEditor > MaterialView > Add Node Menu",
     "description": "A Complete Toolkit of Nodes to Make your Materials even more colorful and physically accurate",

@@ -15,7 +15,7 @@ glass_ior = [1, #Vacuum
             1.000132, #Hydrogen
             1.00045, #Carbon dioxide
             1.31, #Ice
-            1.333, #Water
+            1.333333, #Water
             1.345, #Beer
             1.35, #Milk
             1.36, #Alcohol

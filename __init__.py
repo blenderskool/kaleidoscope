@@ -16,9 +16,8 @@ if "bpy" in locals():
     importlib.reload(spectrum)
     importlib.reload(intensity)
     importlib.reload(addon_updater_ops)
-    importlib.reload(color_picker)
 else:
-    from . import spectrum, intensity, addon_updater_ops, color_picker
+    from . import spectrum, intensity, addon_updater_ops
 
 import bpy
 import nodeitems_utils, zipfile, os, json
@@ -311,15 +310,14 @@ def register():
     spectrum.register()
     intensity.register()
     addon_updater_ops.register(bl_info)
-    bpy.types.NODE_PT_active_node_properties.append(color_picker.color_picker_button_ui)
     bpy.types.Scene.kaleidoscope_props = bpy.props.PointerProperty(type=KaleidoscopeProps)
     nodeitems_utils.register_node_categories("KALEIDOSCOPE_NODES", node_categories)
+
 
 def unregister():
     nodeitems_utils.unregister_node_categories("KALEIDOSCOPE_NODES")
     spectrum.unregister()
     intensity.unregister()
     addon_updater_ops.unregister()
-    bpy.types.NODE_PT_active_node_properties.remove(color_picker.color_picker_button_ui)
     del bpy.types.Scene.kaleidoscope_props
     bpy.utils.unregister_module(__name__)

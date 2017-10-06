@@ -4,10 +4,7 @@ import json, os
 import urllib.request
 from bpy.types import Node
 from mathutils import Color
-from collections import Counter
 import random
-import requests, math
-import xml.etree.ElementTree as ET
 from . import client
 if "bpy" in locals():
     import importlib
@@ -23,8 +20,6 @@ before_shuffle_colors=[]
 community_maintain = False
 community_palette = {}
 online_check = True
-
-lovers_id = None
 for i in range(1, 16):
     PaletteHistory.append(Color())
 
@@ -298,8 +293,8 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0), update=set_base_color)
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
-    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from Internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not following any rule!'), ('6', 'Image', 'Use Image')), update=set_type, default="0")
-    online_type = bpy.props.EnumProperty(name="Type of Online Palette", description="Select the Type of Online Palettes", items=(('0', 'Standard', 'Use the Online Palettes that I have selected just for you. This includes the best picks by me'), ('1', 'Community', 'Explore the Color Palettes added by users all around the world'), ('2', 'COLOURlovers', '')), default='0', update=set_type)
+    custom_gen_type = bpy.props.EnumProperty(name="Type of Custom Rule", description="Select the Custom rule for Custom Palette Generation", items=(('0', 'Vibrant', 'Uses Two Vibrant Colors, along with shades of black and white'), ('1', 'Gradient', 'Use Color with same hue, but gradual change in Saturation and Value'), ('2', 'Pop out', 'Pop out effect uses one color in combination with shades of black and white'), ('4', 'Online', 'Get Color Palettes from Internet'), ('3', 'Random Rule', 'Use any Rule or color Effect to generate the palette'), ('5', 'Random', 'Randomly Generated Color scheme, not following any rule!')), update=set_type, default="0")
+    online_type = bpy.props.EnumProperty(name="Type of Online Palette", description="Select the Type of Online Palettes", items=(('0', 'Standard', 'Use the Online Palettes that I have selected just for you. This includes the best picks by me'), ('1', 'Community', 'Explore the Color Palettes added by users all around the world')), default='0', update=set_type)
     saved_palettes = bpy.props.EnumProperty(name="Saved Palettes", description="Stores the Saved Palettes", items=get_saved_palettes, update=import_saved_palette)
 
     use_custom = bpy.props.BoolProperty(name="Use Custom", description="Use Custom Values for Base Color", default=False)
@@ -321,7 +316,6 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
     save_palette_name = bpy.props.StringProperty(name="Save Palette Name", description="Name to be used to save this palette", default="My Palette")
     colorramp_world_name = bpy.props.StringProperty(name="ColorRamp name World", description="Select the ColorRamp in the World Material to assign the Colors", default="", update=set_ramp)
-    img_name = bpy.props.StringProperty(name = "Choose a Texture",description="Load an Image Texture",subtype='FILE_PATH')
 
 class SpectrumMaterialProps(bpy.types.PropertyGroup):
     """Spectrum Properties for Every Material"""
@@ -389,8 +383,6 @@ class SpectrumNode(Node, SpectrumTreeNode):
     bl_idname = 'spectrum_palette.node'
     bl_label = 'Spectrum Palette'
     bl_icon = 'NONE'
-    bl_width_min = 226.0
-    bl_width_max = 350.0
 
     def init(self, context):
         self.outputs.new('NodeSocketColor', "Color 1")
@@ -568,13 +560,6 @@ def SpectrumPaletteUI(self, context, layout):
                     col_box.label("does not look good, it will get")
                     col_box.label("removed")
                     col_box.label()
-                elif kaleidoscope_spectrum_props.online_type == "2":
-                    col_box.label("COLOURlovers site has amazing")
-                    col_box.label("color palettes added by users.")
-                    col_box.label("This Source provides you with all")
-                    col_box.label("those amazing palettes directly")
-                    col_box.label("inside Blender.")
-                    col_box.label()
             elif kaleidoscope_spectrum_props.custom_gen_type == "3":
                 col_box.label("Random option allows you to")
                 col_box.label("generate a palette from any rule")
@@ -591,16 +576,7 @@ def SpectrumPaletteUI(self, context, layout):
                 if kaleidoscope_spectrum_props.use_internet_libs == True:
                     col_box.label()
         if kaleidoscope_spectrum_props.use_internet_libs == True:
-            if kaleidoscope_spectrum_props.custom_gen_type == '3':
-                if kaleidoscope_spectrum_props.random_online_int != 2:
-                    col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
-                elif kaleidoscope_spectrum_props.random_online_int == 2:
-                    col_box.label("Palette ID: "+str(lovers_id))
-            else:
-                if kaleidoscope_spectrum_props.online_type != "2":
-                    col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
-                elif kaleidoscope_spectrum_props.online_type == "2":
-                    col_box.label("Palette ID: "+str(lovers_id))
+            col_box.label("Palette ID: "+str(kaleidoscope_spectrum_props.online_palette_index+1))
             row = col_box.row(align=True)
             row.scale_y = 1.1
             row.operator("wm.url_open", text="Problem?", icon="HELP").url="http://blskl.cf/kalbugs"
@@ -608,11 +584,9 @@ def SpectrumPaletteUI(self, context, layout):
             col_box.label()
         col_box.prop(kaleidoscope_spectrum_props, "view_help", text="Close Help", icon='INFO')
     col = layout.column(align=True)
-    if kaleidoscope_spectrum_props.use_internet_libs == False:
+    if kaleidoscope_spectrum_props.use_internet_libs != True:
         col.enabled = True
     else:
-        col.enabled = False
-    if kaleidoscope_spectrum_props.gen_type == "4" and kaleidoscope_spectrum_props.custom_gen_type == "4":
         col.enabled = False
     if kaleidoscope_spectrum_props.use_custom == False:
         col.prop(kaleidoscope_spectrum_props, "use_custom", text="Use Custom Base Color", toggle=True, icon="LAYER_USED")
@@ -681,7 +655,6 @@ def SpectrumPaletteUI(self, context, layout):
 
     row5.operator(client.PublishPaletteMenu.bl_idname, text="", icon='WORLD')
     col4.label()
-    #col4.prop(kaleidoscope_spectrum_props, "img_name")
     row6 = col4.row(align=True)
     try:
         if bpy.context.space_data.shader_type == 'WORLD':
@@ -807,10 +780,6 @@ def hex_to_real_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
     return list(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
-
-def real_rgb_to_hex(value):
-    """Return color as #rrggbb for the given color values."""
-    return '#%02x%02x%02x' % value
 
 def Spectrum_Engine():
     """Generates the Color Palettes. Use the PaletteGenerate Class for Palettes, as this requires some custom properties"""
@@ -1266,28 +1235,6 @@ def Spectrum_Engine():
                         kaleidoscope_spectrum_props.use_internet_libs = True
                 except:
                     online_check = False
-            elif kaleidoscope_spectrum_props.online_type == "2" or kaleidoscope_spectrum_props.random_online_int == 2:
-                global online_check
-                global lovers_id
-                while True:
-                    try:
-                        req = requests.get("http://blskl.cf/kalCOLOURloversapi")
-                        data = ET.fromstring(req.text)
-                        for i in range(0, 5):
-                            print(str(data[0][9][i].text))
-                            color_palette[i] = str(data[0][9][i].text)
-                            lovers_id = str(data[0][0].text)
-                        online_check = True
-                        kaleidoscope_spectrum_props.use_internet_libs = True
-                        break
-                    except requests.ConnectionError:
-                        for i in range(0, 5):
-                            color_palette[i] = "000000"
-                        online_check = False
-                        kaleidoscope_spectrum_props.use_internet_libs = False
-                        break
-                    except:
-                        continue
         elif kaleidoscope_spectrum_props.custom_gen_type == "5" or kaleidoscope_spectrum_props.random_custom_int == 4:
             #Random
             if kaleidoscope_spectrum_props.use_custom == True:
@@ -1299,40 +1246,6 @@ def Spectrum_Engine():
             color_palette[index[3]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
             color_palette[index[4]] = (''.join([random.choice('0123456789ABCDEF') for x in range(6)]))
             kaleidoscope_spectrum_props.use_internet_libs = False
-        elif kaleidoscope_spectrum_props.custom_gen_type == "6":
-            colors = []
-            final_colors = []
-            fin_colors = []
-            kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
-            img = bpy.data.images.load(kaleidoscope_spectrum_props.img_name)
-            img.scale(30, img.size[1]/img.size[0]*30)
-
-            for i in range(0, len(img.pixels), 4):
-                colors.append(img.pixels[i:i+4])
-
-            colors = filter(None, colors)
-            words_to_count = (word for word in colors)
-            c = Counter(words_to_count)
-            c = list(c.items())
-            color1 = c[0][0] # most dominant
-            col = hex_to_real_rgb(rgb_to_hex(color1))
-            final_colors.append(color1)
-            for i in range(1, len(c)):
-                color2 = hex_to_real_rgb(rgb_to_hex(c[i][0]))
-                res = math.pow((color2[0]-col[0]), 2) + math.pow((color2[1]-col[1]), 2) + math.pow((color2[2]-col[2]), 2)
-                if res <= 3:
-                    continue
-                else:
-                    for j in range(0, len(final_colors)):
-                        in_color = hex_to_real_rgb(rgb_to_hex(final_colors[j]))
-                        res = math.pow((color2[0]-in_color[0]), 2) + math.pow((color2[1]-in_color[1]), 2) + math.pow((color2[2]-in_color[2]), 2)
-                        if res <= 3:
-                            continue
-                        else:
-                            fin_colors.append(c[i][0])
-            print(fin_colors)
-            for i in range(0, 5):
-                color_palette[i] = rgb_to_hex(fin_colors[i][0])
     return color_palette
 
 def set_palettes_list(caller, context):
@@ -1440,7 +1353,7 @@ class PaletteGenerate(bpy.types.Operator):
             else:
                 kaleidoscope_spectrum_props.random_int = random.randint(0, 4)
             kaleidoscope_spectrum_props.random_custom_int = random.randint(0, 4)
-            kaleidoscope_spectrum_props.random_online_int = random.randint(0, 2)
+            kaleidoscope_spectrum_props.random_online_int = random.randint(0, 1)
             color_palette = Spectrum_Engine()
             kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
             kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])

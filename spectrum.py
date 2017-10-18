@@ -1091,6 +1091,7 @@ def Spectrum_Engine():
         kaleidoscope_spectrum_props.use_internet_libs = False
 
     elif kaleidoscope_spectrum_props.gen_type == "4" or kaleidoscope_spectrum_props.random_int == 4:
+        global online_check
         if kaleidoscope_spectrum_props.custom_gen_type == "0" or kaleidoscope_spectrum_props.random_custom_int == 0:
             #Vibrant
             Hue = c.h
@@ -1216,7 +1217,6 @@ def Spectrum_Engine():
             global palette
             global community_maintain
             global community_palette
-            global online_check
             #Online
             if kaleidoscope_spectrum_props.online_type == '0' or kaleidoscope_spectrum_props.random_online_int == 0:
                 try:
@@ -1267,7 +1267,6 @@ def Spectrum_Engine():
                 except:
                     online_check = False
             elif kaleidoscope_spectrum_props.online_type == "2" or kaleidoscope_spectrum_props.random_online_int == 2:
-                global online_check
                 global lovers_id
                 while True:
                     try:

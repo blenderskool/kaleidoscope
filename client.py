@@ -6,8 +6,7 @@ try:
     import ctypes
 except:
     pass
-import json, os, requests
-import urllib.request
+import json, os, requests, datetime
 from collections import OrderedDict
 from . import spectrum, intensity
 if "bpy" in locals():
@@ -16,6 +15,7 @@ if "bpy" in locals():
     importlib.reload(intensity)
 
 palette_export = {}
+instance = 0
 
 class CancelProcess(bpy.types.Operator):
     """Cancel the Process"""
@@ -94,7 +94,7 @@ class SavePaletteMenu(bpy.types.Operator):
     bl_label = "Save Spectrum Palette"
 
     def set_name(self, context):
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
         kaleidoscope_spectrum_props.save_palette_name = self.name
         return None
 
@@ -120,8 +120,9 @@ class SavePaletteYes(bpy.types.Operator):
             ctypes.windll.user32.keybd_event(VK_ESCAPE)
         except AttributeError:
             pass
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        
         global palette_export
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
         name = kaleidoscope_spectrum_props.save_palette_name
         temp_name = name
         name = name.title()
@@ -174,65 +175,37 @@ class PublishPaletteYes(bpy.types.Operator):
     bl_idname = "spectrum.publish_palette_yes"
     bl_label = "Publish Yes"
 
-    def compare_colors(self, color1, color2):
-        return math.pow((color1[0]-color2[0]), 2) + math.pow((color1[1]-color2[1]), 2) + math.pow((color1[2]-color2[2]), 2) # based on https://en.wikipedia.org/wiki/Color_difference
-
     def execute(self, context):
         try:
             VK_ESCAPE = 0x1B
             ctypes.windll.user32.keybd_event(VK_ESCAPE)
         except AttributeError:
             pass
-        duplicate = False
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
 
-        community_palette_file = None
-        if kaleidoscope_spectrum_props.new_community_file != 0:
-            community_palette_file = str(urllib.request.urlopen("http://blskl.cf/kalcommunitypal").read(), 'UTF-8')
-            if community_palette_file == "Off":
-                spectrum.community_maintain = True
-            else:
-                kaleidoscope_spectrum_props.new_community_file = 0
-                spectrum.community_palette = json.loads(community_palette_file)
-                spectrum.community_maintain = False
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
 
-        if community_palette_file != "Off":
-            for palettes in spectrum.community_palette['Palettes']:
-                col1 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1))
-                col2 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2))
-                col3 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3))
-                col4 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4))
-                col5 = spectrum.hex_to_real_rgb(spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5))
+        palettes = requests.get('http://blskl.cf/kalcommunitypal').json()
 
-                onl_col1 = spectrum.hex_to_real_rgb(palettes['Color_1'].rstrip('t'))
-                onl_col2 = spectrum.hex_to_real_rgb(palettes['Color_2'].rstrip('t'))
-                onl_col3 = spectrum.hex_to_real_rgb(palettes['Color_3'].rstrip('t'))
-                onl_col4 = spectrum.hex_to_real_rgb(palettes['Color_4'].rstrip('t'))
-                onl_col5 = spectrum.hex_to_real_rgb(palettes['Color_5'].rstrip('t'))
+        palette = {}
+        palette['colors'] = [
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#'),
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#'),
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#'),
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#'),
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#')
+        ]
+        palette['time'] = datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+        palettes['Palettes'].append(palette)
 
-                comp1 = self.compare_colors(color1 = col1, color2 = onl_col1)
-                comp2 = self.compare_colors(color1 = col2, color2 = onl_col2)
-                comp3 = self.compare_colors(color1 = col3, color2 = onl_col3)
-                comp4 = self.compare_colors(color1 = col4, color2 = onl_col4)
-                comp5 = self.compare_colors(color1 = col5, color2 = onl_col5)
+        req = requests.put('https://api.jsonbin.io/b/5b49a450dd2c022ecda2553d',
+                            json=palettes,
+                            headers={'content-type':'application/json'})
 
-                if comp1 <= 3 and comp2 <= 3 and comp3 <= 3 and comp4 <= 3 and comp5 <= 3:
-                    duplicate = True
-                    break
-                else:
-                    duplicate = False
+        if req.status_code == 200:
+            self.report({'INFO'}, 'Palette Successfully Published, Shift+Click \'Refresh\' to reload the Community Palettes')
         else:
-            self.report({'INFO'}, "Community Palettes Database is going through maintenance, check later")
+            self.report({'WARNING'}, 'There was a Problem. Try again Later')
 
-        if duplicate == False:
-            post_url = str("https://docs.google.com/forms/d/e/1FAIpQLSdVOWNzUeDwudMBcPNHfMRbDCMmNbQAK8A8DbX26u1w8oSYOA/formResponse?entry.737918241="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#')+"t"+"&entry.552637366="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#')+"t"+"&entry.1897395291="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#')+"t"+"&entry.1035475240="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#')+"t"+"&entry.577277592="+spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#')+"t")
-            out = requests.post(post_url)
-            if out.status_code == 200:
-                self.report({'INFO'}, 'Palette Successfully Published, Shift+Click \'Refresh\' to reload the Community Palettes')
-            else:
-                self.report({'WARNING'}, 'There was a Problem. Try again Later')
-        else:
-            self.report({'WARNING'}, 'A Palette of those colors already exists')
         return{'FINISHED'}
 
 class DeletePaletteMenu(bpy.types.Operator):
@@ -260,9 +233,9 @@ class DeletePaletteYes(bpy.types.Operator):
             ctypes.windll.user32.keybd_event(VK_ESCAPE)
         except AttributeError:
             pass
-        local_error = False
-        global_error = False
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+        global_error = local_error = False
+
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
         name = kaleidoscope_spectrum_props.saved_palettes
         temp_name = name
         name = name.lower()

@@ -79,7 +79,7 @@ class IntensityNode(Node, IntensityTreeNode):
 
     def set_value(self, context):
         global custom_values_list
-        kaleidoscope_props = bpy.context.scene.kaleidoscope_props
+        kaleidoscope_props = context.scene.kaleidoscope_props
         if self.kaleidoscope_intensity_main_category == '0':
             self.kaleidoscope_intensity_out_value = glass_ior[int(self.kaleidoscope_intensity_glass_category)]
         elif self.kaleidoscope_intensity_main_category == '1':
@@ -321,7 +321,7 @@ class IntensityNext(bpy.types.Operator):
     def execute(self, context):
         global custom_values_list
 
-        node = bpy.context.object.active_material.node_tree.nodes[self.nodeName]
+        node = context.object.active_material.node_tree.nodes[self.nodeName]
 
         if node.kaleidoscope_intensity_main_category == '0':
             if int(node.kaleidoscope_intensity_glass_category) < 16:
@@ -349,7 +349,7 @@ class IntensityPrevious(bpy.types.Operator):
 
     def execute(self, context):
         global custom_values_list
-        node = bpy.context.object.active_material.node_tree.nodes[self.nodeName]
+        node = context.object.active_material.node_tree.nodes[self.nodeName]
         if node.kaleidoscope_intensity_main_category == '0':
             if int(node.kaleidoscope_intensity_glass_category) > 0:
                 node.kaleidoscope_intensity_glass_category = str(int(node.kaleidoscope_intensity_glass_category)-1)

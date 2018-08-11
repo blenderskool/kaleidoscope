@@ -61,139 +61,84 @@ class SpectrumTreeNode:
 class SpectrumProperties(bpy.types.PropertyGroup):
     """Properties of Spectrum which are created for every new scene"""
     def update_color_1(self, context):
-        for world in bpy.data.worlds:
-            if world.node_tree is not None:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
-                        update_caller(self, input_name="Color 1")
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
-                        update_caller(self, input_name="Color 1")
-        for lamps in bpy.data.lamps:
-            if lamps.node_tree is not None:
-                for node in lamps.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
-                        update_caller(self, input_name="Color 1")
-        return None
+
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            node.outputs['Color 1'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[int(node.instance)].color1
+                            update_caller(self, input_name='Color 1', instance=int(node.instance))
 
     def update_color_2(self, context):
-        for world in bpy.data.worlds:
-            if world.node_tree is not None:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
-                        update_caller(self, input_name="Color 2")
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
-                        update_caller(self, input_name="Color 2")
-        for lamps in bpy.data.lamps:
-            if lamps.node_tree is not None:
-                for node in lamps.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
-                        update_caller(self, input_name="Color 2")
-        return None
+
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            node.outputs['Color 2'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[int(node.instance)].color2
+                            update_caller(self, input_name='Color 2', instance=int(node.instance))
 
     def update_color_3(self, context):
-        for world in bpy.data.worlds:
-            if world.node_tree is not None:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
-                        update_caller(self, input_name="Color 3")
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
-                        update_caller(self, input_name="Color 3")
-        for lamps in bpy.data.lamps:
-            if lamps.node_tree is not None:
-                for node in lamps.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
-                        update_caller(self, input_name="Color 3")
-        return None
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            node.outputs['Color 3'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[int(node.instance)].color3
+                            update_caller(self, input_name='Color 3', instance=int(node.instance))
+
     def update_color_4(self, context):
-        for world in bpy.data.worlds:
-            if world.node_tree is not None:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
-                        update_caller(self, input_name="Color 4")
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
-                        update_caller(self, input_name="Color 4")
-        for lamps in bpy.data.lamps:
-            if lamps.node_tree is not None:
-                for node in lamps.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
-                        update_caller(self, input_name="Color 4")
-        return None
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            node.outputs['Color 4'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[int(node.instance)].color4
+                            update_caller(self, input_name='Color 4', instance=int(node.instance))
+
 
     def update_color_5(self, context):
-        for world in bpy.data.worlds:
-            if world.node_tree is not None:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
-                        update_caller(self, input_name="Color 5")
-        for mat in bpy.data.materials:
-            if mat.node_tree is not None:
-                for node in mat.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
-                        update_caller(self, input_name="Color 5")
-        for lamps in bpy.data.lamps:
-            if lamps.node_tree is not None:
-                for node in lamps.node_tree.nodes:
-                    if node.bl_idname == 'spectrum_palette.node':
-                        node.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
-                        update_caller(self, input_name="Color 5")
-        return None
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            node.outputs['Color 5'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[int(node.instance)].color5
+                            update_caller(self, input_name='Color 5', instance=int(node.instance))
+
+
     def set_type(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
-        kaleidoscope_spectrum_props.random_int = int(kaleidoscope_spectrum_props.gen_type)
-        kaleidoscope_spectrum_props.random_custom_int = int(kaleidoscope_spectrum_props.custom_gen_type)
-        kaleidoscope_spectrum_props.random_online_int = int(kaleidoscope_spectrum_props.online_type)
-        return None
+        self.random_int = int(self.gen_type)
+        self.random_custom_int = int(self.custom_gen_type)
+        self.random_online_int = int(self.online_type)
+
     def set_global_settings(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         c = Color()
         for i in range(0,5):
-            if kaleidoscope_spectrum_props.history_count == 0:
+            if self.history_count == 0:
                 exec("c.r = PaletteHistory[1"+str(i)+"].r")
                 exec("c.g = PaletteHistory[1"+str(i)+"].g")
                 exec("c.b = PaletteHistory[1"+str(i)+"].b")
-            elif kaleidoscope_spectrum_props.history_count == 1:
+            elif self.history_count == 1:
                 exec("c.r = PaletteHistory["+str(i+5)+"].r")
                 exec("c.g = PaletteHistory["+str(i+5)+"].g")
                 exec("c.b = PaletteHistory["+str(i+5)+"].b")
-            elif kaleidoscope_spectrum_props.history_count == 2:
+            elif self.history_count == 2:
                 exec("c.r = PaletteHistory["+str(i)+"].r")
                 exec("c.g = PaletteHistory["+str(i)+"].g")
                 exec("c.b = PaletteHistory["+str(i)+"].b")
-            c.v = c.v+kaleidoscope_spectrum_props.value_slider
-            c.s = c.s+kaleidoscope_spectrum_props.saturation_slider
-            c.h = c.h+kaleidoscope_spectrum_props.hue_slider
-            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
-            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
-            exec("kaleidoscope_spectrum_props.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
-        return None
+            c.v = c.v+self.value_slider
+            c.s = c.s+self.saturation_slider
+            c.h = c.h+self.hue_slider
+            exec("self.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+            exec("self.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+            exec("self.color"+str(i+1)+" = c.r, c.g, c.b, 1.0")
+
+        #set_color_ramp({'instance': self})
+
     def get_saved_palettes(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
         saved_palettes_list = []
         global_palette = []
         local_palette = []
@@ -257,8 +202,7 @@ class SpectrumProperties(bpy.types.PropertyGroup):
 
         return saved_palettes_list
     def import_saved_palette(self, context):
-        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-        name = kaleidoscope_spectrum_props.saved_palettes
+        name = self.saved_palettes
         name = name.lower()
         name = name.replace(' ', '_')
         name = name+".json"
@@ -272,29 +216,28 @@ class SpectrumProperties(bpy.types.PropertyGroup):
                 palette_file = open(path, 'r')
                 self.palette = json.load(palette_file)
         for i in range(1, 6):
-            exec("kaleidoscope_spectrum_props.color"+str(i)+" = hex_to_rgb(self.palette[kaleidoscope_spectrum_props.saved_palettes]['color"+str(i)+"'])")
+            exec("self.color"+str(i)+" = hex_to_rgb(self.palette[self.saved_palettes]['color"+str(i)+"'])")
         palette_file.close()
         set_palettes_list(self, context)
-        return None
 
     def set_ramp(self, context):
         set_color_ramp(self)
-        return None
 
     def set_base_color(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
-        if kaleidoscope_spectrum_props.use_realtime_base == True:
-            bpy.ops.spectrum_palette.palette_gen('INVOKE_DEFAULT')
-        return None
+        # Gets the instance id of the node using the reference to collection property
+        instance = int(repr(self)[repr(self).rfind('[')+1 : len(repr(self))-1])
+        if self.use_realtime_base == True:
+            bpy.ops.spectrum_palette.palette_gen('INVOKE_DEFAULT', instance=instance)
 
     value_slider = bpy.props.FloatProperty(name="Global Brightness", description="Control the Overall Brightness of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     saturation_slider = bpy.props.FloatProperty(name="Global Saturation", description="Control the Overall Saturation of the Palette", min=-0.5, max=0.5, default=0.0, update=set_global_settings)
     hue_slider = bpy.props.FloatProperty(name="Global Hue", description="Control the Overall Hue of the Palette", min=0.0, max=1.0, default=0, update=set_global_settings)
-    color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.009, 0.421, 0.554,1.0), size=4, max=1.0, min=0.0, update=update_color_1)
-    color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", default=(0.267, 0.639, 0.344,1.0), size=4, max=1.0, min=0.0, update=update_color_2)
-    color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", default=(0.612, 0.812, 0.194,1.0), size=4, max=1.0, min=0.0, update=update_color_3)
-    color4 = bpy.props.FloatVectorProperty(name="Color4", description="Set Color 4 for the Palette", subtype="COLOR", default=(0.974, 0.465, 0.08,1.0), size=4, max=1.0, min=0.0, update=update_color_4)
-    color5 = bpy.props.FloatVectorProperty(name="Color5", description="Set Color 5 for the Palette", subtype="COLOR", default=(1.0, 0.08, 0.087,1.0), size=4, max=1.0, min=0.0, update=update_color_5)
+
+    color1 = bpy.props.FloatVectorProperty(name="Color1", description="Set Color 1 for the Palette", subtype="COLOR", default=(0.009, 0.421, 0.554, 1.0), size=4, max=1.0, min=0.0, update=update_color_1)
+    color2 = bpy.props.FloatVectorProperty(name="Color2", description="Set Color 2 for the Palette", subtype="COLOR", default=(0.267, 0.639, 0.344, 1.0), size=4, max=1.0, min=0.0, update=update_color_2)
+    color3 = bpy.props.FloatVectorProperty(name="Color3", description="Set Color 3 for the Palette", subtype="COLOR", default=(0.612, 0.812, 0.194, 1.0), size=4, max=1.0, min=0.0, update=update_color_3)
+    color4 = bpy.props.FloatVectorProperty(name="Color4", description="Set Color 4 for the Palette", subtype="COLOR", default=(0.974, 0.465, 0.08, 1.0), size=4, max=1.0, min=0.0, update=update_color_4)
+    color5 = bpy.props.FloatVectorProperty(name="Color5", description="Set Color 5 for the Palette", subtype="COLOR", default=(1.0, 0.08, 0.087, 1.0), size=4, max=1.0, min=0.0, update=update_color_5)
 
     hue = bpy.props.FloatVectorProperty(name="Hue", description="Set the Color for the Base Color to be used in Palette Generation", subtype="COLOR", size=4, max=1.0, min=0.0, default=(random.random(), random.random(), random.random(), 1.0), update=set_base_color)
     gen_type = bpy.props.EnumProperty(name="Type of Palette", description="Select the Rule for the Color Palette Generation", items=(('0','Monochromatic','Use Monochromatic Rule for Palette'),('1','Analogous','Use Analogous Rule for Palette'),('2','Complementary','Use Complementary Rule for Palette'),('3','Triadic','Use Triadic Rule for Palette'),('4','Custom','Use Custom Rule for Palette')), update=set_type, default="0")
@@ -328,16 +271,19 @@ class SpectrumMaterialProps(bpy.types.PropertyGroup):
 
     def set_ramp(self, context):
         set_color_ramp(self)
-        return None
 
     colorramp_name = bpy.props.StringProperty(name="ColorRamp name", description="Select the ColorRamp to assign the Colors", default="", update=set_ramp)
     assign_colorramp = bpy.props.BoolProperty(name="Assign ColorRamp", description="Assign the Colors from Spectrum to ColorRamp in the Object Material", default=False, update=set_ramp)
 
 def set_color_ramp(self):
     """Set the Colors from the Palette to a ColorRamp node"""
-    kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
+    try:
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
+    except:
+        kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props[self['instance']]
     ramp = None
     ramp_world = None
+
     if kaleidoscope_spectrum_props.assign_colorramp_world == True:
         try:
             try:
@@ -392,68 +338,59 @@ class SpectrumNode(Node, SpectrumTreeNode):
     bl_width_min = 226.0
     bl_width_max = 350.0
 
+    def update_instance(self, context):
+        instance = int(self.instance)
+        self.outputs['Color 1'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[instance].color1
+        self.outputs['Color 2'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[instance].color2
+        self.outputs['Color 3'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[instance].color3
+        self.outputs['Color 4'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[instance].color4
+        self.outputs['Color 5'].default_value = bpy.context.scene.kaleidoscope_spectrum_props[instance].color5
+        update_caller(self, 'Color 1', instance)
+        update_caller(self, 'Color 2', instance)
+        update_caller(self, 'Color 3', instance)
+        update_caller(self, 'Color 4', instance)
+        update_caller(self, 'Color 5', instance)
+
+        client.instance = instance
+
+    instance = bpy.props.EnumProperty(name='Instance', description='Set the Instance of Spectrum Node', items=(('0', 'Spectrum 1', 'Spectrum 1'),
+                                                                                                                ('1', 'Spectrum 2', 'Spectrum 2'),
+                                                                                                                ('2', 'Spectrum 3', 'Spectrum 3')), default='0', update=update_instance)
+
     def init(self, context):
         self.outputs.new('NodeSocketColor', "Color 1")
         self.outputs.new('NodeSocketColor', "Color 2")
         self.outputs.new('NodeSocketColor', "Color 3")
         self.outputs.new('NodeSocketColor', "Color 4")
         self.outputs.new('NodeSocketColor', "Color 5")
-        self.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color1
-        self.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color2
-        self.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color3
-        self.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color4
-        self.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props.color5
+
+        if (len(bpy.context.scene.kaleidoscope_spectrum_props) == 0):
+            bpy.context.scene.kaleidoscope_spectrum_props.add()
+
+        self.outputs["Color 1"].default_value = bpy.context.scene.kaleidoscope_spectrum_props[0].color1
+        self.outputs["Color 2"].default_value = bpy.context.scene.kaleidoscope_spectrum_props[0].color2
+        self.outputs["Color 3"].default_value = bpy.context.scene.kaleidoscope_spectrum_props[0].color3
+        self.outputs["Color 4"].default_value = bpy.context.scene.kaleidoscope_spectrum_props[0].color4
+        self.outputs["Color 5"].default_value = bpy.context.scene.kaleidoscope_spectrum_props[0].color5
         self.width = 226
 
     def update(self):
-        if bpy.context.scene.render.engine == 'CYCLES':
-            out = ""
-            try:
-                for world in bpy.data.worlds:
-                    for node in world.node_tree.nodes:
+        if bpy.context.scene.render.engine != 'CYCLES':
+            return
+
+        for mat in ['worlds', 'materials', 'lamps']:
+            for inst in getattr(bpy.data, mat):
+                if inst.node_tree is not None:
+                    for node in inst.node_tree.nodes:
                         if node.bl_idname == 'spectrum_palette.node':
                             for out in node.outputs:
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, out.name)
+                                            if o.to_node.bl_idname == 'NodeReroute':
+                                                update_reroutes(mat, inst.name, node.name, o.to_node.name, out.name)
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-            except:
-                pass
 
-            try:
-                for lamps in bpy.data.lamps:
-                    try:
-                        for node in lamps.node_tree.nodes:
-                            if node.bl_idname == 'spectrum_palette.node':
-                                for out in node.outputs:
-                                    if out.is_linked:
-                                        for o in out.links:
-                                            if o.is_valid:
-                                                if o.to_node.bl_idname == "NodeReroute":
-                                                    update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, out.name)
-                                                o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                    except:
-                        continue
-            except:
-                pass
-            try:
-                for mat in bpy.data.materials:
-                    try:
-                        for node in mat.node_tree.nodes:
-                            if node.bl_idname == 'spectrum_palette.node':
-                                for out in node.outputs:
-                                    if out.is_linked:
-                                        for o in out.links:
-                                            if o.is_valid:
-                                                if o.to_node.bl_idname == "NodeReroute":
-                                                    update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, out.name)
-                                                o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                    except:
-                        continue
-            except:
-                pass
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
@@ -463,14 +400,18 @@ class SpectrumNode(Node, SpectrumTreeNode):
     def draw_label(self):
         return "Spectrum Palette"
 
+
 def SpectrumPaletteUI(self, context, layout):
     """Spectrum Palette Interface, which can be accessed from any other class"""
-    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[int(self.instance)]
     col = layout.column(align=True)
+    col.prop(self, 'instance', text='Slot')
+    col.separator()
     row = col.row(align=True)
     split = row.split(percentage=0.8)
     col1 = split.column(align=True)
     col1.prop(kaleidoscope_spectrum_props, "gen_type", text="Rule")
+
     if kaleidoscope_spectrum_props.gen_type == "4":
         col1.prop(kaleidoscope_spectrum_props, "custom_gen_type", "Type")
         if kaleidoscope_spectrum_props.custom_gen_type == "4":
@@ -635,7 +576,8 @@ def SpectrumPaletteUI(self, context, layout):
     row.prop(kaleidoscope_spectrum_props, "color5", text="")
     row2 = col2.row(align=True)
     row2.scale_y = 1.2
-    row2.operator(PaletteGenerate.bl_idname, text="Refresh Palette", icon="COLOR")
+    row2.operator(PaletteGenerate.bl_idname, text="Refresh Palette", icon="COLOR").instance = int(self.instance)
+
     col3 = layout.column(align=True)
     if online_check == False:
         col3.label("There was some problem,", icon='ERROR')
@@ -658,14 +600,14 @@ def SpectrumPaletteUI(self, context, layout):
     col4.label()
     row4 = col4.row(align=True)
     if kaleidoscope_spectrum_props.history_count != 2:
-        row4.operator(PreviousPalette.bl_idname, text="", icon="TRIA_LEFT")
+        row4.operator(PreviousPalette.bl_idname, text="", icon="TRIA_LEFT").instance = int(self.instance)
     else:
         row4.separator()
         row4.separator()
-    row4.operator(PaletteInvert.bl_idname, text="Invert", icon="ARROW_LEFTRIGHT")
-    row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="LOOP_BACK")
+    row4.operator(PaletteInvert.bl_idname, text="Invert", icon="ARROW_LEFTRIGHT").instance = int(self.instance)
+    row4.operator(PaletteShuffle.bl_idname, text="Shuffle", icon="LOOP_BACK").instance = int(self.instance)
     if kaleidoscope_spectrum_props.history_count != 0:
-        row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT")
+        row4.operator(NextPalette.bl_idname, text="", icon="TRIA_RIGHT").instance = int(self.instance)
     else:
         row4.separator()
         row4.separator()
@@ -700,58 +642,35 @@ def SpectrumPaletteUI(self, context, layout):
     row7_1.scale_y = 1.2
     row7_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/kalsupport'
 
-def update_caller(caller, input_name):
-    kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
-    for world in bpy.data.worlds:
-        if world.node_tree is not None:
-            for node in world.node_tree.nodes:
-                if node.bl_idname == 'spectrum_palette.node':
-                    if node.outputs[input_name].is_linked:
-                        for o in node.outputs[input_name].links:
-                            if o.is_valid:
-                                if o.to_node.bl_idname == "NodeReroute":
-                                    update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, input_name)
-                                o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
+def update_caller(caller, input_name, instance):
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
 
-    for mat in bpy.data.materials:
-        if mat.node_tree is not None:
-            for node in mat.node_tree.nodes:
-                if node.bl_idname == 'spectrum_palette.node':
-                    if node.outputs[input_name].is_linked:
-                        for o in node.outputs[input_name].links:
-                            if o.is_valid:
-                                if o.to_node.bl_idname == "NodeReroute":
-                                    update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, input_name)
-                                o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
-
-    for lamps in bpy.data.lamps:
-        if lamps.node_tree is not None:
-            try:
-                for node in lamps.node_tree.nodes:
+    for mat in ['worlds', 'materials', 'lamps']:
+        for inst in getattr(bpy.data, mat):
+            if inst.node_tree is not None:
+                for node in inst.node_tree.nodes:
                     if node.bl_idname == 'spectrum_palette.node':
                         if node.outputs[input_name].is_linked:
                             for o in node.outputs[input_name].links:
                                 if o.is_valid:
                                     if o.to_node.bl_idname == "NodeReroute":
-                                        update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, input_name)
+                                        update_reroutes("WorldNodeTree", inst.name, node.name, o.to_node.name, input_name)
                                     o.to_socket.node.inputs[o.to_socket.name].default_value = node.outputs[input_name].default_value
-            except:
-                continue
 
     for mat in bpy.data.materials:
         if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
-            set_color_ramp(caller)
+            set_color_ramp({'instance': instance})
             break
 
 def update_reroutes(tree_type, material_name, kaleidoscope_node_name, reroute_name, input_name):
-    if tree_type == "ShaderNodeTree":
+    if tree_type == 'materials':
         node_tree_type = bpy.data.materials[material_name]
-    elif tree_type == "WorldNodeTree":
+    elif tree_type == 'worlds':
         node_tree_type = bpy.data.worlds[material_name]
-    elif tree_type == "LampNodeTree":
+    elif tree_type == 'lamps':
         node_tree_type = bpy.data.lamps[material_name]
     else:
-        return ("NodeTree Type not in [\"ShaderNodeTree\", \"WorldNodeTree\", \"LampNodeTree\"]")
+        return ('NodeTree Type not in [\"ShaderNodeTree\", \"WorldNodeTree\", \"LampNodeTree\"]')
 
     reroute = node_tree_type.node_tree.nodes[reroute_name]
     node = node_tree_type.node_tree.nodes[kaleidoscope_node_name]
@@ -766,7 +685,6 @@ def update_reroutes(tree_type, material_name, kaleidoscope_node_name, reroute_na
                         update_reroutes(tree_type, material_name, kaleidoscope_node_name, next_node.name, input_name)
     except:
         pass
-
 
 def hex_to_rgb(value, alpha=True):
     """Convets a Hex code to a Blender RGB Value"""
@@ -812,9 +730,9 @@ def real_rgb_to_hex(value):
     """Return color as #rrggbb for the given color values."""
     return '#%02x%02x%02x' % value
 
-def Spectrum_Engine():
+def Spectrum_Engine(instance):
     """Generates the Color Palettes. Use the PaletteGenerate Class for Palettes, as this requires some custom properties"""
-    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
     kaleidoscope_spectrum_props.hue_slider = 0.0
     kaleidoscope_spectrum_props.saturation_slider = 0.0
     kaleidoscope_spectrum_props.value_slider = 0.0
@@ -1240,18 +1158,18 @@ def Spectrum_Engine():
                     online_check = False
             elif kaleidoscope_spectrum_props.online_type == '1' or kaleidoscope_spectrum_props.random_online_int == 1:
                 try:
-                    community_palette_file = None
                     if kaleidoscope_spectrum_props.new_community_file != 0:
-                        community_palette_file = str(urllib.request.urlopen("http://blskl.cf/kalcommunitypal").read(), 'UTF-8')
-                        if community_palette_file == "Off":
-                            community_maintain = True
-                            for i in range(0, 5):
-                                color_palette[i] = "000000"
-                        else:
+                        community_palette = requests.get("http://blskl.cf/kalcommunitypal").json()
+                        try:
+                            if community_palette['success'] == False:
+                                community_maintain = True
+                                for i in range(0, 5):
+                                    color_palette[i] = "000000"
+                        except KeyError:
                             kaleidoscope_spectrum_props.new_community_file = 0
-                            community_palette = json.loads(community_palette_file)
                             community_maintain = False
-                    if community_palette_file != "Off":
+
+                    if kaleidoscope_spectrum_props.new_community_file == 0:
                         index = random.randint(0, len(community_palette['Palettes'])-1)
                         for i in range(0, 20):
                             if kaleidoscope_spectrum_props.online_palette_index == index or Palette_idHistory[1] == index or Palette_idHistory[0] == index:
@@ -1261,8 +1179,8 @@ def Spectrum_Engine():
                         kaleidoscope_spectrum_props.online_palette_index = index+1
                         online_check = True
 
-                        for i in range(0, 5):
-                            color_palette[i] = str(community_palette['Palettes'][index]["Color_"+str(i+1)].rstrip('t'))
+                        for i, color in enumerate(community_palette['Palettes'][index]['colors']):
+                            color_palette[i] = color.rstrip('t')
                         kaleidoscope_spectrum_props.use_internet_libs = True
                 except:
                     online_check = False
@@ -1273,7 +1191,6 @@ def Spectrum_Engine():
                         req = requests.get("http://blskl.cf/kalCOLOURloversapi")
                         data = ET.fromstring(req.text)
                         for i in range(0, 5):
-                            print(str(data[0][9][i].text))
                             color_palette[i] = str(data[0][9][i].text)
                             lovers_id = str(data[0][0].text)
                         online_check = True
@@ -1329,12 +1246,11 @@ def Spectrum_Engine():
                             continue
                         else:
                             fin_colors.append(c[i][0])
-            print(fin_colors)
             for i in range(0, 5):
                 color_palette[i] = rgb_to_hex(fin_colors[i][0])
     return color_palette
 
-def set_palettes_list(caller, context):
+def set_palettes_list(caller, context, instance):
     """Saves the Palettes for History Purposes"""
     kaleidoscope_spectrum_props=bpy.context.scene.kaleidoscope_spectrum_props
     #Palette History 1
@@ -1382,36 +1298,38 @@ def set_palettes_list(caller, context):
     Palette_idHistory[1] = Palette_idHistory[2]
 
     #Palette History 3
-    PaletteHistory[14].r = kaleidoscope_spectrum_props.color5[0]
-    PaletteHistory[14].g = kaleidoscope_spectrum_props.color5[1]
-    PaletteHistory[14].b = kaleidoscope_spectrum_props.color5[2]
+    PaletteHistory[14].r = kaleidoscope_spectrum_props[instance].color5[0]
+    PaletteHistory[14].g = kaleidoscope_spectrum_props[instance].color5[1]
+    PaletteHistory[14].b = kaleidoscope_spectrum_props[instance].color5[2]
 
-    PaletteHistory[13].r = kaleidoscope_spectrum_props.color4[0]
-    PaletteHistory[13].g = kaleidoscope_spectrum_props.color4[1]
-    PaletteHistory[13].b = kaleidoscope_spectrum_props.color4[2]
+    PaletteHistory[13].r = kaleidoscope_spectrum_props[instance].color4[0]
+    PaletteHistory[13].g = kaleidoscope_spectrum_props[instance].color4[1]
+    PaletteHistory[13].b = kaleidoscope_spectrum_props[instance].color4[2]
 
-    PaletteHistory[12].r = kaleidoscope_spectrum_props.color3[0]
-    PaletteHistory[12].g = kaleidoscope_spectrum_props.color3[1]
-    PaletteHistory[12].b = kaleidoscope_spectrum_props.color3[2]
+    PaletteHistory[12].r = kaleidoscope_spectrum_props[instance].color3[0]
+    PaletteHistory[12].g = kaleidoscope_spectrum_props[instance].color3[1]
+    PaletteHistory[12].b = kaleidoscope_spectrum_props[instance].color3[2]
 
-    PaletteHistory[11].r = kaleidoscope_spectrum_props.color2[0]
-    PaletteHistory[11].g = kaleidoscope_spectrum_props.color2[1]
-    PaletteHistory[11].b = kaleidoscope_spectrum_props.color2[2]
+    PaletteHistory[11].r = kaleidoscope_spectrum_props[instance].color2[0]
+    PaletteHistory[11].g = kaleidoscope_spectrum_props[instance].color2[1]
+    PaletteHistory[11].b = kaleidoscope_spectrum_props[instance].color2[2]
 
-    PaletteHistory[10].r = kaleidoscope_spectrum_props.color1[0]
-    PaletteHistory[10].g = kaleidoscope_spectrum_props.color1[1]
-    PaletteHistory[10].b = kaleidoscope_spectrum_props.color1[2]
-    Palette_idHistory[2] = kaleidoscope_spectrum_props.online_palette_index
+    PaletteHistory[10].r = kaleidoscope_spectrum_props[instance].color1[0]
+    PaletteHistory[10].g = kaleidoscope_spectrum_props[instance].color1[1]
+    PaletteHistory[10].b = kaleidoscope_spectrum_props[instance].color1[2]
+    Palette_idHistory[2] = kaleidoscope_spectrum_props[instance].online_palette_index
 
-    kaleidoscope_spectrum_props.history_count = 0
+    kaleidoscope_spectrum_props[instance].history_count = 0
 
 class PaletteGenerate(bpy.types.Operator):
     """Generate a new Color Palette"""
     bl_idname="spectrum_palette.palette_gen"
     bl_label="Refresh Palette"
 
+    instance = bpy.props.IntProperty()
+
     def invoke(self, context, event):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         if event.shift:
             if kaleidoscope_spectrum_props.gen_type == '4' and kaleidoscope_spectrum_props.custom_gen_type == '4':
                 if kaleidoscope_spectrum_props.online_type == "0":
@@ -1424,14 +1342,15 @@ class PaletteGenerate(bpy.types.Operator):
         return {'FINISHED'}
 
     def execute(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         if kaleidoscope_spectrum_props.custom_gen_type != "3":
-            color_palette = Spectrum_Engine()
+            color_palette = Spectrum_Engine(self.instance)
             kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
             kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])
             kaleidoscope_spectrum_props.color3 = hex_to_rgb(color_palette[2])
             kaleidoscope_spectrum_props.color4 = hex_to_rgb(color_palette[3])
             kaleidoscope_spectrum_props.color5 = hex_to_rgb(color_palette[4])
+
         else:
             num = random.randint(0, 2)
             if num % 2 == 0:
@@ -1440,13 +1359,13 @@ class PaletteGenerate(bpy.types.Operator):
                 kaleidoscope_spectrum_props.random_int = random.randint(0, 4)
             kaleidoscope_spectrum_props.random_custom_int = random.randint(0, 4)
             kaleidoscope_spectrum_props.random_online_int = random.randint(0, 2)
-            color_palette = Spectrum_Engine()
+            color_palette = Spectrum_Engine(self.instance)
             kaleidoscope_spectrum_props.color1 = hex_to_rgb(color_palette[0])
             kaleidoscope_spectrum_props.color2 = hex_to_rgb(color_palette[1])
             kaleidoscope_spectrum_props.color3 = hex_to_rgb(color_palette[2])
             kaleidoscope_spectrum_props.color4 = hex_to_rgb(color_palette[3])
             kaleidoscope_spectrum_props.color5 = hex_to_rgb(color_palette[4])
-        set_palettes_list(self, context)
+        set_palettes_list(self, context, self.instance)
         for mat in bpy.data.materials:
             if mat.kaleidoscope_spectrum_props.assign_colorramp == True or kaleidoscope_spectrum_props.assign_colorramp_world == True:
                 set_color_ramp(self)
@@ -1464,8 +1383,10 @@ class PreviousPalette(bpy.types.Operator):
     bl_idname="spectrum_palette.palette_previous"
     bl_label="Previous Palette"
 
+    instance = bpy.props.IntProperty()
+
     def execute(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         kaleidoscope_spectrum_props.history_count = kaleidoscope_spectrum_props.history_count+1
         if kaleidoscope_spectrum_props.history_count == 2:
             for i in range(0, 5):
@@ -1525,6 +1446,8 @@ class PreviousPalette(bpy.types.Operator):
         kaleidoscope_spectrum_props.saturation_slider = 0.0
         kaleidoscope_spectrum_props.value_slider = 0.0
 
+        set_color_ramp(self)
+
         global shuffle_time
         shuffle_time=1
         return{'FINISHED'}
@@ -1534,8 +1457,10 @@ class NextPalette(bpy.types.Operator):
     bl_idname="spectrum_palette.palette_next"
     bl_label="Next Palette"
 
+    instance = bpy.props.IntProperty()
+
     def execute(self, context):
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         kaleidoscope_spectrum_props.history_count = kaleidoscope_spectrum_props.history_count-1
         if kaleidoscope_spectrum_props.history_count == 1:
             kaleidoscope_spectrum_props.color1[0] = PaletteHistory[5].r
@@ -1587,6 +1512,8 @@ class NextPalette(bpy.types.Operator):
         kaleidoscope_spectrum_props.saturation_slider = 0.0
         kaleidoscope_spectrum_props.value_slider = 0.0
 
+        set_color_ramp(self)
+
         global shuffle_time
         shuffle_time=1
         return{'FINISHED'}
@@ -1596,9 +1523,11 @@ class PaletteShuffle(bpy.types.Operator):
     bl_idname="spectrum_palette.palette_shuffle"
     bl_label="Shufle Palette"
 
+    instance = bpy.props.IntProperty()
+
     def invoke(self, context, event):
         global shuffle_time
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         if event.shift:
             if shuffle_time != 1:
                 global before_shuffle_colors
@@ -1615,7 +1544,7 @@ class PaletteShuffle(bpy.types.Operator):
     def execute(self, context):
         global before_shuffle_colors
         global shuffle_time
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
 
         col1 = Color()
         col2 = Color()
@@ -1638,12 +1567,13 @@ class PaletteShuffle(bpy.types.Operator):
         for i in range(1, 6):
             exec("kaleidoscope_spectrum_props.color"+str(index[i-1])+" = col"+str(i)+".r, col"+str(i)+".g, col"+str(i)+".b, 1.0")
 
-        current_history()
+        current_history(self.instance)
+        set_color_ramp(self)
         shuffle_time=shuffle_time+1
         return{'FINISHED'}
 
-def current_history():
-    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+def current_history(instance):
+    kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
 
     kaleidoscope_spectrum_props.history_count = 0.0
 
@@ -1676,10 +1606,12 @@ class PaletteInvert(bpy.types.Operator):
     bl_idname = "spectrum_palette.palette_invert"
     bl_label = "Invert Palette"
 
+    instance = bpy.props.IntProperty()
+
     def execute(self, context):
         global shuffle_time
         global before_shuffle_colors
-        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props
+        kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[self.instance]
         color1 = Color()
         color2 = Color()
         color3 = Color()
@@ -1700,12 +1632,13 @@ class PaletteInvert(bpy.types.Operator):
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[1] = color"+str(i)+".g")
             exec("kaleidoscope_spectrum_props.color"+str(6-i)+"[2] = color"+str(i)+".b")
 
-        current_history()
+        current_history(self.instance)
+        set_color_ramp(self)
         shuffle_time = shuffle_time+1
         return{'FINISHED'}
 
 def register():
-    bpy.types.Scene.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumProperties)
+    bpy.types.Scene.kaleidoscope_spectrum_props = bpy.props.CollectionProperty(type=SpectrumProperties)
     bpy.types.Material.kaleidoscope_spectrum_props = bpy.props.PointerProperty(type=SpectrumMaterialProps)
     bpy.app.handlers.frame_change_pre.append(pre_spectrum_frame_change)
 
@@ -1741,23 +1674,10 @@ def pre_spectrum_frame_change(scene):
     v = scene.kaleidoscope_spectrum_props.value_slider
     scene.kaleidoscope_spectrum_props.value_slider = v"""
 
-    for mat in bpy.data.materials:
-        if mat.node_tree is not None:
-            for node in mat.node_tree.nodes:
-                if node.bl_idname == 'spectrum_palette.node':
-                    v = mat.kaleidoscope_spectrum_props.assign_colorramp
-                    mat.kaleidoscope_spectrum_props.assign_colorramp = v
-
-    for world in bpy.data.worlds:
-        if world.node_tree is not None:
-            for node in world.node_tree.nodes:
-                if node.bl_idname == 'spectrum_palette.node':
-                    v = world.kaleidoscope_spectrum_props.assign_colorramp
-                    world.kaleidoscope_spectrum_props.assign_colorramp = v
-
-    for lamps in bpy.data.lamps:
-        if lamps.node_tree is not None:
-            for node in lamps.node_tree.nodes:
-                if node.bl_idname == 'spectrum_palette.node':
-                    v = lamps.kaleidoscope_spectrum_props.assign_colorramp
-                    lamps.kaleidoscope_spectrum_props.assign_colorramp = v
+    for mat in ['worlds', 'materials', 'lamps']:
+        for inst in getattr(bpy.data, mat):
+            if inst.node_tree is not None:
+                for node in inst.node_tree.nodes:
+                    if node.bl_idname == 'spectrum_palette.node':
+                        v = inst.kaleidoscope_spectrum_props.assign_colorramp
+                        inst.kaleidoscope_spectrum_props.assign_colorramp = v

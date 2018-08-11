@@ -120,24 +120,6 @@ class IntensityNode(Node, IntensityTreeNode):
             else:
                 self.kaleidoscope_intensity_custom_category = str(len(custom_values_list)-1)
         return None
-    def set_next(self, context):
-        global custom_values_list
-        if self.kaleidoscope_intensity_main_category == '0':
-            if int(self.kaleidoscope_intensity_glass_category) < 16:
-                self.kaleidoscope_intensity_glass_category = str(int(self.kaleidoscope_intensity_glass_category)+1)
-            else:
-                self.kaleidoscope_intensity_glass_category = '0'
-        elif self.kaleidoscope_intensity_main_category == '1':
-            if int(self.kaleidoscope_intensity_black_body_category) < 15:
-                self.kaleidoscope_intensity_black_body_category = str(int(self.kaleidoscope_intensity_black_body_category)+1)
-            else:
-                self.kaleidoscope_intensity_black_body_category = '0'
-        elif self.kaleidoscope_intensity_main_category == '2':
-            if int(self.kaleidoscope_intensity_custom_category) < len(custom_values_list)-1:
-                self.kaleidoscope_intensity_custom_category = str(int(self.kaleidoscope_intensity_custom_category)+1)
-            else:
-                self.kaleidoscope_intensity_custom_category = '0'
-        return None
 
     def get_custom_vals(self, context):
         global custom_values_list
@@ -213,8 +195,6 @@ class IntensityNode(Node, IntensityTreeNode):
     num_val = 0.0
     active_custom_preset = None
 
-    kaleidoscope_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
-    kaleidoscope_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
     kaleidoscope_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
 
     kaleidoscope_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
@@ -331,6 +311,62 @@ class IntensityNode(Node, IntensityTreeNode):
     def draw_label(self):
         return "Intensity"
 
+class IntensityNext(bpy.types.Operator):
+    """Set the next value of the node"""
+    bl_idname = "kaleidoscope.intensity_next"
+    bl_label = "Intensity Next"
+
+    nodeName = bpy.props.StringProperty()
+
+    def execute(self, context):
+        global custom_values_list
+
+        node = bpy.context.object.active_material.node_tree.nodes[self.nodeName]
+
+        if node.kaleidoscope_intensity_main_category == '0':
+            if int(node.kaleidoscope_intensity_glass_category) < 16:
+                node.kaleidoscope_intensity_glass_category = str(int(node.kaleidoscope_intensity_glass_category)+1)
+            else:
+                node.kaleidoscope_intensity_glass_category = '0'
+        elif node.kaleidoscope_intensity_main_category == '1':
+            if int(node.kaleidoscope_intensity_black_body_category) < 15:
+                node.kaleidoscope_intensity_black_body_category = str(int(node.kaleidoscope_intensity_black_body_category)+1)
+            else:
+                node.kaleidoscope_intensity_black_body_category = '0'
+        elif node.kaleidoscope_intensity_main_category == '2':
+            if int(node.kaleidoscope_intensity_custom_category) < len(custom_values_list)-1:
+                node.kaleidoscope_intensity_custom_category = str(int(node.kaleidoscope_intensity_custom_category)+1)
+            else:
+                node.kaleidoscope_intensity_custom_category = '0'
+        return {'FINISHED'}
+
+class IntensityPrevious(bpy.types.Operator):
+    """Set the previous value of the node"""
+    bl_idname = 'kaleidoscope.intensity_previous'
+    bl_label = 'Intensity Previous'
+
+    nodeName = bpy.props.StringProperty()
+
+    def execute(self, context):
+        global custom_values_list
+        node = bpy.context.object.active_material.node_tree.nodes[self.nodeName]
+        if node.kaleidoscope_intensity_main_category == '0':
+            if int(node.kaleidoscope_intensity_glass_category) > 0:
+                node.kaleidoscope_intensity_glass_category = str(int(node.kaleidoscope_intensity_glass_category)-1)
+            else:
+                node.kaleidoscope_intensity_glass_category = str(len(glass_ior)-1)
+        elif node.kaleidoscope_intensity_main_category == '1':
+            if int(node.kaleidoscope_intensity_black_body_category) > 0:
+                node.kaleidoscope_intensity_black_body_category = str(int(node.kaleidoscope_intensity_black_body_category)-1)
+            else:
+                node.kaleidoscope_intensity_black_body_category = str(len(blackbody)-1)
+        elif node.kaleidoscope_intensity_main_category == '2':
+            if int(node.kaleidoscope_intensity_custom_category) > 0:
+                node.kaleidoscope_intensity_custom_category = str(int(node.kaleidoscope_intensity_custom_category)-1)
+            else:
+                node.kaleidoscope_intensity_custom_category = str(len(custom_values_list)-1)
+        return {'FINISHED'}
+
 def intensity_ui(self, context, layout, current_node):
         global custom_values_list
         kaleidoscope_intensity_props = self
@@ -387,13 +423,18 @@ def intensity_ui(self, context, layout, current_node):
             colb.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="Close Help", icon='INFO', toggle=True)
         col.label()
         row = col.row(align=True)
-        split1 = row.split(percentage=0.05)
+        split1 = row.split(percentage=0.1, align=True)
         col1 = split1.column(align=True)
-        col1.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_prev_button', text="", icon="TRIA_LEFT", emboss=False, toggle=True)
+        #col1.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_prev_button', text="", icon="TRIA_LEFT", emboss=False, toggle=True)
+        if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2':
+            if len(custom_values_list) != 0:
+                col1.operator(IntensityPrevious.bl_idname, text="", icon='TRIA_LEFT').nodeName = self.name
+        else:
+            col1.operator(IntensityPrevious.bl_idname, text="", icon='TRIA_LEFT').nodeName = self.name
 
         col2 = split1.column(align=True)
         row = col2.row(align=True)
-        split2 = row.split(percentage=0.95)
+        split2 = row.split(percentage=0.9, align=True)
         col3 = split2.column(align=True)
         row = col3.row(align=True)
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
@@ -409,7 +450,13 @@ def intensity_ui(self, context, layout, current_node):
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2' and len(custom_values_list) != 0:
             row.operator(client.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")
         col4 = split2.column(align=True)
-        col4.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
+
+        if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2':
+            if len(custom_values_list) != 0:
+                col4.operator(IntensityNext.bl_idname, text="", icon='TRIA_RIGHT').nodeName = self.name
+        else:
+            col4.operator(IntensityNext.bl_idname, text="", icon='TRIA_RIGHT').nodeName = self.name
+
         col.label()
         col.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_out_value')
         col.label()

@@ -53,7 +53,6 @@ blackbody = [1700,
             9500,
             27000]
 custom_values_list = []
-node_name = ""
 class IntensityTreeNode:
     @classmethod
     def poll(cls, ntree):
@@ -73,9 +72,7 @@ class IntensityNode(Node, IntensityTreeNode):
 
     def update_value(self, context):
         self.outputs['Value'].default_value = self.kaleidoscope_intensity_out_value
-        IntensityNode.num_val = self.kaleidoscope_intensity_out_value
         self.update()
-        return None
 
     def set_value(self, context):
         global custom_values_list
@@ -85,10 +82,8 @@ class IntensityNode(Node, IntensityTreeNode):
         elif self.kaleidoscope_intensity_main_category == '1':
             self.kaleidoscope_intensity_out_value = blackbody[int(self.kaleidoscope_intensity_black_body_category)]
         elif self.kaleidoscope_intensity_main_category == '2':
-            name = custom_values_list[int(self.kaleidoscope_intensity_custom_category)]
-            name = name.lower()
-            name = name.replace(" ", "_")+".json"
-            path = os.path.join(os.path.dirname(__file__), "values", name)
+            name = custom_values_list[int(self.kaleidoscope_intensity_custom_category)].lower().replace(" ", "_")+'.json'
+            path = os.path.join(os.path.dirname(__file__), 'values', name)
             value = None
             try:
                 value_file = open(path, 'r')
@@ -149,10 +144,7 @@ class IntensityNode(Node, IntensityTreeNode):
                 if os.path.isfile(os.path.join(val, str(sub))):
                     name = str(sub)
                     if name.endswith('.json'):
-                        name = name[:-5]
-                        name = name.title()
-                        name = name.replace('_', ' ')
-                        global_values.append(name)
+                        global_values.append(name[:-5].title().replace('_', ' '))
 
         i=0
         m='0'
@@ -163,9 +155,7 @@ class IntensityNode(Node, IntensityTreeNode):
             if os.path.isfile(os.path.join(os.path.dirname(__file__), "values", str(sub))):
                 name = str(sub)
                 if name.endswith('.json'):
-                    name = name[:-5]
-                    name = name.title()
-                    name = name.replace('_', ' ')
+                    name = name[:-5].title().replace('_', ' ')
                     if name in global_values:
                         value_list.append((m, name, "Choose the Saved Value from Library", "URL", i))
                         synced_values.append(name)
@@ -180,9 +170,7 @@ class IntensityNode(Node, IntensityTreeNode):
                 if os.path.isfile(os.path.join(val, str(sub))):
                     name = str(sub)
                     if name.endswith('.json'):
-                        name = name[:-5]
-                        name = name.title()
-                        name = name.replace('_', ' ')
+                        name = name[:-5].title().replace('_', ' ')
                         if name not in synced_values and name not in local_values:
                             value_list.append((m, name, "Choose the Saved Value from the Synced Library", "WORLD", i))
                 i=i+1
@@ -192,10 +180,7 @@ class IntensityNode(Node, IntensityTreeNode):
             custom_values_list.append(x[1])
         return value_list
 
-    num_val = 0.0
     active_custom_preset = None
-
-    kaleidoscope_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
 
     kaleidoscope_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
 
@@ -253,59 +238,16 @@ class IntensityNode(Node, IntensityTreeNode):
         self.width = 216.3
 
     def update(self):
-        out = ""
-        try:
-            for world in bpy.data.worlds:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == "intensity.node":
-                        for out in node.outputs:
-                            if out.is_linked:
-                                for o in out.links:
-                                    if o.is_valid:
-                                        if o.to_node.bl_idname == "NodeReroute":
-                                            spectrum.update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, "Value")
-                                        o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-        except:
-            pass
+        output = self.outputs['Value']
+        if output.is_linked:
+            for o in output.links:
+                if o.is_valid:
+                    o.to_socket.node.inputs[o.to_socket.name].default_value = output.default_value
 
-        try:
-            for lamps in bpy.data.lamps:
-                try:
-                    for node in lamps.node_tree.nodes:
-                        if node.bl_idname == "intensity.node":
-                            for out in node.outputs:
-                                if out.is_linked:
-                                    for o in out.links:
-                                        if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                spectrum.update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, "Value")
-                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
-        except:
-            pass
-        try:
-            for mat in bpy.data.materials:
-                try:
-                    for node in mat.node_tree.nodes:
-                        if node.bl_idname == "intensity.node":
-                            for out in node.outputs:
-                                if out.is_linked:
-                                    for o in out.links:
-                                        if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                spectrum.update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, "Value")
-                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
-        except:
-            pass
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
         intensity_ui(self, context, layout, self.name)
-        global node_name
-        node_name = self.name
 
     #Node Label
     def draw_label(self):
@@ -371,56 +313,7 @@ def intensity_ui(self, context, layout, current_node):
         global custom_values_list
         kaleidoscope_intensity_props = self
         col = layout.column(align=False)
-        row = col.row()
-        split = row.split(percentage=0.9)
-        col1 = split.column(align=True)
-        col1.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_main_category", text="")
-        col2 = split.column(align=True)
-        col2.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="", icon='INFO', toggle=True, emboss=False)
-        if kaleidoscope_intensity_props.kaleidoscope_intensity_info == True:
-            box = col.box()
-            colb = box.column(align=True)
-            if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
-                colb.label("Glass IOR")
-                colb.label()
-                colb.label("The IOR (Index of Refraction)")
-                colb.label("Value, is the ratio between")
-                colb.label("speed of light ray in vacuum")
-                colb.label("to the speed in the medium")
-                colb.label()
-                colb.label("So, the IOR value defines")
-                colb.label("that how much slower a light")
-                colb.label("ray would travel in a medium")
-                colb.label("compared to that in vacuum.")
-                colb.label("This value is important and")
-                colb.label("it controls the refractions")
-                colb.label("caused by the light ray.")
-                colb.label()
-
-            elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '1':
-                colb.label("Blackbody")
-                colb.label()
-                colb.label("A Blackbody radiator radiates")
-                colb.label("light, with a specific")
-                colb.label("temperature, and this temperature")
-                colb.label("defines a specific hue to that")
-                colb.label("light ray.")
-                colb.label()
-                colb.label("This characteristic of light")
-                colb.label("is important in the fields of")
-                colb.label("Photography, Lighting, and many")
-                colb.label("more.")
-                colb.label()
-
-            elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2':
-                colb.label("Custom Values")
-                colb.label()
-                colb.label("This Section is just for you,")
-                colb.label("to save all the values for later")
-                colb.label("use.")
-                colb.label()
-
-            colb.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="Close Help", icon='INFO', toggle=True)
+        col.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_main_category", text="Category")
         col.label()
         row = col.row(align=True)
         split1 = row.split(percentage=0.1, align=True)
@@ -474,32 +367,10 @@ def unregister():
     pass
 
 def pre_intensity_frame_change(scene):
-    for m in bpy.data.materials:
-        try:
-            if m.node_tree is not None:
-                for n in m.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
-
-    for lamp in bpy.data.lamps:
-        try:
-            if lamp.node_tree is not None:
-                for n in lamp.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
-
-    for w in bpy.data.worlds:
-        try:
-            if w.node_tree is not None:
-                for n in w.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
+    for mat in ['worlds', 'materials', 'lamps']:
+        for inst in getattr(bpy.data, mat):
+            if inst.node_tree is not None:
+                for node in inst.node_tree.nodes:
+                    if node.bl_idname == 'intensity.node':
+                        v = node.kaleidoscope_intensity_out_value
+                        node.kaleidoscope_intensity_out_value = v

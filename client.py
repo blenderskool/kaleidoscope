@@ -28,7 +28,7 @@ class CancelProcess(bpy.types.Operator):
             ctypes.windll.user32.keybd_event(VK_ESCAPE)
         except AttributeError:
             pass
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 #General Structure of layout which will be used by all the popups
 def menu_layout_builder(self, yes_operator, process_type):
@@ -123,37 +123,32 @@ class SavePaletteYes(bpy.types.Operator):
         
         global palette_export
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
-        name = kaleidoscope_spectrum_props.save_palette_name
-        temp_name = name
-        name = name.title()
-        name = name.replace('_', ' ')
+        temp_name = name = kaleidoscope_spectrum_props.save_palette_name.title().replace('_', ' ')
+
         kaleidoscope_spectrum_props.save_palette_name = name
-        palette_export[kaleidoscope_spectrum_props.save_palette_name] = OrderedDict([
-            ("palette_name", kaleidoscope_spectrum_props.save_palette_name),
-            ("color1", spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1)),
-            ("color2", spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2)),
-            ("color3", spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3)),
-            ("color4", spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4)),
-            ("color5", spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5))
+        ls = [("palette_name", kaleidoscope_spectrum_props.save_palette_name)]
+        palette_export[kaleidoscope_spectrum_props.save_palette_name] = OrderedDict(ls + [
+            ('color'+str(num), spectrum.rgb_to_hex(kaleidoscope_spectrum_props['color'+str(num)].to_list())) for num in range(1, 6)
         ])
-        name = kaleidoscope_spectrum_props.save_palette_name
-        name = name.lower()
-        kaleidoscope_spectrum_props.save_palette_name = name.replace(' ', '_')
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "palettes")):
-            os.makedirs(os.path.join(os.path.dirname(__file__), "palettes"))
-        path = os.path.join(os.path.dirname(__file__), "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
+
+        name = kaleidoscope_spectrum_props.save_palette_name.lower().replace(' ', '_')
+        kaleidoscope_spectrum_props.save_palette_name = name
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), 'palettes')):
+            os.makedirs(os.path.join(os.path.dirname(__file__), 'palettes'))
+        path = os.path.join(os.path.dirname(__file__), 'palettes', name+'.json')
         s = json.dumps(palette_export, sort_keys=True)
-        with open(path, "w") as f:
+        with open(path, 'w') as f:
             f.write(s)
 
-        if bpy.context.scene.kaleidoscope_props.sync_path != '':
-            path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", kaleidoscope_spectrum_props.save_palette_name+".json")
+        if bpy.context.scene.kaleidoscope_props.sync_path:
+            path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, 'palettes', name+'.json')
             s = json.dumps(palette_export, sort_keys=True)
             with open(path, 'w') as f:
                 f.write(s)
-        temp_name = temp_name.title().replace("_", " ")
-        self.report({'INFO'}, temp_name+" palette was saved successfully")
-        return{'FINISHED'}
+
+        temp_name = temp_name.title().replace('_', ' ')
+        self.report({'INFO'}, temp_name+' palette was saved successfully')
+        return {'FINISHED'}
 
 class PublishPaletteMenu(bpy.types.Operator):
     """Publish the current Palette"""
@@ -161,7 +156,7 @@ class PublishPaletteMenu(bpy.types.Operator):
     bl_label = "Publish Spectrum Palette"
 
     def draw(self, context):
-        menu_layout_builder(self, PublishPaletteYes.bl_idname, "spectrum_publish")
+        menu_layout_builder(self, PublishPaletteYes.bl_idname, 'spectrum_publish')
 
     def execute(self, context):
         return {'FINISHED'}
@@ -188,11 +183,7 @@ class PublishPaletteYes(bpy.types.Operator):
 
         palette = {}
         palette['colors'] = [
-            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color1).lstrip('#'),
-            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color2).lstrip('#'),
-            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color3).lstrip('#'),
-            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color4).lstrip('#'),
-            spectrum.rgb_to_hex(kaleidoscope_spectrum_props.color5).lstrip('#')
+            spectrum.rgb_to_hex(kaleidoscope_spectrum_props['color'+str(num)].to_list()).lstrip('#') for num in range(1, 6)
         ]
         palette['time'] = datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
         palettes['Palettes'].append(palette)
@@ -206,7 +197,7 @@ class PublishPaletteYes(bpy.types.Operator):
         else:
             self.report({'WARNING'}, 'There was a Problem. Try again Later')
 
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 class DeletePaletteMenu(bpy.types.Operator):
     """Delete the Current Selected Palette"""
@@ -236,28 +227,26 @@ class DeletePaletteYes(bpy.types.Operator):
         global_error = local_error = False
 
         kaleidoscope_spectrum_props = bpy.context.scene.kaleidoscope_spectrum_props[instance]
-        name = kaleidoscope_spectrum_props.saved_palettes
-        temp_name = name
-        name = name.lower()
-        name = name.replace(' ', '_')
-        path = os.path.join(os.path.dirname(__file__), "palettes", name+".json")
+        temp_name = name = kaleidoscope_spectrum_props.saved_palettes
+        name = name.lower().replace(' ', '_')
+        path = os.path.join(os.path.dirname(__file__), 'palettes', name+'.json')
         try:
             os.remove(path)
         except:
             local_error = True
 
-        if bpy.context.scene.kaleidoscope_props.sync_path != '':
+        if bpy.context.scene.kaleidoscope_props.sync_path:
             try:
-                path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, "palettes", name+".json")
+                path = os.path.join(bpy.context.scene.kaleidoscope_props.sync_path, 'palettes', name+'.json')
                 os.remove(path)
             except:
                 global_error = True
 
-        if local_error == False or global_error == False:
-            self.report({'INFO'}, temp_name+" palette was successfully deleted")
+        if not local_error or not global_error:
+            self.report({'INFO'}, temp_name+' palette was successfully deleted')
         else:
-            self.report({'WARNING'}, temp_name+" palette could not be deleted")
-        return{'CANCELLED'}
+            self.report({'WARNING'}, temp_name+' palette could not be deleted')
+        return {'CANCELLED'}
 
 #Intensity Node
 class SaveValueMenu(bpy.types.Operator):
@@ -266,14 +255,14 @@ class SaveValueMenu(bpy.types.Operator):
     bl_label = "Save Intensity Value"
 
     def set_name(self, context):
-        SaveValueMenu.pass_name = (self.name.replace(' ', '_')).lower()
+        SaveValueMenu.pass_name = self.name.replace(' ', '_').lower()
         return None
 
     pass_name = None
     name = bpy.props.StringProperty(name="Value Name", description="Enter the Name for the Value", default="My Value", update=set_name)
 
     def draw(self, context):
-        menu_layout_builder(self, SaveValueYes.bl_idname, "intensity_save")
+        menu_layout_builder(self, SaveValueYes.bl_idname, 'intensity_save')
 
     def execute(self, context):
         return {'FINISHED'}
@@ -293,37 +282,39 @@ class SaveValueYes(bpy.types.Operator):
         except AttributeError:
             pass
         kaleidoscope_props = bpy.context.scene.kaleidoscope_props
-        name = SaveValueMenu.pass_name
-        temp_name = name
-        name = name.title()
-        name = name.replace('_', ' ')
+        temp_name = name = SaveValueMenu.pass_name
+
+        name = name.title().replace('_', ' ')
         value_export = OrderedDict([
             ("value_name", name),
             ("Value", float(intensity.IntensityNode.num_val))
         ])
-        name = SaveValueMenu.pass_name
-        name = name.lower()
-        SaveValueMenu.pass_name = name.replace(' ', '_')
-        if kaleidoscope_props.sync_path != '':
-            if not os.path.exists(os.path.join(kaleidoscope_props.sync_path, "values")):
-                os.makedirs(os.path.join(kaleidoscope_props.sync_path, "values"))
 
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "values")):
-            os.makedirs(os.path.join(os.path.dirname(__file__), "values"))
-        path = os.path.join(os.path.dirname(__file__), "values", SaveValueMenu.pass_name+".json")
+        name = SaveValueMenu.pass_name.lower().replace(' ', '_')
+        SaveValueMenu.pass_name = name
+
+        pathValues = os.path.join(os.path.dirname(__file__), 'values')
+        if not os.path.exists(pathValues):
+            os.makedirs(pathValues)
+        path = os.path.join(pathValues, name+'.json')
+
         s = json.dumps(value_export, sort_keys=True)
-        with open(path, "w") as f:
+        with open(path, 'w') as f:
             f.write(s)
 
-        if kaleidoscope_props.sync_path != '':
-            path = os.path.join(kaleidoscope_props.sync_path, "values", SaveValueMenu.pass_name+".json")
+        if kaleidoscope_props.sync_path:
+            pathValues = os.path.join(kaleidoscope_props.sync_path, 'values')
+            if not os.path.exists(pathValues):
+                os.makedirs(pathValues)
+
             s = json.dumps(value_export, sort_keys=True)
-            with open(path, 'w') as f:
+            with open(os.path.join(pathValues, name+'.json'), 'w') as f:
                 f.write(s)
+
         intensity.IntensityNode.get_custom_vals(self, context)
-        temp_name = temp_name.title().replace('_', " ")
-        self.report({'INFO'}, temp_name+" value was saved successfully")
-        return{'FINISHED'}
+        temp_name = temp_name.title().replace('_', ' ')
+        self.report({'INFO'}, temp_name+' value was saved successfully')
+        return {'FINISHED'}
 
 class DeleteValueMenu(bpy.types.Operator):
     """Remove this Value from the list"""
@@ -331,7 +322,7 @@ class DeleteValueMenu(bpy.types.Operator):
     bl_label = "Remove Intensity Value"
 
     def draw(self, context):
-        menu_layout_builder(self, DeleteValueYes.bl_idname, "intensity_remove")
+        menu_layout_builder(self, DeleteValueYes.bl_idname, 'intensity_remove')
 
     def execute(self, context):
         return {'FINISHED'}
@@ -353,29 +344,29 @@ class DeleteValueYes(bpy.types.Operator):
         kaleidoscope_props=bpy.context.scene.kaleidoscope_props
         local_error = False
         global_error = False
-        name = intensity.IntensityNode.active_custom_preset
-        temp_name = name
-        name = name.lower().replace(' ', '_')+".json"
-        path = os.path.join(os.path.dirname(__file__), "values", name)
+        temp_name = name = intensity.IntensityNode.active_custom_preset
+
+        name = name.lower().replace(' ', '_')+'.json'
+        path = os.path.join(os.path.dirname(__file__), 'values', name)
         try:
             os.remove(path)
         except:
             local_error = True
         try:
-            if kaleidoscope_props.sync_path != '':
-                path = os.path.join(kaleidoscope_props.sync_path, "values", name)
+            if kaleidoscope_props.sync_path:
+                path = os.path.join(kaleidoscope_props.sync_path, 'values', name)
                 try:
                     os.remove(path)
                 except:
-                    self.report({'INFO'}, "Custom Value is not Selected")
+                    self.report({'INFO'}, 'Custom Value is not Selected')
         except:
             global_error = True
 
-        if local_error == False or global_error == False:
-            self.report({'INFO'}, temp_name+" value was successfully deleted")
+        if not local_error or not global_error:
+            self.report({'INFO'}, temp_name+' value was successfully deleted')
         else:
-            self.report({'WARNING'}, temp_name+" value could not be deleted")
-        return{'FINISHED'}
+            self.report({'WARNING'}, temp_name+' value could not be deleted')
+        return {'FINISHED'}
 
 def register():
     pass

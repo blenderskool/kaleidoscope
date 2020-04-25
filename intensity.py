@@ -90,14 +90,9 @@ class IntensityNode(Node, IntensityTreeNode):
             name = name.replace(" ", "_")+".json"
             path = os.path.join(os.path.dirname(__file__), "values", name)
             value = None
-            try:
-                value_file = open(path, 'r')
-                value = json.load(value_file)
-            except:
-                if kaleidoscope_props.sync_path != '':
-                    path = os.path.join(kaleidoscope_props.sync_path, "values", name)
-                    value_file = open(path, 'r')
-                    value = json.load(value_file)
+
+            value_file = open(path, 'r')
+            value = json.load(value_file)
 
             self.kaleidoscope_intensity_out_value = value["Value"]
             IntensityNode.active_custom_preset = custom_values_list[int(self.kaleidoscope_intensity_custom_category)]
@@ -142,35 +137,8 @@ class IntensityNode(Node, IntensityTreeNode):
     def get_custom_vals(self, context):
         global custom_values_list
         value_list = []
-        global_values = []
-        synced_values = []
-        local_values = []
 
         custom_values_list.clear()
-        check = False
-        val = None
-        try:
-            f = open(os.path.join(os.path.dirname(__file__), "settings.json"), 'r')
-            settings = json.load(f)
-            val = os.path.join(settings['sync_directory'], "values")
-            f.close()
-            check = True
-        except:
-            check = False
-
-        if val is not None:
-            if not os.path.exists(val):
-                os.makedirs(val)
-
-        if check == True:
-            for sub in os.listdir(val):
-                if os.path.isfile(os.path.join(val, str(sub))):
-                    name = str(sub)
-                    if name.endswith('.json'):
-                        name = name[:-5]
-                        name = name.title()
-                        name = name.replace('_', ' ')
-                        global_values.append(name)
 
         i=0
         m='0'
@@ -184,27 +152,9 @@ class IntensityNode(Node, IntensityTreeNode):
                     name = name[:-5]
                     name = name.title()
                     name = name.replace('_', ' ')
-                    if name in global_values:
-                        value_list.append((m, name, "Choose the Saved Value from Library", "URL", i))
-                        synced_values.append(name)
-                    else:
-                        value_list.append((m, name, "Choose the Saved Value from Local Library", "FILE", i))
-                        local_values.append(name)
+                    value_list.append((m, name, "Choose the Saved Value from Local Library", "FILE", i))
             i=i+1
             m=str(int(m)+1)
-
-        if check == True:
-            for sub in os.listdir(val):
-                if os.path.isfile(os.path.join(val, str(sub))):
-                    name = str(sub)
-                    if name.endswith('.json'):
-                        name = name[:-5]
-                        name = name.title()
-                        name = name.replace('_', ' ')
-                        if name not in synced_values and name not in local_values:
-                            value_list.append((m, name, "Choose the Saved Value from the Synced Library", "WORLD", i))
-                i=i+1
-                m=str(int(m)+1)
 
         for x in value_list:
             custom_values_list.append(x[1])
@@ -213,16 +163,16 @@ class IntensityNode(Node, IntensityTreeNode):
     num_val = 0.0
     active_custom_preset = None
 
-    kaleidoscope_intensity_next_button = bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
-    kaleidoscope_intensity_prev_button = bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
-    kaleidoscope_intensity_info = bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
+    kaleidoscope_intensity_next_button: bpy.props.BoolProperty(name="Next", description="Select the Next Predefined Value", default=False, update=set_next)
+    kaleidoscope_intensity_prev_button: bpy.props.BoolProperty(name="Previous", description="Select the Previous Predefined Value", default=False, update=set_previous)
+    kaleidoscope_intensity_info: bpy.props.BoolProperty(name="Info", description="View/Hide Information about this category", default=False)
 
-    kaleidoscope_intensity_out_value = bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
+    kaleidoscope_intensity_out_value: bpy.props.FloatProperty(name="Value", description="The Value of the Intensity Node", precision=6, default=1.00, update=update_value)
 
-    kaleidoscope_intensity_main_category = bpy.props.EnumProperty(name="Main Category", description="Select the Type of Values to be used for the node", items=(('0', 'Glass IOR', 'Select the Glass IOR Predefined values'),
+    kaleidoscope_intensity_main_category: bpy.props.EnumProperty(name="Main Category", description="Select the Type of Values to be used for the node", items=(('0', 'Glass IOR', 'Select the Glass IOR Predefined values'),
                                                                                                                                          ('1', 'Blackbody', 'Select the Blackbody Predefined values'),
                                                                                                                                          ('2','Custom', 'Select the Custom Predefined values')), default='0', update=set_value)
-    kaleidoscope_intensity_glass_category = bpy.props.EnumProperty(name="Glass IOR", description="Select the Predefined Value for the Index of Refraction (IOR)", items=(('0', 'Vacuum', ''),
+    kaleidoscope_intensity_glass_category: bpy.props.EnumProperty(name="Glass IOR", description="Select the Predefined Value for the Index of Refraction (IOR)", items=(('0', 'Vacuum', ''),
                                                                                                                                                 ('1', 'Air', ''),
                                                                                                                                                 ('2', 'Helium', ''),
                                                                                                                                                 ('3', 'Hydrogen', ''),
@@ -249,7 +199,7 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                 ('24', 'Diamond', ''),
                                                                                                                                                 ('25', 'Moissanite', ''),
                                                                                                                                                 ('26', 'Zinc selenide', '')), default='0', update=set_value)
-    kaleidoscope_intensity_black_body_category = bpy.props.EnumProperty(name="Blackbody", description="Select the Predefined Value for the Blackbody (Color Temperature)", items=(('0', 'Match Flame', ''),
+    kaleidoscope_intensity_black_body_category: bpy.props.EnumProperty(name="Blackbody", description="Select the Predefined Value for the Blackbody (Color Temperature)", items=(('0', 'Match Flame', ''),
                                                                                                                                                           ('1', 'Candle Flame', ''),
                                                                                                                                                           ('2', 'Standard incandescent lamps', ''),
                                                                                                                                                           ('3', 'Soft White incandescent lamps', ''),
@@ -265,7 +215,7 @@ class IntensityNode(Node, IntensityTreeNode):
                                                                                                                                                           ('13', 'Daylight', ''),
                                                                                                                                                           ('14', 'LCD, CRT screen', ''),
                                                                                                                                                           ('15', 'Clear Blue Sky', '')), default='0', update=set_value)
-    kaleidoscope_intensity_custom_category = bpy.props.EnumProperty(name="Custom Values", description="Seleect the Predefined Values from the Custom Category", items=get_custom_vals, update=set_value)
+    kaleidoscope_intensity_custom_category: bpy.props.EnumProperty(name="Custom Values", description="Seleect the Predefined Values from the Custom Category", items=get_custom_vals, update=set_value)
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Value")
@@ -275,49 +225,17 @@ class IntensityNode(Node, IntensityTreeNode):
     def update(self):
         out = ""
         try:
-            for world in bpy.data.worlds:
-                for node in world.node_tree.nodes:
-                    if node.bl_idname == "intensity.node":
-                        for out in node.outputs:
-                            if out.is_linked:
-                                for o in out.links:
-                                    if o.is_valid:
-                                        if o.to_node.bl_idname == "NodeReroute":
-                                            spectrum.update_reroutes("WorldNodeTree", world.name, node.name, o.to_node.name, "Value")
-                                        o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-        except:
-            pass
-
-        try:
-            for lamps in bpy.data.lamps:
-                try:
-                    for node in lamps.node_tree.nodes:
+            for attr in ('materials', 'lights', 'worlds'):
+                for item in getattr(bpy.data, attr):
+                    for node in item.node_tree.nodes:
                         if node.bl_idname == "intensity.node":
                             for out in node.outputs:
                                 if out.is_linked:
                                     for o in out.links:
                                         if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                spectrum.update_reroutes("LampNodeTree", lamps.name, node.name, o.to_node.name, "Value")
+                                            if o.to_node.bl_idname == 'NodeReroute':
+                                                spectrum.update_reroutes(attr, item.name, node.name, o.to_node.name, 'Value')
                                             o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
-        except:
-            pass
-        try:
-            for mat in bpy.data.materials:
-                try:
-                    for node in mat.node_tree.nodes:
-                        if node.bl_idname == "intensity.node":
-                            for out in node.outputs:
-                                if out.is_linked:
-                                    for o in out.links:
-                                        if o.is_valid:
-                                            if o.to_node.bl_idname == "NodeReroute":
-                                                spectrum.update_reroutes("ShaderNodeTree", mat.name, node.name, o.to_node.name, "Value")
-                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-                except:
-                    continue
         except:
             pass
 
@@ -336,7 +254,7 @@ def intensity_ui(self, context, layout, current_node):
         kaleidoscope_intensity_props = self
         col = layout.column(align=False)
         row = col.row()
-        split = row.split(percentage=0.9)
+        split = row.split(factor=0.9)
         col1 = split.column(align=True)
         col1.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_main_category", text="")
         col2 = split.column(align=True)
@@ -345,55 +263,55 @@ def intensity_ui(self, context, layout, current_node):
             box = col.box()
             colb = box.column(align=True)
             if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
-                colb.label("Glass IOR")
+                colb.label(text="Glass IOR")
                 colb.label()
-                colb.label("The IOR (Index of Refraction)")
-                colb.label("Value, is the ratio between")
-                colb.label("speed of light ray in vacuum")
-                colb.label("to the speed in the medium")
+                colb.label(text="The IOR (Index of Refraction)")
+                colb.label(text="Value, is the ratio between")
+                colb.label(text="speed of light ray in vacuum")
+                colb.label(text="to the speed in the medium")
                 colb.label()
-                colb.label("So, the IOR value defines")
-                colb.label("that how much slower a light")
-                colb.label("ray would travel in a medium")
-                colb.label("compared to that in vacuum.")
-                colb.label("This value is important and")
-                colb.label("it controls the refractions")
-                colb.label("caused by the light ray.")
+                colb.label(text="So, the IOR value defines")
+                colb.label(text="that how much slower a light")
+                colb.label(text="ray would travel in a medium")
+                colb.label(text="compared to that in vacuum.")
+                colb.label(text="This value is important and")
+                colb.label(text="it controls the refractions")
+                colb.label(text="caused by the light ray.")
                 colb.label()
 
             elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '1':
-                colb.label("Blackbody")
+                colb.label(text="Blackbody")
                 colb.label()
-                colb.label("A Blackbody radiator radiates")
-                colb.label("light, with a specific")
-                colb.label("temperature, and this temperature")
-                colb.label("defines a specific hue to that")
-                colb.label("light ray.")
+                colb.label(text="A Blackbody radiator radiates")
+                colb.label(text="light, with a specific")
+                colb.label(text="temperature, and this temperature")
+                colb.label(text="defines a specific hue to that")
+                colb.label(text="light ray.")
                 colb.label()
-                colb.label("This characteristic of light")
-                colb.label("is important in the fields of")
-                colb.label("Photography, Lighting, and many")
-                colb.label("more.")
+                colb.label(text="This characteristic of light")
+                colb.label(text="is important in the fields of")
+                colb.label(text="Photography, Lighting, and many")
+                colb.label(text="more.")
                 colb.label()
 
             elif kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2':
-                colb.label("Custom Values")
+                colb.label(text="Custom Values")
                 colb.label()
-                colb.label("This Section is just for you,")
-                colb.label("to save all the values for later")
-                colb.label("use.")
+                colb.label(text="This Section is just for you,")
+                colb.label(text="to save all the values for later")
+                colb.label(text="use.")
                 colb.label()
 
             colb.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_info", text="Close Help", icon='INFO', toggle=True)
         col.label()
         row = col.row(align=True)
-        split1 = row.split(percentage=0.05)
+        split1 = row.split(factor=0.05)
         col1 = split1.column(align=True)
         col1.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_prev_button', text="", icon="TRIA_LEFT", emboss=False, toggle=True)
 
         col2 = split1.column(align=True)
         row = col2.row(align=True)
-        split2 = row.split(percentage=0.95)
+        split2 = row.split(factor=0.95)
         col3 = split2.column(align=True)
         row = col3.row(align=True)
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '0':
@@ -404,10 +322,10 @@ def intensity_ui(self, context, layout, current_node):
             if len(custom_values_list) != 0:
                 row.prop(kaleidoscope_intensity_props, "kaleidoscope_intensity_custom_category", text="")
             else:
-                row.label("No Saved Value")
-        row.operator(client.SaveValueMenu.bl_idname, text="", icon="ZOOMIN")
+                row.label(text="No Saved Value")
+        row.operator(client.SaveValueMenu.bl_idname, text="", icon="FILE_TICK")
         if kaleidoscope_intensity_props.kaleidoscope_intensity_main_category == '2' and len(custom_values_list) != 0:
-            row.operator(client.DeleteValueMenu.bl_idname, text="", icon="ZOOMOUT")
+            row.operator(client.DeleteValueMenu.bl_idname, text="", icon="TRASH")
         col4 = split2.column(align=True)
         col4.prop(kaleidoscope_intensity_props, 'kaleidoscope_intensity_next_button', text="", icon="TRIA_RIGHT", emboss=False, toggle=True)
         col.label()
@@ -416,7 +334,7 @@ def intensity_ui(self, context, layout, current_node):
         row2 = col.row(align=True)
         row2_1 = row2.row(align=True)
         row2_1.alignment = 'CENTER'
-        row2_1.label("Akash Hamirwasia")
+        row2_1.label(text="Akash Hamirwasia")
         row2_1.scale_y=1.2
         row2_1.operator('wm.url_open', text="Support Me", icon='SOLO_ON').url='http://blskl.cf/kalsupport'
 
@@ -427,32 +345,13 @@ def unregister():
     pass
 
 def pre_intensity_frame_change(scene):
-    for m in bpy.data.materials:
-        try:
-            if m.node_tree is not None:
-                for n in m.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
-
-    for lamp in bpy.data.lamps:
-        try:
-            if lamp.node_tree is not None:
-                for n in lamp.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
-
-    for w in bpy.data.worlds:
-        try:
-            if w.node_tree is not None:
-                for n in w.node_tree.nodes:
-                    if n.bl_idname == 'intensity.node':
-                        v = n.kaleidoscope_intensity_out_value
-                        n.kaleidoscope_intensity_out_value = v
-        except:
-            continue
+    for attr in ('materials', 'lights', 'worlds'):
+        for item in getattr(bpy.data, attr):
+            try:
+                if item.node_tree is not None:
+                    for n in item.node_tree.nodes:
+                        if n.bl_idname == 'intensity.node':
+                            v = n.kaleidoscope_intensity_out_value
+                            n.kaleidoscope_intensity_out_value = v
+            except:
+                continue

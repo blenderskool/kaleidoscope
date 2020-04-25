@@ -1036,7 +1036,6 @@ def Spectrum_Engine():
                         req = requests.get("http://blskl.cf/kalCOLOURloversapi")
                         data = ET.fromstring(req.text)
                         for i in range(0, 5):
-                            print(str(data[0][9][i].text))
                             color_palette[i] = str(data[0][9][i].text)
                             lovers_id = str(data[0][0].text)
                         online_check = True

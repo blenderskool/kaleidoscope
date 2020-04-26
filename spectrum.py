@@ -257,22 +257,20 @@ class SpectrumNode(Node, SpectrumTreeNode):
         self.width = 226
 
     def update(self):
-        if bpy.context.scene.render.engine == 'CYCLES':
-            out = ""
-            try:
-                for attr in ('materials', 'lights', 'worlds'):
-                    for item in getattr(bpy.data, attr):
-                        for node in item.node_tree.nodes:
-                            if node.bl_idname == 'spectrum_palette.node':
-                                for out in node.outputs:
-                                    if out.is_linked:
-                                        for o in out.links:
-                                            if o.is_valid:
-                                                if o.to_node.bl_idname == 'NodeReroute':
-                                                    update_reroutes(attr, item.name, node.name, o.to_node.name, out.name)
-                                                o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
-            except:
-                pass
+        try:
+            for attr in ('materials', 'lights', 'worlds'):
+                for item in getattr(bpy.data, attr):
+                    for node in item.node_tree.nodes:
+                        if node.bl_idname == 'spectrum_palette.node':
+                            for out in node.outputs:
+                                if out.is_linked:
+                                    for o in out.links:
+                                        if o.is_valid:
+                                            if o.to_node.bl_idname == 'NodeReroute':
+                                                update_reroutes(attr, item.name, node.name, o.to_node.name, out.name)
+                                            o.to_socket.node.inputs[o.to_socket.name].default_value = out.default_value
+        except:
+            pass
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
